@@ -1,0 +1,30 @@
+steps:
+1. read in training data
+2. read in testing data
+3. append these two data sets together
+Post-MVP: summarize the data (making sure to only summarize through the training data)
+  for each column:
+    average
+    min
+    max
+    median
+    mode
+    # of missing values ("NA", undefined, None, NaN, "", "N/A", "blank", etc.)
+    # of 0 values
+  print this out just so the user knows what their data is like
+
+min-max requires that we break this out by column. we will need on min-max-scaler for each column. otherwise it will try to min-max scale income the same way it does height, when clearly they are going to have very different ranges. 
+
+send it through dictVectorizer- before or after min-max? 
+  make sure it reads in as a dictionary, and that each of the column headers is the key for htis. That way if we have a value of "passed", it is saved as the value for some key that is meaningful. 
+4. send it through min-max scaling
+5. separate data back out
+5. write to two separate files (training and testing)
+6. save the scaler??
+
+post-MVP:
+read in header row? save it in memory. then append it to the top of the .csv files
+read in information about each column- categorical or not
+
+1. impute missing values
+2. reduce the number of features being passed in- make sure each feature has at least n observations in the dataset, only include those features that are present in both the training and the testing data, etc. 
