@@ -1,0 +1,18 @@
+1. write the test
+    create an anonymous function
+    that will itself spin up our main python controller process
+      our python controller process is giong to import all the other python modules
+        invoke them in their proper order, and with their proper arguments
+        and generally control things
+        it will check, in between each stage, whether we have passed in test or not
+          if so, it will send a message back to the parent with the results from the previous operation
+          and our parent process will be listening for that result
+          then kill the python process
+doing it this will will allow us to use multiple cores, since if we have 8 tests, we will be spinning up 8 child_processes, each running independently until they get to the point in the python controller flow that they are testing for. 
+
+      challenge: passing in the arguments?
+      that child process will do the concatting
+      that child process will check to see if we are in a testing environment
+        if test, the child will send back a message with it's script's name and the value it is returning
+    the parent function will be listening for a message of exactly that type
+      and will return the parsed results
