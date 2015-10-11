@@ -4,6 +4,32 @@ var path = require('path');
 var testFolder = path.dirname(__filename);
 var fs = require('fs');
 var child_process = require('child_process');
+var PythonShell = require('python-shell');
+
+var makePyOptions = function() {
+  var pyOptions = {
+    mode: 'json',
+    args: []
+  };
+  for (var i = 0; i < arguments.length; i++) {
+    pyOptions.args.push(arguments[i]);
+  }
+  return pyOptions;
+}
+
+var startPyController = function() {
+  var pyOptions = makePyOptions(path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'), path.join(testFolder, 'testKaggleGiveMeSoemCredit.csv'), 'test');
+
+  var pyPath = path.resolve(testFolder,'..','pyController.py');
+  console.log('pyPath:',pyPath);
+
+  var pyController = PythonShell.run(pyPath, pyOptions, function(err) {
+    if(err) {
+      console.error(err);
+    }
+  });
+  return pyController;
+}
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
@@ -20,7 +46,8 @@ describe('data-formatter', function() {
     // by defining done as a parameter for the callback function here, we are saying this test be an asynchronous function. 
     // mocha will allow this test to run up until we invoke done(), or until the test times out.
     it('should concatenate the test data and the training data together into one large data set', function(done) {
-      var pyController = child_process.fork(path.resolve(testFolder,'..','pyController.py'));
+      var pyController = startPyController();
+
       pyController.on('message', function(message) {
         // message is the message object coming to us from the Python process
         // we are expecting to get back an array of the concatted results
