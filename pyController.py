@@ -1,7 +1,7 @@
+import concat
 from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
-import concat
 # grab arguments
 trainingFile = sys.argv[0]
 testingFile = sys.argv[1]
