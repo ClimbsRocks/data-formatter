@@ -29,8 +29,11 @@ module.exports = function() {
 
   var pyController = PythonShell.run('pyController.py', pyOptions, function(err) {
     if(err) {
-      // console.log('heard an error!');
-      // console.error(err);
+      // exit code null means we killed the python child process intentionally
+      if(err.exitCode !== null) {
+        console.log('heard an error!');
+        console.error(err);
+      }
     }
   });
 
