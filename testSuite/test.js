@@ -1,47 +1,6 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var path = require('path');
-var testFolder = path.dirname(__filename);
-var fs = require('fs');
-var child_process = require('child_process');
-var PythonShell = require('python-shell');
-
-var makePyOptions = function() {
-  var pyOptions = {
-    mode: 'json',
-    scriptPath: path.resolve(testFolder,'..'),
-    args: []
-  };
-  for (var i = 0; i < arguments.length; i++) {
-    pyOptions.args.push(arguments[i]);
-  }
-  return pyOptions;
-};
-
-var attachListeners = function(pyShell) {
-  pyShell.on('message', function(message) {
-    if(message.type === 'console.log') {
-      console.log('message from Python:',message.text);
-    }
-  });
-}
-
-var startPyController = function() {
-  var pyOptions = makePyOptions(path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'), path.join(testFolder, 'testKaggleGiveMeSomeCredit.csv'), 'test');
-
-  var pyController = PythonShell.run('pyController.py', pyOptions, function(err) {
-    if(err) {
-      console.log('heard an error!');
-      console.error(err);
-      console.log('above is the error');
-    }
-  });
-
-  attachListeners(pyController);
-  return pyController;
-}
-
-process.emit('message',"this is my test message for mocha that is not valid");
+var startPyController = require('./startPyController');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
@@ -78,12 +37,8 @@ describe('data-formatter', function() {
       var pyController = startPyController();
 
       pyController.on('message', function(message) {
-        // message is the message object coming to us from the Python process
-        // we are expecting to get back an array of the concatted results
+        // the first item in the array returned to us should be the length of the training data
         if(message.type === 'concat.py') {
-          // 1 header row in training data
-          // 150,000 data rows in training data
-          // 101,503 data rows in testing data
           expect(message.text[0]).to.equal(150001);
           done();
         }
@@ -91,8 +46,80 @@ describe('data-formatter', function() {
       });
     });
 
-    // should return the number of rows, and the concatted list
-    // test both parts to make sure they are what we expect
+  });
+
+  describe('min-max-normalizing', function() {
+
+    it('should return only values between 0 and 1', function(done) {
+      var pyController = startPyController();
+
+      pyController.on('message', function(message) {
+        if(message.type === 'normalization.py') {
+
+          // check each number in each row of the array to make sure it is between 0 and 1, inclusive
+          function checkAllCorrectRanges (arr) {
+            for (var i = 0; i < arr.length; i++) {
+              for (var j = 0; j < arr[i].length; j++) {
+                if(arr[i][j] < 0 || arr[i][j] > 1) {
+                  return false;
+                }
+              }
+            }
+            return true;
+          }
+
+          expect(checkAllCorrectRanges(message.text)).to.be(true);
+          done();
+        }
+      
+      });
+    });
+
+    it('should min-max normalize each column individually', function(done) {
+      var pyController = startPyController();
+
+      pyController.on('message', function(message) {
+        if(message.type === 'normalization.py') {
+          function checkOneCorrectColumn (arr) {
+            var min = -Infinity;
+            var max = Infinity;
+            for (var i = 0; i < arr.length; i++) {
+
+              // check the value is not outside the range of 0,1
+              if(arr[i] < 0 || arr[i] > 1) {
+                return false;
+              }
+
+              // keep track of min and max values seen
+              if (arr[i] < min) {
+                min = arr[i];
+              }
+              if (arr[i] > max) {
+                max = arr[i];
+              }
+            }
+
+            // make sure each column is min-max-normalized individually. that means each column should have it's own 0 and 1 values (allowing for some potential rounding inconsistencies)
+            return min < 0.01 && max > 0.99;
+          }
+
+          // TODO: split the data out into columns
+          function checkAllCorrectRanges(arr) {
+            for (var i = 0; i < arr.length; i++) {
+              if (!checkOneCorrectColumn(arr[i]) ) {
+                return false;
+              }
+            }
+            return true;
+          }
+
+          expect(checkAllCorrectRanges(message.text)).to.be(true);
+          done();
+        }
+      
+      });
+    });
+
 
   });
 
