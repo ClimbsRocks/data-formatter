@@ -20,16 +20,14 @@ var makePyOptions = function() {
 
 var attachListeners = function(pyShell) {
   pyShell.on('message', function(message) {
-    console.log('here is the raw message we are getting from Python');
-    console.log(message);
-    // if(message.type === 'console.log') {
-    //   console.log('message from Python:',message.body);
-    // }
+    if(message.type === 'console.log') {
+      console.log('message from Python:',message.text);
+    }
   });
 }
 
 var startPyController = function() {
-  var pyOptions = makePyOptions(path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'), path.join(testFolder, 'testKaggleGiveMeSoemCredit.csv'), 'test');
+  var pyOptions = makePyOptions(path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'), path.join(testFolder, 'testKaggleGiveMeSomeCredit.csv'), 'test');
 
   var pyController = PythonShell.run('pyController.py', pyOptions, function(err) {
     if(err) {
@@ -66,8 +64,27 @@ describe('data-formatter', function() {
         // message is the message object coming to us from the Python process
         // we are expecting to get back an array of the concatted results
         if(message.type === 'concat.py') {
-          expect(message.body.length).to.equal(251503);
-          expect(message.body.trainingLength).to.equal(150000);
+          // 1 header row in training data
+          // 150,000 data rows in training data
+          // 101,503 data rows in testing data
+          expect(message.text[1].length).to.equal(251504);
+          done();
+        }
+      
+      });
+    });
+
+    it('should communicate back the number of rows in the training dataset, including the header row', function(done) {
+      var pyController = startPyController();
+
+      pyController.on('message', function(message) {
+        // message is the message object coming to us from the Python process
+        // we are expecting to get back an array of the concatted results
+        if(message.type === 'concat.py') {
+          // 1 header row in training data
+          // 150,000 data rows in training data
+          // 101,503 data rows in testing data
+          expect(message.text[0]).to.equal(150001);
           done();
         }
       
