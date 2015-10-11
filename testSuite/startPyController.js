@@ -29,9 +29,8 @@ module.exports = function() {
 
   var pyController = PythonShell.run('pyController.py', pyOptions, function(err) {
     if(err) {
-      console.log('heard an error!');
-      console.error(err);
-      console.log('above is the error');
+      // console.log('heard an error!');
+      // console.error(err);
     }
   });
 

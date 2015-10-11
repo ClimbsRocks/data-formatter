@@ -7,6 +7,8 @@ describe('data-formatter', function() {
 
   // this describe block will contain all the tests for our fileConcatting module
   describe('fileConcatting', function() {
+    // this operation can be slow, so give it some time to process:
+    this.timeout(5000);
 
     // if we write the results to disk, mae sure to erase them so we are starting from fresh results
     // before(function() {
@@ -49,12 +51,13 @@ describe('data-formatter', function() {
   });
 
   describe('min-max-normalizing', function() {
+    this.timeout(5000);
 
     it('should return only values between 0 and 1', function(done) {
       var pyController = startPyController();
 
       pyController.on('message', function(message) {
-        if(message.type === 'normalization.py') {
+        if(message.type === 'minMax.py') {
 
           // check each number in each row of the array to make sure it is between 0 and 1, inclusive
           function checkAllCorrectRanges (arr) {
@@ -79,7 +82,7 @@ describe('data-formatter', function() {
       var pyController = startPyController();
 
       pyController.on('message', function(message) {
-        if(message.type === 'normalization.py') {
+        if(message.type === 'minMax.py') {
           function checkOneCorrectColumn (arr) {
             var min = -Infinity;
             var max = Infinity;
@@ -122,7 +125,10 @@ describe('data-formatter', function() {
 
 
   });
-
+  
+  // grab the first row above the header separately, to know which column is used for what
+  // only normalize numerical columns
+  // write results to file
 
 
 
