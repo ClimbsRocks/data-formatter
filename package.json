@@ -1,0 +1,35 @@
+{
+  "name": "data-formatter",
+  "version": "0.0.1",
+  "description": "Formats your data to get it ready for a neural network!",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha testSuite/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClimbsRocks/data-formatter.git"
+  },
+  "author": "Preston Parry <climbsbytes@gmail.com> (prestonparry.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ClimbsRocks/data-formatter/issues"
+  },
+  "homepage": "https://github.com/ClimbsRocks/data-formatter#readme",
+  "keywords": [
+    "neural network",
+    "machine learning",
+    "data formatting",
+    "normalization",
+    "min-max normalization",
+    "brain.js",
+    "automated machine learning",
+    "bestBrain",
+    "data science",
+    "kaggle"
+  ],
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "mocha": "^2.3.3"
+  }
+}
