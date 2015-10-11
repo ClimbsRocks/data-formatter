@@ -9,6 +9,7 @@ var PythonShell = require('python-shell');
 var makePyOptions = function() {
   var pyOptions = {
     mode: 'json',
+    scriptPath: path.resolve(testFolder,'..'),
     args: []
   };
   for (var i = 0; i < arguments.length; i++) {
@@ -20,10 +21,7 @@ var makePyOptions = function() {
 var startPyController = function() {
   var pyOptions = makePyOptions(path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'), path.join(testFolder, 'testKaggleGiveMeSoemCredit.csv'), 'test');
 
-  var pyPath = path.resolve(testFolder,'..','pyController.py');
-  console.log('pyPath:',pyPath);
-
-  var pyController = PythonShell.run(pyPath, pyOptions, function(err) {
+  var pyController = PythonShell.run('pyController.py', pyOptions, function(err) {
     if(err) {
       console.error(err);
     }
