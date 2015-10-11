@@ -1,15 +1,15 @@
 import json
 
-def printParent(input):
+def printParent(messageText):
     messageObj = {
-        'body': input,
+        'text': messageText,
         'type': 'console.log'
     }
     print json.dumps(messageObj)
 
-def messageParent(input, type):
+def messageParent(messageText, type):
     messageObj = {
-        'body': input,
+        'text': messageText,
         'type': type
     }
     print json.dumps(messageObj)

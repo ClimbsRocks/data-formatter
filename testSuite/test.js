@@ -16,6 +16,16 @@ var makePyOptions = function() {
     pyOptions.args.push(arguments[i]);
   }
   return pyOptions;
+};
+
+var attachListeners = function(pyShell) {
+  pyShell.on('message', function(message) {
+    console.log('here is the raw message we are getting from Python');
+    console.log(message);
+    // if(message.type === 'console.log') {
+    //   console.log('message from Python:',message.body);
+    // }
+  });
 }
 
 var startPyController = function() {
@@ -23,11 +33,17 @@ var startPyController = function() {
 
   var pyController = PythonShell.run('pyController.py', pyOptions, function(err) {
     if(err) {
+      console.log('heard an error!');
       console.error(err);
+      console.log('above is the error');
     }
   });
+
+  attachListeners(pyController);
   return pyController;
 }
+
+process.emit('message',"this is my test message for mocha that is not valid");
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
