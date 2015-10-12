@@ -6,7 +6,6 @@ module.exports = function() {
   // this describe block will contain all the tests for our fileConcatting module
   describe('fileConcatting', function() {
     // this operation can be slow, so give it some time to process:
-    this.timeout(5000);
 
     // if we write the results to disk, mae sure to erase them so we are starting from fresh results
     // before(function() {
@@ -54,7 +53,7 @@ module.exports = function() {
         // the first item in the array returned to us should be the length of the training data
         if(message.type === 'concat.py') {
           pyController.childProcess.kill();
-          expect(message.text[0]).to.deep.equal(['ID','Output','Numerical','Numerical','Numerical','Numerical','Numerical','Numerical','Numerical','Numerical','Numerical','Numerical']);
+          expect(message.text[0]).to.deep.equal(['id','output','numerical','numerical','numerical','numerical','numerical','numerical','numerical','numerical','numerical','numerical']);
           done();
         }
       
@@ -68,7 +67,7 @@ module.exports = function() {
         // the first item in the array returned to us should be the length of the training data
         if(message.type === 'concat.py') {
           pyController.childProcess.kill();
-          expect(message.text[1]).to.deep.equal(['ID','SeriousDlqin2yrs','RevolvingUtilizationOfUnsecuredLines','age','NumberOfTime30-59DaysPastDueNotWorse','DebtRatio','MonthlyIncome','NumberOfOpenCreditLinesAndLoans','NumberOfTimes90DaysLate','NumberRealEstateLoansOrLines','NumberOfTime60-89DaysPastDueNotWorse','NumberOfDependents']);
+          expect(message.text[1]).to.deep.equal(["id", "seriousdlqin2yrs", "revolvingutilizationofunsecuredlines", "age", "numberoftime30-59dayspastduenotworse", "debtratio", "monthlyincome", "numberofopencreditlinesandloans", "numberoftimes90dayslate", "numberrealestateloansorlines", "numberoftime60-89dayspastduenotworse", "numberofdependents"]);
           done();
         }
       

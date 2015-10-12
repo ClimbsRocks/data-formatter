@@ -4,7 +4,6 @@ var startPyController = require('./startPyController');
 
 module.exports = function() {
   describe('imputing missing values', function() {
-    this.timeout(5000);
 
     it('should insert the median value for all completely blank values', function(done) {
       var pyController = startPyController();

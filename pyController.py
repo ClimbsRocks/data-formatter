@@ -15,25 +15,28 @@ test = sys.argv[3]
 concattedResults = concat.inputFiles(trainingFile, testingFile)
 # obviousPrint('concattedResults', concattedResults)
 # we are identifying whether each column is "output","id","categorical", or "numerical"
-columnDataTypes = concattedResults[0]
-headerRow = concattedResults[1]
+dataDescription = [x.lower() for x in concattedResults[0]]
+headerRow = [x.lower() for x in concattedResults[1]]
 trainingLength = concattedResults[2]
 allData = concattedResults[3]
 
 
 
 if(test):
-    messageParent([columnDataTypes, headerRow, trainingLength, allData], 'concat.py')
+    messageParent([dataDescription, headerRow, trainingLength, allData], 'concat.py')
 
 
-imputedResults = imputingMissingValues.impute(allData)
+imputedResults = imputingMissingValues.cleanAll(dataDescription, allData)
 
 if(test):
+    testResults = []
+    for column in imputedResults:
+        testResults.append( column.tolist() )
     messageParent(imputedResults, 'imputingMissingValues.py')
 
 
-minMaxNormalizedResults = minMax.normalize(allData)
+# minMaxNormalizedResults = minMax.normalize(allData)
 
-if(test):
-    messageParent(minMaxNormalizedResults, 'minMax.py')
+# if(test):
+#     messageParent(minMaxNormalizedResults, 'minMax.py')
 

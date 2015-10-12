@@ -7,8 +7,9 @@ var imputingMissingValues = require('./imputingMissingValues');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
+  this.timeout(10000);
 
-  fileConcatting();
+  // fileConcatting();
 
   imputingMissingValues();
 
