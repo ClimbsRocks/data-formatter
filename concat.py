@@ -7,8 +7,16 @@ def inputFiles(trainingFile, testingFile):
     outputData = []
     with open(trainingFile, 'rU') as trainingInput:
         trainingRows = csv.reader(trainingInput)
+        firstRow = 0
         for row in trainingRows:
-            outputData.append(row)
+            if firstRow < 2:
+                if firstRow == 0:
+                    dataDescription = row
+                else: 
+                    headerRow = row
+                firstRow = firstRow + 1
+            else:
+                outputData.append(row)
         trainingLength = len(outputData)
 
     with open(testingFile, 'rU') as testingInput:
@@ -20,4 +28,4 @@ def inputFiles(trainingFile, testingFile):
             else:
                 outputData.append(row)
 
-    return [trainingLength, outputData]
+    return [dataDescription, headerRow, trainingLength, outputData]

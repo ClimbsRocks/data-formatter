@@ -5,6 +5,7 @@ from sendMessages import obviousPrint
 
 import concat
 import minMax
+import imputingMissingValues
 
 # grab arguments
 trainingFile = sys.argv[1]
@@ -12,11 +13,24 @@ testingFile = sys.argv[2]
 test = sys.argv[3]
 
 concattedResults = concat.inputFiles(trainingFile, testingFile)
-allData = concattedResults[1]
-trainingLength = concattedResults[0]
+# obviousPrint('concattedResults', concattedResults)
+# we are identifying whether each column is "output","id","categorical", or "numerical"
+columnDataTypes = concattedResults[0]
+headerRow = concattedResults[1]
+trainingLength = concattedResults[2]
+allData = concattedResults[3]
+
+
 
 if(test):
-    messageParent(concattedResults, 'concat.py')
+    messageParent([columnDataTypes, headerRow, trainingLength, allData], 'concat.py')
+
+
+imputedResults = imputingMissingValues.impute(allData)
+
+if(test):
+    messageParent(imputedResults, 'imputingMissingValues.py')
+
 
 minMaxNormalizedResults = minMax.normalize(allData)
 
