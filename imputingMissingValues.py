@@ -100,7 +100,7 @@ def stackOverflowImpute(dataDescription, matrix):
 
             self.fill = pd.Series(
                 [ X[c].value_counts().index[0]
-                if X[c].dtype == np.dtype('O') else X[c].mean() for c in X ],
+                if X[c].dtype == np.dtype('O') else X[c].median() for c in X ],
                 index=X.columns
             )
 
@@ -114,6 +114,7 @@ def stackOverflowImpute(dataDescription, matrix):
 
     outputColumn = dataDescription.index('output')
 
+    # convert from pands DataFrame back to a standard python list
     X = X.values.tolist()
     for row in X:
         if row[outputColumn] == "DO_NOT_ACCIDENTALLY_FILL_ME_IN":
