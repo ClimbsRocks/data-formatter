@@ -7,13 +7,13 @@ from sendMessages import obviousPrint
 
 imputer = preprocessing.Imputer(missing_values="NaN", strategy='median', verbose=10)
 # TODO: ignore casing
-emptyEquivalents = ["NA","N/A","None","","undefined","missing","blank","empty", None]
+emptyEquivalents = ["na","n/a","none",'',"undefined","missing","blank","empty", None]
 
 # standardize all missing values to None
 # removes all strings (values that can't be converted to a flot) from "Numerical" columns
 # removes all values in the emptyEquivalents array from categorical columns
 # doesn't touch ID or Output columns
-def standardizeMissingValues(dataDescription, matrix ):
+def standardizeMissingValues(dataDescription, trainingLength, matrix ):
     cleanedMatrix = []
 
     # split data into columns
@@ -32,37 +32,52 @@ def standardizeMissingValues(dataDescription, matrix ):
                 except:
 
                     # remove all non-numerical values
-                    # NOTE: passing in None breaks Imputer in the next step. Passing in float('nan') works with Imputer
+                    # Note: passing in None breaks Imputer in the next step. Passing in np.nan works with Imputer
                     cleanColumn.append( np.nan )
-            # make sure this array is stored as a np array with data type float64- essential for the next series of transforms. 
-            cleanColumn = np.array( cleanColumn, dtype='float64' )
-        # elif dataDescription[idx] == "categorical":
-        #     for value in column:
-        #         if value in emptyEquivalents:
-        #             cleanColumn.append( 'nan' )
-        #         else:
-        #             cleanColumn.append(value)
-        else:
+        elif dataDescription[idx] == "categorical":
+            for value in column:
+                if lower(value) in emptyEquivalents:
+                    cleanColumn.append( np.nan )
+                else:
+                    cleanColumn.append(value)
+
+
+        elif dataDescription[idx] == "id":
+            for value in column:
+
+                if str(value).lower() in emptyEquivalents:
+                    printParent('warning, you are missing values in your ID column')
+            # we will warn them but allow them to continue
             cleanColumn = column
+
+        elif dataDescription[idx] == "output":
+            cleanColumn
+            for rowIdx, value in enumerate(column):
+
+                # if this row is in our training data, and we have missing values, warn the user
+                if str(value).lower() in emptyEquivalents and rowIdx < trainingLength:
+                    printParent('warning, you are missing values in your training Output column')
+                    # prevent the imputer from trying to impute this value. We will let the user or the classifier rectify this issue later down the road. 
+                    cleanColumn.append("DO_NOT_ACCIDENTALLY_FILL_ME_IN")
+
+                # check to make sure that all the prediction cells are blank for the testing data
+                elif rowIdx > trainingLength:
+                    if str(value).lower() not in emptyEquivalents:
+                        printParent('warning, have values in the Output field of your testing data. We are removing them now, but you might want to consider using this as your training data next time')
+                    # making super sure that we do not accidentally impute values for the output column in the testing data
+                    cleanColumn.append("DO_NOT_ACCIDENTALLY_FILL_ME_IN")
+
+                else:
+                    cleanColumn.append(value)
+
+
         
         cleanedMatrix.append( cleanColumn )
     return cleanedMatrix
 
 
-# def impute(dataDescription, matrix ):
-#     resultMatrix = []
-#     for idx, column in enumerate(matrix):
-#         printParent(idx)
-
-#         if dataDescription[idx] == "numerical":
-#             column = imputer.fit_transform(column, y=None)
-#         resultMatrix.append(column)
-
-#     return resultMatrix
-
-
 # http://stackoverflow.com/a/25562948
-def stackOverflowImpute( matrix):
+def stackOverflowImpute(dataDescription, matrix):
     rowMatrix = zip(*matrix)
 
     import pandas as pd
@@ -83,9 +98,11 @@ def stackOverflowImpute( matrix):
             """
         def fit(self, X, y=None):
 
-            self.fill = pd.Series([X[c].value_counts().index[0]
-                if X[c].dtype == np.dtype('O') else X[c].mean() for c in X],
-                index=X.columns)
+            self.fill = pd.Series(
+                [ X[c].value_counts().index[0]
+                if X[c].dtype == np.dtype('O') else X[c].mean() for c in X ],
+                index=X.columns
+            )
 
             return self
 
@@ -94,14 +111,22 @@ def stackOverflowImpute( matrix):
 
     X = pd.DataFrame(rowMatrix)
     X = DataFrameImputer().fit_transform(X)
+
+    outputColumn = dataDescription.index('output')
+
+    X = X.values.tolist()
+    for row in X:
+        if row[outputColumn] == "DO_NOT_ACCIDENTALLY_FILL_ME_IN":
+            row[outputColumn] = ""
+
     return X
 
 
 
 
 
-def cleanAll(dataDescription, matrix ):
-    cleanedMatrix = standardizeMissingValues(dataDescription, matrix)
+def cleanAll(dataDescription, trainingLength, matrix ):
+    cleanedMatrix = standardizeMissingValues(dataDescription, trainingLength, matrix)
     # results = impute(dataDescription, cleanedMatrix )
-    results = stackOverflowImpute(cleanedMatrix)
+    results = stackOverflowImpute(dataDescription, cleanedMatrix)
     return results

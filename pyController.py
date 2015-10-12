@@ -24,10 +24,10 @@ if(test):
     messageParent([dataDescription, headerRow, trainingLength, allData], 'concat.py')
 
 
-imputedResults = imputingMissingValues.cleanAll(dataDescription, allData)
+imputedResults = imputingMissingValues.cleanAll(dataDescription, trainingLength, allData)
 
 if(test):
-    messageParent(imputedResults.to_json(), 'imputingMissingValues.py')
+    messageParent(imputedResults, 'imputingMissingValues.py')
 
 
 # minMaxNormalizedResults = minMax.normalize(allData)
