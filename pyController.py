@@ -30,8 +30,8 @@ if(test):
     messageParent(imputedResults, 'imputingMissingValues.py')
 
 
-# minMaxNormalizedResults = minMax.normalize(allData)
+minMaxNormalizedResults = minMax.normalize(dataDescription, imputedResults)
 
-# if(test):
-#     messageParent(minMaxNormalizedResults, 'minMax.py')
+if(test):
+    messageParent(minMaxNormalizedResults, 'minMax.py')
 

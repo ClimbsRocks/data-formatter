@@ -11,9 +11,9 @@ describe('data-formatter', function() {
 
   // fileConcatting();
 
-  imputingMissingValues();
+  // imputingMissingValues();
 
-  // minMaxScaling();
+  minMaxScaling();
   
   // grab the first row above the header separately, to know which column is used for what
   // only normalize numerical columns
