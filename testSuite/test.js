@@ -9,7 +9,7 @@ var imputingMissingValues = require('./imputingMissingValues');
 describe('data-formatter', function() {
   this.timeout(10000);
 
-  // fileConcatting();
+  fileConcatting();
 
   imputingMissingValues();
 

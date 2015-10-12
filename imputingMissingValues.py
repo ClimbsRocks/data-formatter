@@ -33,7 +33,7 @@ def standardizeMissingValues(dataDescription, matrix ):
 
                     # remove all non-numerical values
                     # NOTE: passing in None breaks Imputer in the next step. Passing in float('nan') works with Imputer
-                    cleanColumn.append( float('nan') )
+                    cleanColumn.append( np.nan )
             # make sure this array is stored as a np array with data type float64- essential for the next series of transforms. 
             cleanColumn = np.array( cleanColumn, dtype='float64' )
         # elif dataDescription[idx] == "categorical":
@@ -49,18 +49,59 @@ def standardizeMissingValues(dataDescription, matrix ):
     return cleanedMatrix
 
 
-def impute(dataDescription, matrix ):
-    resultMatrix = []
-    for idx, column in enumerate(matrix):
-        printParent(idx)
+# def impute(dataDescription, matrix ):
+#     resultMatrix = []
+#     for idx, column in enumerate(matrix):
+#         printParent(idx)
 
-        if dataDescription[idx] == "numerical":
-            column = imputer.fit_transform(column, y=None)
-        resultMatrix.append(column)
+#         if dataDescription[idx] == "numerical":
+#             column = imputer.fit_transform(column, y=None)
+#         resultMatrix.append(column)
 
-    return resultMatrix
+#     return resultMatrix
+
+
+# http://stackoverflow.com/a/25562948
+def stackOverflowImpute( matrix):
+    rowMatrix = zip(*matrix)
+
+    import pandas as pd
+    import numpy as np
+
+    from sklearn.base import TransformerMixin
+
+    class DataFrameImputer(TransformerMixin):
+
+        def __init__(self):
+            """Impute missing values.
+
+            Columns of dtype object are imputed with the most frequent value 
+            in column.
+
+            Columns of other types are imputed with mean of column.
+
+            """
+        def fit(self, X, y=None):
+
+            self.fill = pd.Series([X[c].value_counts().index[0]
+                if X[c].dtype == np.dtype('O') else X[c].mean() for c in X],
+                index=X.columns)
+
+            return self
+
+        def transform(self, X, y=None):
+            return X.fillna(self.fill)
+
+    X = pd.DataFrame(rowMatrix)
+    X = DataFrameImputer().fit_transform(X)
+    return X
+
+
+
+
 
 def cleanAll(dataDescription, matrix ):
     cleanedMatrix = standardizeMissingValues(dataDescription, matrix)
-    results = impute(dataDescription, cleanedMatrix )
+    # results = impute(dataDescription, cleanedMatrix )
+    results = stackOverflowImpute(cleanedMatrix)
     return results
