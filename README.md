@@ -7,13 +7,16 @@ This library is designed to work with ppComplete, but is so broadly useful that 
 
 ### Format of Input File:
 1. .csv file
-2. First row is a header row
-3. The first column holds the output data (what you want the net to make a prediction about). It must be the first column, otherwise we will normalize the data, impute missing values, etc. 
+2. The first row holds information describing each column. Specifically, it must specify:
+  - "ID", the column that holds the IDs
+  - "Output", the column that holds the variable we are trying to predict for the test dataset, and train on for the training data set
+  All other columns must be labeled as holding either Categorical or Numerical data:
+  - "Categorical": all columns holding strings (not numbers) are categorical. Similarly, if you have saved someone's occupation as a number (1 for engineer, 2 for carpenter, 3 for processional cyclist, etc.), that column must be labeled "Categorical". Otherwise, the algorithm won't know any better and will simply think the data says the rows with 3 have 3x the occupation as the rows with 1, rather than simply encoding which category that row belongs in. 
+  - "Numerical": any column that should hold only numbers. Any non-numerical values in these columns will be assumed to be missing values, and will be replaced by the median values for this column.
+3. Next row (the second row) is a header row containing the names of each column
 4. Make sure there are no empty rows!
 5. Make sure each row has the same number of columns (even if those columns are blank, they must exist)
 6. Make sure any strings are formatted using UTF-8. 
-7. Make sure there is no empty line at the end of the file. This manifests itself as "unexpected end of input" when parsing that row inside of brainChildMemoryHog.js to add it to our testing set
-9. Anything that can be turned into a number will be turned into a number. What this means: do not use numbers for categorical data. For example, if you are saving occupations, save them as ["carpenter","astronaut","cyclist"], not as [24,8,4]. While you may know that 24 actually means "carpenter", the machine will not, and will simply see any rows with the number 24 in them as being 3x more occupation than the rows with 8 in them. An easy way to avoid this is simply to add a letter to each row in this column, which will turn the data into a string, and therefore be recognized as categorical data. For example, [24,8,4] would get turned into ["a24","a8","a4"]
 
 
 ### Format of Output File:
