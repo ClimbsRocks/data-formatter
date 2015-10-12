@@ -24,29 +24,57 @@ module.exports = function() {
         // we are expecting to get back an array of the concatted results
         if(message.type === 'concat.py') {
           pyController.childProcess.kill();
-          // 1 header row in training data
           // 150,000 data rows in training data
           // 101,503 data rows in testing data
-          expect(message.text[1].length).to.equal(251504);
+          expect(message.text[3].length).to.equal(251503);
           done();
         }
       
       });
     });
 
-    it('should communicate back the number of rows in the training dataset, including the header row', function(done) {
+    it('should communicate back the number of rows in the training dataset, excluding the header row', function(done) {
       var pyController = startPyController();
 
       pyController.on('message', function(message) {
         // the first item in the array returned to us should be the length of the training data
         if(message.type === 'concat.py') {
           pyController.childProcess.kill();
-          expect(message.text[0]).to.equal(150001);
+          expect(message.text[2]).to.equal(150000);
           done();
         }
       
       });
     });
+
+    it('should save the header row separately', function(done) {
+      var pyController = startPyController();
+
+      pyController.on('message', function(message) {
+        // the first item in the array returned to us should be the length of the training data
+        if(message.type === 'concat.py') {
+          pyController.childProcess.kill();
+          expect(message.text[0]).to.deep.equal(['ID','Output','Numerical','Numerical','Numerical','Numerical','Numerical','Numerical','Numerical','Numerical','Numerical','Numerical']);
+          done();
+        }
+      
+      });
+    });
+
+    it('should save the header row separately', function(done) {
+      var pyController = startPyController();
+
+      pyController.on('message', function(message) {
+        // the first item in the array returned to us should be the length of the training data
+        if(message.type === 'concat.py') {
+          pyController.childProcess.kill();
+          expect(message.text[1]).to.deep.equal(['ID','SeriousDlqin2yrs','RevolvingUtilizationOfUnsecuredLines','age','NumberOfTime30-59DaysPastDueNotWorse','DebtRatio','MonthlyIncome','NumberOfOpenCreditLinesAndLoans','NumberOfTimes90DaysLate','NumberRealEstateLoansOrLines','NumberOfTime60-89DaysPastDueNotWorse','NumberOfDependents']);
+          done();
+        }
+      
+      });
+    });
+
 
   });
 };
