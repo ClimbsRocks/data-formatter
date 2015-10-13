@@ -1,6 +1,7 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
 var startPyController = require('./startPyController');
+var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
 
@@ -12,7 +13,7 @@ module.exports = function() {
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
-          pyController.childProcess.kill();
+          killChildProcess(pyController.childProcess);
 
           expect(message.text.length).to.equal(251503)
           expect(message.text[0].length).to.equal(12)
@@ -27,7 +28,7 @@ module.exports = function() {
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
-          pyController.childProcess.kill();
+          killChildProcess(pyController.childProcess);
 
           // check every single value in the returned array to make sure it does not include any of the values listed above
           function checkAllCorrectRanges (arr) {
@@ -57,7 +58,7 @@ module.exports = function() {
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
-          pyController.childProcess.kill();
+          killChildProcess(pyController.childProcess);
           var sumOfMonthlyIncomeColumn = 0;
 
 
@@ -66,7 +67,6 @@ module.exports = function() {
           }
 
           // previously computed value
-          console.log(sumOfMonthlyIncomeColumn);
           // right now the answer matches exactly, but i want to leave some wiggle room if we adjust our methodology at all. 
           expect(sumOfMonthlyIncomeColumn).to.be.within(1629324335 * .98, 1629324335 * 1.02);
           done();
@@ -81,7 +81,7 @@ module.exports = function() {
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
-          pyController.childProcess.kill();
+          killChildProcess(pyController.childProcess);
           var sumOfIdColumn = 0;
           var sumOfOutputColumn = 0;
 

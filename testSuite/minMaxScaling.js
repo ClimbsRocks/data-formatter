@@ -1,6 +1,7 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
 var startPyController = require('./startPyController');
+var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
   describe('min-max-normalizing', function() {
@@ -11,6 +12,7 @@ module.exports = function() {
 
       pyController.on('message', function(message) {
         if(message.type === 'minMax.py') {
+          killChildProcess(pyController.childProcess);
 
           // check each number in each row of the array to make sure it is between 0 and 1, inclusive
           function checkAllCorrectRanges (arr) {
@@ -37,7 +39,7 @@ module.exports = function() {
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
-          pyController.childProcess.kill();
+          killChildProcess(pyController.childProcess);
           var sumOfIdColumn = 0;
           var sumOfOutputColumn = 0;
 

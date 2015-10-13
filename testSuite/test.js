@@ -7,17 +7,19 @@ var imputingMissingValues = require('./imputingMissingValues');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
-  this.timeout(10000);
+  this.timeout(20000);
 
-  // fileConcatting();
+  fileConcatting();
 
-  // imputingMissingValues();
+  imputingMissingValues();
 
   minMaxScaling();
+
+  // dictVectorizer for categorical data
   
-  // grab the first row above the header separately, to know which column is used for what
-  // only normalize numerical columns
   // write results to file
+
+  // make it work from the command line and from module.exports
 
 
 
