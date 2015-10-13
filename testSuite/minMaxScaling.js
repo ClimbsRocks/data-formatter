@@ -11,6 +11,11 @@ module.exports = function() {
       var pyController = startPyController();
 
       pyController.on('message', function(message) {
+        if(message.type === 'concat.py') {
+          dataDescription = message.text[0];
+        }
+
+
         if(message.type === 'minMax.py') {
           killChildProcess(pyController.childProcess);
 
@@ -18,7 +23,7 @@ module.exports = function() {
           function checkAllCorrectRanges (arr) {
             for (var i = 0; i < arr.length; i++) {
               for (var j = 2; j < arr[i].length; j++) {
-                if(arr[i][j] < 0 || arr[i][j] > 1) {
+                if(dataDescription[j] === 'continuous' && (arr[i][j] < 0 || arr[i][j] > 1) ) {
                   return false;
                 }
               }

@@ -13,6 +13,10 @@ describe('data-formatter', function() {
 
   imputingMissingValues();
 
+  // dictVectorizer
+
+  // rfecv (feature selection)
+
   minMaxScaling();
 
   // dictVectorizer for categorical data

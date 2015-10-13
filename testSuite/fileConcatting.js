@@ -48,14 +48,16 @@ module.exports = function() {
       });
     });
 
-    it('should save the header row separately', function(done) {
+    it('should save the data description row separately', function(done) {
       var pyController = startPyController();
 
       pyController.on('message', function(message) {
         // the first item in the array returned to us should be the length of the training data
         if(message.type === 'concat.py') {
           killChildProcess(pyController.childProcess);
-          expect(message.text[0]).to.deep.equal(['id','output','numerical','numerical','numerical','numerical','numerical','numerical','numerical','numerical','numerical','numerical']);
+          // console.log(message.text[0]);
+          // console.log(['id','output','continuous','continuous','categorical','continuous','continuous','categorical','categorical','categorical','categorical','categorical']);
+          expect(message.text[0]).to.deep.equal(["id","output","continuous","continuous","categorical","continuous","continuous","categorical","categorical","categorical","categorical","categorical"]);
           done();
         }
       
