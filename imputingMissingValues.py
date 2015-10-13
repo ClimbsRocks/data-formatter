@@ -22,12 +22,12 @@ def standardizeMissingValues(dataDescription, trainingLength, matrix ):
     for idx, column in enumerate(columns):
         cleanColumn = []
 
-        # check and see if it is a numerical field
-        if dataDescription[idx] == "numerical":
+        # check and see if it is a continuous field
+        if dataDescription[idx] == "continuous":
 
             for num in column:
                 try:
-                    # if it is numerical, try to convert each field to a float
+                    # if it is continuous, try to convert each field to a float
                     cleanColumn.append( float( num ) )
                 except:
 
@@ -36,7 +36,7 @@ def standardizeMissingValues(dataDescription, trainingLength, matrix ):
                     cleanColumn.append( np.nan )
         elif dataDescription[idx] == "categorical":
             for value in column:
-                if lower(value) in emptyEquivalents:
+                if str(value).lower() in emptyEquivalents:
                     cleanColumn.append( np.nan )
                 else:
                     cleanColumn.append(value)

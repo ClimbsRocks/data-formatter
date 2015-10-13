@@ -53,7 +53,7 @@ module.exports = function() {
 
 
 
-    it('should insert the median value of the column for missing values', function(done) {
+    it('should insert the median value of the column for missing continuous values', function(done) {
       var pyController = startPyController();
 
       pyController.on('message', function(message) {
@@ -69,6 +69,32 @@ module.exports = function() {
           // previously computed value
           // right now the answer matches exactly, but i want to leave some wiggle room if we adjust our methodology at all. 
           expect(sumOfMonthlyIncomeColumn).to.be.within(1629324335 * .98, 1629324335 * 1.02);
+          done();
+        }
+      
+      });
+    });
+
+
+
+    it('should insert the most-commonly-appearing value of the column for missing categorical values', function(done) {
+      var pyController = startPyController();
+
+      pyController.on('message', function(message) {
+        if(message.type === 'imputingMissingValues.py') {
+          killChildProcess(pyController.childProcess);
+          var countNumDependentsIsZero = 0;
+
+
+          for (var i = 0; i < message.text.length; i++) {
+            if(message.text[i][11] === '0') {
+              countNumDependentsIsZero++;
+            }
+          }
+
+          // previously computed value
+          // right now the answer matches exactly, but i want to leave some wiggle room if we adjust our methodology at all. 
+          expect(countNumDependentsIsZero).to.equal(152070)
           done();
         }
       

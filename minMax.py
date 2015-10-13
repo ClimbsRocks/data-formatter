@@ -10,7 +10,7 @@ def normalize(dataDescription, matrix):
     columns = zip(*matrix)
     cleanedColumns = []
     for idx, column in enumerate(columns):
-        if dataDescription[idx] == 'numerical':
+        if dataDescription[idx] == 'continuous':
             column = min_max_scaler.fit_transform( column )
             cleanedColumns.append(column)
         else:
