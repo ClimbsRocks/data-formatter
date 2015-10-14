@@ -57,7 +57,7 @@ module.exports = function() {
           killChildProcess(pyController.childProcess);
           // console.log(message.text[0]);
           // console.log(['id','output','continuous','continuous','categorical','continuous','continuous','categorical','categorical','categorical','categorical','categorical']);
-          expect(message.text[0]).to.deep.equal(["id","output","continuous","continuous","categorical","continuous","continuous","categorical","categorical","categorical","categorical","categorical"]);
+          expect(message.text[0]).to.deep.equal(["continuous","continuous","categorical","continuous","continuous","categorical","categorical","categorical","categorical","categorical"]);
           done();
         }
       

@@ -5,6 +5,9 @@ var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
 
+  // TODO: add in a check for a specific row we know to be correct. 
+    // this both checks to make sure things are happening to that row as we expect, and ensures that the ID column is still properly attached, if we perform this lookup by ID, ideally near the end of the dataset. 
+
   describe('imputing missing values', function() {
     var emptyEquivalents = ["na","n/a","none","","undefined","missing","blank","empty", undefined, NaN]
 
@@ -15,8 +18,8 @@ module.exports = function() {
         if(message.type === 'imputingMissingValues.py') {
           killChildProcess(pyController.childProcess);
 
-          expect(message.text.length).to.equal(251503)
-          expect(message.text[0].length).to.equal(12)
+          expect(message.text[0].length).to.equal(251503)
+          expect(message.text[0][0].length).to.equal(10)
           done();
         }
       
@@ -35,8 +38,9 @@ module.exports = function() {
             // iterates through array
             for (var i = 0; i < arr.length; i++) {
               // iterates through each row. does not check ID or Output columns
-              for (var j = 2; j < arr[i].length; j++) {
+              for (var j = 0; j < arr[i].length; j++) {
                 if( emptyEquivalents.indexOf( arr[i][j] ) !== -1 ) {
+                  console.log(arr[i]);
                   return false;
                 }
               }
@@ -44,7 +48,7 @@ module.exports = function() {
             return true;
           }
 
-          expect(checkAllCorrectRanges(message.text)).to.be.true;
+          expect(checkAllCorrectRanges(message.text[0])).to.be.true;
           done();
         }
       
@@ -62,8 +66,8 @@ module.exports = function() {
           var sumOfMonthlyIncomeColumn = 0;
 
 
-          for (var i = 0; i < message.text.length; i++) {
-            sumOfMonthlyIncomeColumn += parseFloat( message.text[i][6], 10) ;
+          for (var i = 0; i < message.text[0].length; i++) {
+            sumOfMonthlyIncomeColumn += parseFloat( message.text[0][i][4], 10) ;
           }
 
           // previously computed value
@@ -86,8 +90,8 @@ module.exports = function() {
           var countNumDependentsIsZero = 0;
 
 
-          for (var i = 0; i < message.text.length; i++) {
-            if(message.text[i][11] === '0') {
+          for (var i = 0; i < message.text[0].length; i++) {
+            if(message.text[0][i][9] === '0') {
               countNumDependentsIsZero++;
             }
           }
@@ -108,30 +112,21 @@ module.exports = function() {
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
           killChildProcess(pyController.childProcess);
-          var sumOfIdColumn = 0;
-          var sumOfOutputColumn = 0;
 
-          // check every single value in the returned array to make sure it does not include any of the values listed above
-          function checkAllCorrectRanges (arr) {
+          var sumOfIdColumn = message.text[1].reduce(function(acc, current) {
+            return acc + parseFloat( current, 10);
+          }, 0);
 
-            for (var i = 0; i < arr.length; i++) {
-              var outputNum = parseFloat( arr[i][1], 10) ;
-              // makes sure we have not calculated any values for our Output column for the prediction set
-              if(i >= 150000) {
-                outputNum = 0;
-                // lazily hardcoding in the value 1 for the output column here. can generalize later. 
-                if( arr[i][1] !== "") {
-                  return false;
-                }
-                
-              }
-              sumOfIdColumn+= parseFloat( arr[i][0], 10 );
-              sumOfOutputColumn += outputNum;
-            }
-            return true;
-          }
+          var sumOfOutputColumn = message.text[2].slice(0,150000).reduce(function(acc, current) {
+            return acc + parseFloat( current, 10) ;
+          }, 0);
 
-          expect(checkAllCorrectRanges(message.text)).to.be.true;
+          var allOutputValuesBlank= message.text[2].slice(150000).reduce(function(acc, current) {
+            return acc && current === "";
+          }, true);
+
+
+          expect(allOutputValuesBlank).to.be.true;
 
           // previously computed values
           expect(sumOfIdColumn).to.equal(16401555256);
