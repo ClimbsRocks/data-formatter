@@ -2,3 +2,5 @@
 *.csv
 node_modules
 *.pyc
+*.xlsx
+*.xls

@@ -4,6 +4,7 @@ var startPyController = require('./startPyController');
 var minMaxScaling = require('./minMaxScaling');
 var fileConcatting = require('./fileConcatting');
 var imputingMissingValues = require('./imputingMissingValues');
+var dictVectorizing = require('./dictVectorizing');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
@@ -13,7 +14,7 @@ describe('data-formatter', function() {
 
   imputingMissingValues();
 
-  // dictVectorizer
+  dictVectorizing();
 
 
   // rfecv (feature selection)
@@ -22,7 +23,7 @@ describe('data-formatter', function() {
       // for something like the titanic dataset though, we'd probably see a HUGE reduction if we passed in all the raw data. 
       
 
-  minMaxScaling();
+  // minMaxScaling();
 
   // dictVectorizer for categorical data
   

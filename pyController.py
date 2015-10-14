@@ -43,16 +43,15 @@ listOfDicts = listToDict.all(imputedResults, headerRow)
 
 # printParent(listOfDicts)
 
+# 3. convert entire dataset to have categorical data encoded properly
+    # ugly possibility: convert to dicts, then use dictvectorizer
 vectorized = dictVectorizing.vectorize(listOfDicts)
 
 if(test):
-    # printParent(vectorized.tolist())
-    messageParent('sending a message from after dictVectorizing', 'dictVectorizing.py' )
-    messageParent(vectorized.tolist()[0:10000], 'dictVectorizing.py' )
+    messageParent(vectorized.tolist()[0:150000], 'dictVectorizing.py' )
+    messageParent(vectorized.tolist()[150000:], 'dictVectorizing.py' )
 
 # immediate next steps:
-    # 3. convert entire dataset to have categorical data encoded properly
-        # ugly possibility: convert to dicts, then use dictvectorizer
     # 4. run training data through rfecv- fit_transform
         # make sure that rfecv is saved and written to file!
     # 5. run testing data through that same rfecv to make sure it's handled in the exact same way

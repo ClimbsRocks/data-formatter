@@ -5,6 +5,29 @@ var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
   describe('dictVectorizing', function() {
+    this.timeout(600000);
+
+    it('should be performed on the combined training and testing dataset at the same time to ensure consistency', function(done) {
+      // individual row length
+      // count of columns with only 0's and 1's
+      var pyController = startPyController();
+
+      var allData = [];
+      pyController.on('message', function(message) {
+
+        if(message.type === 'dictVectorizing.py') {
+          for (var i = 0; i < message.text.length; i++) {
+            allData.push(message.text[i]);
+          }
+
+          if (allData.length > 250000) {
+            expect(allData.length).to.equal(251503);
+            done();
+          }
+        }
+      
+      });
+    });
 
     // it should leave continuous columns alone
       // it should have a column that sums up to what one of the continuous columns sums up to now
@@ -18,119 +41,171 @@ module.exports = function() {
     // we will need them to be their own vectors for the RFECV anyways
     // and it would let us clean up the code inside imputing a bit.
     // we could still have the user send it over inside other properties on message, such as ID and Output, just to continue to check they're not being modified. 
-    it('should not modify the ID or Output columns at all', function(done) {
+    // it('should not modify the ID or Output columns at all', function(done) {
+    //   var pyController = startPyController();
+
+    //   var allData = [];
+    //   var
+    //   pyController.on('message', function(message) {
+    //     if(message.type === 'dictVectorizing.py') {
+    //       allData.push(message.text);
+
+    //       if ( allData.length > 250000 ) {
+    //         killChildProcess(pyController.childProcess);
+              
+    //        var sumOfIdColumn = message.text[1].reduce(function(acc, current) {
+    //          return acc + parseFloat( current, 10);
+    //        }, 0);
+
+    //        var sumOfOutputColumn = message.text[2].slice(0,150000).reduce(function(acc, current) {
+    //          return acc + parseFloat( current, 10) ;
+    //        }, 0);
+
+    //        var allOutputValuesBlank= message.text[2].slice(150000).reduce(function(acc, current) {
+    //          return acc && current === "";
+    //        }, true);
+
+
+    //        expect(allOutputValuesBlank).to.be.true;
+
+    //        // previously computed values
+    //        expect(sumOfIdColumn).to.equal(16401555256);
+    //        expect(sumOfOutputColumn).to.equal(10026);
+    //        done();
+
+    //       }
+    //     }
+      
+    //   });
+    // });
+
+    // // WIP
+    // it('should return only values of 0 and 1 for categorical columns', function(done) {
+    //   var pyController = startPyController();
+
+    //   pyController.on('message', function(message) {
+    //     if(message.type === 'concat.py') {
+    //       dataDescription = message.text[0];
+    //     }
+
+
+    //     if(message.type === 'minMax.py') {
+    //       killChildProcess(pyController.childProcess);
+
+    //       // check each number in each row of the array to make sure it is between 0 and 1, inclusive
+    //       function checkAllCorrectRanges (arr) {
+    //         for (var i = 0; i < arr.length; i++) {
+    //           for (var j = 2; j < arr[i].length; j++) {
+    //             // TODO: this will not work, since we will now have many more columns than we initially had in the input dataset
+    //             if(dataDescription[j] === 'categorical' && (arr[i][j] < 0 || arr[i][j] > 1) ) {
+    //               return false;
+    //             }
+    //           }
+    //         }
+    //         return true;
+    //       }
+
+    //       expect(checkAllCorrectRanges(message.text)).to.be.true;
+    //       done();
+    //     }
+      
+    //   });
+    // });
+
+    it('should binarize all categorical values using one-hot encoding', function(done) {
+      // individual row length
+      // count of columns with only 0's and 1's
       var pyController = startPyController();
 
+      var allData = [];
       pyController.on('message', function(message) {
-        if(message.type === 'imputingMissingValues.py') {
-          killChildProcess(pyController.childProcess);
-          var sumOfIdColumn = 0;
-          var sumOfOutputColumn = 0;
-
-          // check every single value in the returned array to make sure it does not include any of the values listed above
-          function checkAllCorrectRanges (arr) {
-
-            for (var i = 0; i < arr.length; i++) {
-              var outputNum = parseFloat( arr[i][1], 10) ;
-              // makes sure we have not calculated any values for our Output column for the prediction set
-              if(i >= 150000) {
-                outputNum = 0;
-                // lazily hardcoding in the value 1 for the output column here. can generalize later. 
-                if( arr[i][1] !== "") {
-                  return false;
-                }
-                
-              }
-              sumOfIdColumn+= parseFloat( arr[i][0], 10 );
-              sumOfOutputColumn += outputNum;
+        if(message.type === 'dictVectorizing.py') {
+          for (var i = 0; i < message.text.length; i++) {
+            allData.push(message.text[i]);
+          }
+          if (allData.length > 250000) {
+            var binarySummary = {};
+            for (var i = 0; i < allData[0].length; i++) {
+              binarySummary[i] = true;
             }
-            return true;
+            function checkForBinaries(arr) {
+              for (var i = 0; i < arr.length; i++) {
+                for (var j = 0; j < arr[i].length; j++) {
+                  if(arr[i][j] !== 0 && arr[i][j] !== 1) {
+                    binarySummary[j] = false;
+                  }
+                }
+              }
+            }
+
+            checkForBinaries(allData);
+
+            var countOfBinaryColumns = 0;
+            for (var colIndex in binarySummary) {
+              if(binarySummary[colIndex] === true) {
+                countOfBinaryColumns++;
+              }
+            }
+            // these are known sums of the combined dataset's continuous columns
+            // expect(message.text[0].length).to.equal(158);
+            expect(countOfBinaryColumns).to.equal(154);
+            done();
           }
 
-          expect(checkAllCorrectRanges(message.text)).to.be.true;
-
-          // previously computed values
-          expect(sumOfIdColumn).to.equal(16401555256);
-          expect(sumOfOutputColumn).to.equal(10026);
-          done();
         }
       
       });
     });
 
-    // WIP
-    it('should return only values of 0 and 1 for categorical columns', function(done) {
-      var pyController = startPyController();
-
-      pyController.on('message', function(message) {
-        if(message.type === 'concat.py') {
-          dataDescription = message.text[0];
-        }
-
-
-        if(message.type === 'minMax.py') {
-          killChildProcess(pyController.childProcess);
-
-          // check each number in each row of the array to make sure it is between 0 and 1, inclusive
-          function checkAllCorrectRanges (arr) {
-            for (var i = 0; i < arr.length; i++) {
-              for (var j = 2; j < arr[i].length; j++) {
-                // TODO: this will not work, since we will now have many more columns than we initially had in the input dataset
-                if(dataDescription[j] === 'categorical' && (arr[i][j] < 0 || arr[i][j] > 1) ) {
-                  return false;
-                }
-              }
-            }
-            return true;
-          }
-
-          expect(checkAllCorrectRanges(message.text)).to.be.true;
-          done();
-        }
-      
-      });
-    });
-
-    // Complete
+    // // Complete
     it('should include continuous columns unmodified', function(done) {
       var pyController = startPyController();
 
+      var allData = [];
       pyController.on('message', function(message) {
-        if(message.type === 'concat.py') {
-          dataDescription = message.text[0];
-        }
 
-
-        if(message.type === 'minMax.py') {
-          killChildProcess(pyController.childProcess);
-          var sumOfColumns = {};
-          for (var i = 0; i < message.text[0].length; i++) {
-            sumOfColumns[i] = 0;
+        if(message.type === 'dictVectorizing.py') {
+          for (var i = 0; i < message.text.length; i++) {
+            allData.push(message.text[i]);
           }
+          // allData.concat(JSON.parse(message.text));
 
+          if ( allData.length > 250000 ) {
+            killChildProcess(pyController.childProcess);
 
-          // check each number in each row of the array to make sure it is between 0 and 1, inclusive
-          function checkAllCorrectRanges (arr) {
-            for (var i = 0; i < arr.length; i++) {
-              for (var j = 0; j < arr[i].length; j++) {
-                sumOfColumns[j] = arr[i][j];
+            // set up sumOfColumns so we don't deal with undefined values later on
+            var sumOfColumns = {};
+            for (var i = 0; i < allData[0].length; i++) {
+              sumOfColumns[i] = 0;
+            }
+
+            function sumAllColumns (arr) {
+              for (var i = 0; i < arr.length; i++) {
+                for (var j = 0; j < arr[i].length; j++) {
+                  sumOfColumns[j] += arr[i][j];
+                }
               }
             }
-          }
-          checkAllCorrectRanges(message.text);
 
-          // these are known sums of the combined dataset's continuous columns
-          expect(sumOfColumns).to.contain(13163590);
-          expect(sumOfColumns).to.contain(1360220735);
-          expect(sumOfColumns).to.contain(1446246.668);
-          expect(sumOfColumns).to.contain(87916009.34);
-          done();
+            sumAllColumns(allData);
+
+            var sums = [];
+            for (var columnIndex in sumOfColumns) {
+              // rounding to avoid differences in handling floating point numbers
+              sums.push( Math.round(sumOfColumns[ columnIndex ]) );
+            }
+
+            // these are known sums of the combined dataset's continuous columns
+            expect(sums).to.contain( 13163590 );
+            expect(sums).to.contain( 1629324335 );
+            expect(sums).to.contain( Math.round(1446246.668) );
+            expect(sums).to.contain( Math.round(87916009.34) );
+            done();
+          }
         }
       
       });
     });
-
-
 
 
   });
