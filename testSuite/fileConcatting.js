@@ -71,7 +71,7 @@ module.exports = function() {
         // the first item in the array returned to us should be the length of the training data
         if(message.type === 'concat.py') {
           killChildProcess(pyController.childProcess);
-          expect(message.text[1]).to.deep.equal(["id", "seriousdlqin2yrs", "revolvingutilizationofunsecuredlines", "age", "numberoftime30-59dayspastduenotworse", "debtratio", "monthlyincome", "numberofopencreditlinesandloans", "numberoftimes90dayslate", "numberrealestateloansorlines", "numberoftime60-89dayspastduenotworse", "numberofdependents"]);
+          expect(message.text[1]).to.deep.equal(["revolvingutilizationofunsecuredlines", "age", "numberoftime30-59dayspastduenotworse", "debtratio", "monthlyincome", "numberofopencreditlinesandloans", "numberoftimes90dayslate", "numberrealestateloansorlines", "numberoftime60-89dayspastduenotworse", "numberofdependents"]);
           done();
         }
       

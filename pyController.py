@@ -16,10 +16,12 @@ concattedResults = concat.inputFiles(trainingFile, testingFile)
 
 # we are identifying whether each column is "output","id","categorical", or "continuous"
 dataDescription = concattedResults[0]
+headerRow = concattedResults[1]
+del headerRow[ dataDescription.index('id') ]
 dataDescription.remove('id')
+del headerRow[ dataDescription.index('output') ]
 dataDescription.remove('output')
 
-headerRow = concattedResults[1]
 trainingLength = concattedResults[2]
 allData = concattedResults[3]
 idColumn = concattedResults[4]
