@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
@@ -7,6 +8,7 @@ import concat
 import minMax
 import imputingMissingValues
 import listToDict
+import dictVectorizing
 
 # grab arguments
 trainingFile = sys.argv[1]
@@ -39,7 +41,14 @@ if(test):
 
 listOfDicts = listToDict.all(imputedResults, headerRow)
 
-printParent(listOfDicts)
+# printParent(listOfDicts)
+
+vectorized = dictVectorizing.vectorize(listOfDicts)
+
+if(test):
+    # printParent(vectorized.tolist())
+    messageParent('sending a message from after dictVectorizing', 'dictVectorizing.py' )
+    messageParent(vectorized.tolist()[0:10000], 'dictVectorizing.py' )
 
 # immediate next steps:
     # 3. convert entire dataset to have categorical data encoded properly
