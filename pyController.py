@@ -6,6 +6,7 @@ from sendMessages import obviousPrint
 import concat
 import minMax
 import imputingMissingValues
+import listToDict
 
 # grab arguments
 trainingFile = sys.argv[1]
@@ -36,6 +37,10 @@ imputedResults = imputingMissingValues.cleanAll(dataDescription, trainingLength,
 if(test):
     messageParent([imputedResults, idColumn, outputColumn], 'imputingMissingValues.py')
 
+listOfDicts = listToDict.all(imputedResults, headerRow)
+
+printParent(listOfDicts)
+
 # immediate next steps:
     # 3. convert entire dataset to have categorical data encoded properly
         # ugly possibility: convert to dicts, then use dictvectorizer
@@ -45,8 +50,8 @@ if(test):
     # 6. at this point, we are ready to start considering specific formatting (min-max, brain.js, and sci-kit learn)
 
 
-minMaxNormalizedResults = minMax.normalize(dataDescription, imputedResults)
+# minMaxNormalizedResults = minMax.normalize(dataDescription, imputedResults)
 
-if(test):
-    messageParent( [minMaxNormalizedResults, idColumn, outputColumn], 'minMax.py')
+# if(test):
+#     messageParent( [minMaxNormalizedResults, idColumn, outputColumn], 'minMax.py')
 
