@@ -43,7 +43,7 @@ module.exports = function() {
       var pyController = startPyController();
 
       pyController.on('message', function(message) {
-        if(message.type === 'imputingMissingValues.py') {
+        if(message.type === 'minMax.py') {
           killChildProcess(pyController.childProcess);
 
           var sumOfIdColumn = message.text[1].reduce(function(acc, current) {

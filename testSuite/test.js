@@ -8,7 +8,7 @@ var dictVectorizing = require('./dictVectorizing');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
-  this.timeout(20000);
+  this.timeout(60000);
 
   fileConcatting();
 

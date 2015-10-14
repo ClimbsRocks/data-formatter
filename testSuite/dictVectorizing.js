@@ -29,13 +29,6 @@ module.exports = function() {
       });
     });
 
-    // it should leave continuous columns alone
-      // it should have a column that sums up to what one of the continuous columns sums up to now
-    // it should have a column that sums up to the countif of a categorical column's 1 value
-    // there should be at least X many columns
-    // should be performed on the entire dataset at once to ensure consistency
-
-
     // Complete.
     // actually, at this point, do we want to consider taking out ID and Output? 
     // we will need them to be their own vectors for the RFECV anyways
@@ -79,38 +72,6 @@ module.exports = function() {
     //   });
     // });
 
-    // // WIP
-    // it('should return only values of 0 and 1 for categorical columns', function(done) {
-    //   var pyController = startPyController();
-
-    //   pyController.on('message', function(message) {
-    //     if(message.type === 'concat.py') {
-    //       dataDescription = message.text[0];
-    //     }
-
-
-    //     if(message.type === 'minMax.py') {
-    //       killChildProcess(pyController.childProcess);
-
-    //       // check each number in each row of the array to make sure it is between 0 and 1, inclusive
-    //       function checkAllCorrectRanges (arr) {
-    //         for (var i = 0; i < arr.length; i++) {
-    //           for (var j = 2; j < arr[i].length; j++) {
-    //             // TODO: this will not work, since we will now have many more columns than we initially had in the input dataset
-    //             if(dataDescription[j] === 'categorical' && (arr[i][j] < 0 || arr[i][j] > 1) ) {
-    //               return false;
-    //             }
-    //           }
-    //         }
-    //         return true;
-    //       }
-
-    //       expect(checkAllCorrectRanges(message.text)).to.be.true;
-    //       done();
-    //     }
-      
-    //   });
-    // });
 
     it('should binarize all categorical values using one-hot encoding', function(done) {
       // individual row length
