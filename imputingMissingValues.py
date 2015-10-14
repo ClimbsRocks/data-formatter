@@ -42,33 +42,33 @@ def standardizeMissingValues(dataDescription, trainingLength, matrix ):
                     cleanColumn.append(value)
 
 
-        elif dataDescription[idx] == "id":
-            for value in column:
+        # elif dataDescription[idx] == "id":
+        #     for value in column:
 
-                if str(value).lower() in emptyEquivalents:
-                    printParent('warning, you are missing values in your ID column')
-            # we will warn them but allow them to continue
-            cleanColumn = column
+        #         if str(value).lower() in emptyEquivalents:
+        #             printParent('warning, you are missing values in your ID column')
+        #     # we will warn them but allow them to continue
+        #     cleanColumn = column
 
-        elif dataDescription[idx] == "output":
-            cleanColumn
-            for rowIdx, value in enumerate(column):
+        # elif dataDescription[idx] == "output":
+        #     cleanColumn
+        #     for rowIdx, value in enumerate(column):
 
-                # if this row is in our training data, and we have missing values, warn the user
-                if str(value).lower() in emptyEquivalents and rowIdx < trainingLength:
-                    printParent('warning, you are missing values in your training Output column')
-                    # prevent the imputer from trying to impute this value. We will let the user or the classifier rectify this issue later down the road. 
-                    cleanColumn.append("DO_NOT_ACCIDENTALLY_FILL_ME_IN")
+        #         # if this row is in our training data, and we have missing values, warn the user
+        #         if str(value).lower() in emptyEquivalents and rowIdx < trainingLength:
+        #             printParent('warning, you are missing values in your training Output column')
+        #             # prevent the imputer from trying to impute this value. We will let the user or the classifier rectify this issue later down the road. 
+        #             cleanColumn.append("DO_NOT_ACCIDENTALLY_FILL_ME_IN")
 
-                # check to make sure that all the prediction cells are blank for the testing data
-                elif rowIdx > trainingLength:
-                    if str(value).lower() not in emptyEquivalents:
-                        printParent('warning, have values in the Output field of your testing data. We are removing them now, but you might want to consider using this as your training data next time')
-                    # making super sure that we do not accidentally impute values for the output column in the testing data
-                    cleanColumn.append("DO_NOT_ACCIDENTALLY_FILL_ME_IN")
+        #         # check to make sure that all the prediction cells are blank for the testing data
+        #         elif rowIdx > trainingLength:
+        #             if str(value).lower() not in emptyEquivalents:
+        #                 printParent('warning, have values in the Output field of your testing data. We are removing them now, but you might want to consider using this as your training data next time')
+        #             # making super sure that we do not accidentally impute values for the output column in the testing data
+        #             cleanColumn.append("DO_NOT_ACCIDENTALLY_FILL_ME_IN")
 
-                else:
-                    cleanColumn.append(value)
+        #         else:
+        #             cleanColumn.append(value)
 
 
         
@@ -112,13 +112,8 @@ def stackOverflowImpute(dataDescription, matrix):
     X = pd.DataFrame(rowMatrix)
     X = DataFrameImputer().fit_transform(X)
 
-    outputColumn = dataDescription.index('output')
-
     # convert from pands DataFrame back to a standard python list
     X = X.values.tolist()
-    for row in X:
-        if row[outputColumn] == "DO_NOT_ACCIDENTALLY_FILL_ME_IN":
-            row[outputColumn] = ""
 
     return X
 

@@ -3,20 +3,34 @@ from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
 
+
 def inputFiles(trainingFile, testingFile):
     outputData = []
+    idColumn = []
+    outputColumn = []
     with open(trainingFile, 'rU') as trainingInput:
         trainingRows = csv.reader(trainingInput)
         firstRow = 0
         for row in trainingRows:
             if firstRow < 2:
                 if firstRow == 0:
-                    dataDescription = row
+                    dataDescription = [x.lower() for x in row]
                 else: 
-                    headerRow = row
+                    headerRow = [x.lower() for x in row]
                 firstRow = firstRow + 1
             else:
-                outputData.append(row)
+                trimmedRow = []
+                for idx, val in enumerate(row):
+                    if dataDescription[idx] == 'id':
+                        # printParent('had an id event!')
+                        # printParent(val)
+                        idColumn.append(val)
+                    elif dataDescription[idx] == 'output':
+                        outputColumn.append(val)
+                    else:
+                        trimmedRow.append(val)
+
+                outputData.append(trimmedRow)
         trainingLength = len(outputData)
 
     with open(testingFile, 'rU') as testingInput:
@@ -26,6 +40,16 @@ def inputFiles(trainingFile, testingFile):
             if firstRow:
                 firstRow = False
             else:
-                outputData.append(row)
+                trimmedRow = []
+                for idx, val in enumerate(row):
+                    if dataDescription[idx] == 'id':
+                        # printParent('had an id event!')
+                        # printParent(val)
+                        idColumn.append(val)
+                    elif dataDescription[idx] == 'output':
+                        outputColumn.append(val)
+                    else:
+                        trimmedRow.append(val)
 
-    return [dataDescription, headerRow, trainingLength, outputData]
+                outputData.append(trimmedRow)
+    return [dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn]

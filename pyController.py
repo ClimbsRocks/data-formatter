@@ -15,10 +15,15 @@ test = sys.argv[3]
 concattedResults = concat.inputFiles(trainingFile, testingFile)
 
 # we are identifying whether each column is "output","id","categorical", or "continuous"
-dataDescription = [x.lower() for x in concattedResults[0]]
-headerRow = [x.lower() for x in concattedResults[1]]
+dataDescription = concattedResults[0]
+dataDescription.remove('id')
+dataDescription.remove('output')
+
+headerRow = concattedResults[1]
 trainingLength = concattedResults[2]
 allData = concattedResults[3]
+idColumn = concattedResults[4]
+outputColumn = concattedResults[5]
 
 if(test):
     messageParent([dataDescription, headerRow, trainingLength, allData], 'concat.py')
@@ -27,11 +32,9 @@ if(test):
 imputedResults = imputingMissingValues.cleanAll(dataDescription, trainingLength, allData)
 
 if(test):
-    messageParent(imputedResults, 'imputingMissingValues.py')
+    messageParent([imputedResults, idColumn, outputColumn], 'imputingMissingValues.py')
 
 # immediate next steps:
-    # 1. update tests to handle categorical data
-    # 2. make sure all the tests still pass...
     # 3. convert entire dataset to have categorical data encoded properly
         # ugly possibility: convert to dicts, then use dictvectorizer
     # 4. run training data through rfecv- fit_transform
@@ -43,5 +46,5 @@ if(test):
 minMaxNormalizedResults = minMax.normalize(dataDescription, imputedResults)
 
 if(test):
-    messageParent(minMaxNormalizedResults, 'minMax.py')
+    messageParent( [minMaxNormalizedResults, idColumn, outputColumn], 'minMax.py')
 
