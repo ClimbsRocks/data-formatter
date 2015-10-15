@@ -20,7 +20,7 @@ module.exports = function() {
             allData.push(message.text[i]);
           }
           if (allData.length > 250000) {
-            killChildProcess(pyController);
+            killChildProcess(pyController.childProcess);
             done();
           }
         }

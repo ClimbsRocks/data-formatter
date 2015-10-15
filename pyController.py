@@ -1,4 +1,5 @@
 import sys
+import time
 import numpy as np
 from sendMessages import printParent
 from sendMessages import messageParent
@@ -50,16 +51,21 @@ if(test):
     messageParent(vectorized.tolist()[0:150000], 'dictVectorizing.py' )
     messageParent(vectorized.tolist()[150000:], 'dictVectorizing.py' )
 
+time.sleep(2)
 # immediate next steps:
     # 4. run training data through rfecv- fit_transform
         # make sure that rfecv is saved and written to file!
     # 5. run testing data through that same rfecv to make sure it's handled in the exact same way
 printParent('about to invoke featureSelecting.py')
 featureSelectedResults = featureSelecting.select(vectorized, outputColumn)
+printParent('got back results from featureSelecting')
 
 if(test):
     messageParent(featureSelectedResults, 'featureSelecting.py')
 
+
+
+printParent('have already messaged parent; preparing to write to file')
 # write results from RFECV to a file, since it takes so long to calculate. Then we can load from that file for the next module so that we can iterate faster. 
 writeToFile.writeFile(featureSelectedResults)
 

@@ -14,7 +14,7 @@ def select(X, y):
 
     # TODO: pass in scoring, based on that estimator
     # TODO: make step smaller, and cv possibly larger, depending on how much time we want to spend running through this. 
-    featureSelector = RFECV(estimator=estimator, step=3, cv=3, verbose=2)
+    featureSelector = RFECV(estimator=estimator, step=3, cv=3, verbose=0)
 
     # future optimization: this is creating a copy (slice) of the list from 0 up to but not including index position 150000
         # see what the most effective way is to do this without duplicating. 

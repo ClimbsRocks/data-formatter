@@ -21,7 +21,7 @@ module.exports = function() {
           }
 
           if (allData.length > 250000) {
-            killChildProcess(pyController);
+            killChildProcess(pyController.childProcess);
             console.timeEnd('dict vectorizing time');
             done();
           }
@@ -29,7 +29,7 @@ module.exports = function() {
       
       });
     });
-    
+
 
     it('should be performed on the combined training and testing dataset at the same time to ensure consistency', function(done) {
       // individual row length

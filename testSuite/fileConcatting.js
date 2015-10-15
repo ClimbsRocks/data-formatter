@@ -11,6 +11,7 @@ module.exports = function() {
     var results;
 
     before(function(done) {
+      console.time('file concatting time');
       var pyController = startPyTest();
 
       pyController.on('message', function(message) {
@@ -19,6 +20,7 @@ module.exports = function() {
         if(message.type === 'concat.py') {
           killChildProcess(pyController.childProcess);
           results = message.text;
+          console.timeEnd('file concatting time');
           done();
         }
       });
