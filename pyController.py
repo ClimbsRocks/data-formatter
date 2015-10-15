@@ -10,6 +10,7 @@ import imputingMissingValues
 import listToDict
 import dictVectorizing
 import featureSelecting
+import writeToFile
 
 # grab arguments
 trainingFile = sys.argv[1]
@@ -53,7 +54,15 @@ if(test):
     # 4. run training data through rfecv- fit_transform
         # make sure that rfecv is saved and written to file!
     # 5. run testing data through that same rfecv to make sure it's handled in the exact same way
-# featureSelectedResults = featureSelecting.select(vectorized, outputColumn)
+printParent('about to invoke featureSelecting.py')
+featureSelectedResults = featureSelecting.select(vectorized, outputColumn)
+
+if(test):
+    messageParent(featureSelectedResults, 'featureSelecting.py')
+
+# write results from RFECV to a file, since it takes so long to calculate. Then we can load from that file for the next module so that we can iterate faster. 
+writeToFile.writeFile(featureSelectedResults)
+
 
     # 6. at this point, we are ready to start considering specific formatting (min-max, brain.js, and sci-kit learn)
 
