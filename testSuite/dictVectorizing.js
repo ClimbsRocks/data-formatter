@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var startPyController = require('./startPyController');
+var startPyTest = require('./startPyTest');
 var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
@@ -10,7 +10,7 @@ module.exports = function() {
     it('should be performed on the combined training and testing dataset at the same time to ensure consistency', function(done) {
       // individual row length
       // count of columns with only 0's and 1's
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       var allData = [];
       pyController.on('message', function(message) {
@@ -35,7 +35,7 @@ module.exports = function() {
     // and it would let us clean up the code inside imputing a bit.
     // we could still have the user send it over inside other properties on message, such as ID and Output, just to continue to check they're not being modified. 
     // it('should not modify the ID or Output columns at all', function(done) {
-    //   var pyController = startPyController();
+    //   var pyController = startPyTest();
 
     //   var allData = [];
     //   var
@@ -76,7 +76,7 @@ module.exports = function() {
     it('should binarize all categorical values using one-hot encoding', function(done) {
       // individual row length
       // count of columns with only 0's and 1's
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       var allData = [];
       pyController.on('message', function(message) {
@@ -120,7 +120,7 @@ module.exports = function() {
 
     // // Complete
     it('should include continuous columns unmodified', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       var allData = [];
       pyController.on('message', function(message) {

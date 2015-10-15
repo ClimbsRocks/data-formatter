@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var startPyController = require('./startPyController');
+var startPyTest = require('./startPyTest');
 var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
@@ -8,7 +8,7 @@ module.exports = function() {
 
     this.timeout(20000);
     it('should return only values between 0 and 1', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         if(message.type === 'concat.py') {
@@ -40,7 +40,7 @@ module.exports = function() {
 
 
     it('should not modify the ID or Output columns at all', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         if(message.type === 'minMax.py') {
@@ -75,7 +75,7 @@ module.exports = function() {
     // as long as we are using scikit-learn's MinMaxScaler, this is built in. 
     // if we ever use another method of min-max scaling, we will need to fix up and include this unfinished test. 
     // it('should min-max normalize each column individually', function(done) {
-    //   var pyController = startPyController();
+    //   var pyController = startPyTest();
 
     //   pyController.on('message', function(message) {
     //     if(message.type === 'minMax.py') {

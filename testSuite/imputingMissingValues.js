@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var startPyController = require('./startPyController');
+var startPyTest = require('./startPyTest');
 var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
@@ -12,7 +12,7 @@ module.exports = function() {
     var emptyEquivalents = ["na","n/a","none","","undefined","missing","blank","empty", undefined, NaN]
 
     it('should not change the length or width of the matrix', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
@@ -27,7 +27,7 @@ module.exports = function() {
     });
 
     it('should insert a value for all completely blank values', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
@@ -58,7 +58,7 @@ module.exports = function() {
 
 
     it('should insert the median value of the column for missing continuous values', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
@@ -82,7 +82,7 @@ module.exports = function() {
 
 
     it('should insert the most-commonly-appearing value of the column for missing categorical values', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
@@ -107,7 +107,7 @@ module.exports = function() {
 
 
     it('should not modify the ID or Output columns at all', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {

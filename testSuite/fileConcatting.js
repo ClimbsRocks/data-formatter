@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var startPyController = require('./startPyController');
+var startPyTest = require('./startPyTest');
 var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
@@ -17,7 +17,7 @@ module.exports = function() {
     // by defining done as a parameter for the callback function here, we are saying this test be an asynchronous function. 
     // mocha will allow this test to run up until we invoke done(), or until the test times out.
     it('should concatenate the test data and the training data together into one large data set', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         // message is the message object coming to us from the Python process
@@ -34,7 +34,7 @@ module.exports = function() {
     });
 
     it('should communicate back the number of rows in the training dataset, excluding the header row', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         // the first item in the array returned to us should be the length of the training data
@@ -49,7 +49,7 @@ module.exports = function() {
     });
 
     it('should save the data description row separately', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         // the first item in the array returned to us should be the length of the training data
@@ -65,7 +65,7 @@ module.exports = function() {
     });
 
     it('should save the header row separately', function(done) {
-      var pyController = startPyController();
+      var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         // the first item in the array returned to us should be the length of the training data

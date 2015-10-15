@@ -1,20 +1,23 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var startPyController = require('./startPyController');
+var startPyTest = require('./startPyTest');
 var minMaxScaling = require('./minMaxScaling');
 var fileConcatting = require('./fileConcatting');
 var imputingMissingValues = require('./imputingMissingValues');
 var dictVectorizing = require('./dictVectorizing');
+var featureSelecting = require('./featureSelecting');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
   this.timeout(60000);
 
-  fileConcatting();
+  // fileConcatting();
 
-  imputingMissingValues();
+  // imputingMissingValues();
 
-  dictVectorizing();
+  // dictVectorizing();
+
+  featureSelecting();
 
 
   // rfecv (feature selection)
