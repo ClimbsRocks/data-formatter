@@ -45,24 +45,24 @@ if(test):
 # 3. convert entire dataset to have categorical data encoded properly
 listOfDicts = listToDict.all(imputedResults, headerRow)
 vectorizedInfo = dictVectorizing.vectorize(listOfDicts)
-vectorized = vectorizedInfo[0]
+vectorized = vectorizedInfo[0].tolist()
 vectorizedHeaderRow = vectorizedInfo[1]
 
 if(test):
     # the data become too big to send over in one huge string, so we are splitting it up into two separate messages
-    messageParent(vectorized.tolist()[0:150000], 'dictVectorizing.py' )
-    messageParent(vectorized.tolist()[150000:], 'dictVectorizing.py' )
+    messageParent(vectorized[0:150000], 'dictVectorizing.py' )
+    messageParent(vectorized[150000:], 'dictVectorizing.py' )
 
 # immediate next steps:
     # 4. run training data through rfecv- fit_transform
         # make sure that rfecv is saved and written to file!
     # 5. run testing data through that same rfecv to make sure it's handled in the exact same way
 printParent('about to invoke featureSelecting.py')
-featureSelectedResults = featureSelecting.select(vectorized, outputColumn, trainingLength, 0.01 )
+featureSelectedResults = featureSelecting.select(vectorized, outputColumn, trainingLength, 0.001 )
 printParent('got back results from featureSelecting')
 
 if(test):
-    messageParent(featureSelectedResults, 'featureSelecting.py')
+    messageParent(featureSelectedResults.tolist(), 'featureSelecting.py')
 
 
 

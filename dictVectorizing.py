@@ -11,9 +11,5 @@ vectorizer = DictVectorizer()
 
 def vectorize(listOfDicts):
     listOfDicts = vectorizer.fit_transform(listOfDicts).toarray()
-    printParent( 'vocabulary_' )
-    printParent( vectorizer.vocabulary_ )
-    printParent( 'feature_names_' )
-    printParent( vectorizer.feature_names_ )
     return [ listOfDicts, vectorizer.feature_names_, vectorizer.vocabulary_ ]
 
