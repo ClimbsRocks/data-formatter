@@ -52,6 +52,11 @@ module.exports = function() {
       done();
     });
 
+    after(function() {
+      results = [];
+    });
+
+
 
   });
 };
