@@ -29,29 +29,29 @@ del headerRow[ dataDescription.index('output') ]
 dataDescription.remove('output')
 
 trainingLength = concattedResults[2]
-allData = concattedResults[3]
+X = concattedResults[3]
 idColumn = concattedResults[4]
 outputColumn = concattedResults[5]
 
 if(test):
-    messageParent([dataDescription, headerRow, trainingLength, allData], 'concat.py')
+    messageParent([dataDescription, headerRow, trainingLength, X], 'concat.py')
 
 
-imputedResults = imputingMissingValues.cleanAll(dataDescription, trainingLength, allData)
+X = imputingMissingValues.cleanAll(dataDescription, trainingLength, X)
 
 if(test):
-    messageParent([imputedResults, idColumn, outputColumn], 'imputingMissingValues.py')
+    messageParent([X, idColumn, outputColumn], 'imputingMissingValues.py')
 
 # 3. convert entire dataset to have categorical data encoded properly
-listOfDicts = listToDict.all(imputedResults, headerRow)
+listOfDicts = listToDict.all(X, headerRow)
 vectorizedInfo = dictVectorizing.vectorize(listOfDicts)
-vectorized = vectorizedInfo[0].tolist()
+X = vectorizedInfo[0].tolist()
 vectorizedHeaderRow = vectorizedInfo[1]
 
 if(test):
     # the data become too big to send over in one huge string, so we are splitting it up into two separate messages
-    messageParent(vectorized[0:150000], 'dictVectorizing.py' )
-    messageParent(vectorized[150000:], 'dictVectorizing.py' )
+    messageParent( X[0:150000], 'dictVectorizing.py' )
+    messageParent( X[150000:], 'dictVectorizing.py' )
 
 # immediate next steps:
     # 4. run training data through rfecv- fit_transform
@@ -59,10 +59,10 @@ if(test):
     # 5. run testing data through that same rfecv to make sure it's handled in the exact same way
 
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
-featureSelectedResults = featureSelecting.select(vectorized, outputColumn, trainingLength, 0.001, vectorizedHeaderRow )
+X = featureSelecting.select(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow )
 
 if(test):
-    messageParent(featureSelectedResults.tolist(), 'featureSelecting.py')
+    messageParent(X.tolist(), 'featureSelecting.py')
 
 # Post-MVP:
 # if we wanted to be memory efficient, we'd 
@@ -74,12 +74,12 @@ if(test):
 
 
     # 6. at this point, we are ready to start considering specific formatting (min-max, brain.js, and sci-kit learn)
-minMaxNormalizedResults = minMax.normalize( featureSelectedResults )
+X = minMax.normalize( X )
 
 if(test):
-    messageParent( [minMaxNormalizedResults.tolist(), idColumn, outputColumn], 'minMax.py')
+    messageParent( [X.tolist(), idColumn, outputColumn], 'minMax.py')
 
 
 # write results to file
-writeToFile.writeFile(featureSelectedResults)
+writeToFile.writeFile(X)
 
