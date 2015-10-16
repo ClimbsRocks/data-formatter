@@ -11,12 +11,8 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow ):
 
     classifier = RandomForestClassifier( n_jobs=-1, n_estimators=30 )
     classifier.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
-    printParent( 'feature importances from rf' )
-    printParent( classifier.feature_importances_.tolist() )
 
     columnIndicesThatPass = [idx for idx, x in enumerate( classifier.feature_importances_ ) if x > featureImportanceThreshold]
-    printParent( 'columnIndicesThatPass' )
-    printParent( columnIndicesThatPass )
 
     cleanedX = np.array( X )[ :, columnIndicesThatPass ]
 
@@ -28,7 +24,7 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow ):
             filteredHeaderRow.append( headerRow[idx] )
 
     printingOutput = sorted(printingOutput, key=lambda x: x[1], reverse=True)
-    printParent('here are the features that were kept, sorted bu their feature importance')
+    printParent('here are the features that were kept, sorted by their feature importance')
     printParent(printingOutput)
 
     X = cleanedX

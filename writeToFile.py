@@ -7,12 +7,10 @@ from sendMessages import messageParent
 from sendMessages import obviousPrint
 
 def writeFile(data):
-    printParent('os.getcwd() is:')
-    printParent( os.getcwd() )
     with open( path.join( os.getcwd(), 'testWrittenData.csv' ), 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
         csvOutputFile.writerows(data)
-        printParent('wrote the file!')
+        printParent('we have written your fully transformed data to a file at:')
         printParent( path.join( os.getcwd(), 'testWrittenData.csv' ) )
 
 
