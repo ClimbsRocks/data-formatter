@@ -57,26 +57,29 @@ if(test):
     # 4. run training data through rfecv- fit_transform
         # make sure that rfecv is saved and written to file!
     # 5. run testing data through that same rfecv to make sure it's handled in the exact same way
-printParent('about to invoke featureSelecting.py')
+
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
 featureSelectedResults = featureSelecting.select(vectorized, outputColumn, trainingLength, 0.001, vectorizedHeaderRow )
-printParent('got back results from featureSelecting')
 
 if(test):
     messageParent(featureSelectedResults.tolist(), 'featureSelecting.py')
 
-
-
-printParent('have already messaged parent; preparing to write to file')
-# write results from RFECV to a file, since it takes so long to calculate. Then we can load from that file for the next module so that we can iterate faster. 
-writeToFile.writeFile(featureSelectedResults)
+# Post-MVP:
+# if we wanted to be memory efficient, we'd 
+    # write the data to a file, 
+    # close this Python process
+    # have index.js start new processes for each type of specific data transformation we want
+        # start each one only after the previous one has finished (intentionally trianing in series, not parallel)
+    # each new Python process would write it's own results to file
 
 
     # 6. at this point, we are ready to start considering specific formatting (min-max, brain.js, and sci-kit learn)
+minMaxNormalizedResults = minMax.normalize( featureSelectedResults )
+
+if(test):
+    messageParent( [minMaxNormalizedResults.tolist(), idColumn, outputColumn], 'minMax.py')
 
 
-# minMaxNormalizedResults = minMax.normalize(dataDescription, imputedResults)
-
-# if(test):
-#     messageParent( [minMaxNormalizedResults, idColumn, outputColumn], 'minMax.py')
+# write results to file
+writeToFile.writeFile(featureSelectedResults)
 

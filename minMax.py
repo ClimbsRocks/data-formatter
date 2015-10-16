@@ -6,14 +6,7 @@ from sendMessages import obviousPrint
 
 min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0, 1), copy=False)
 
-def normalize(dataDescription, matrix):
-    columns = zip(*matrix)
-    cleanedColumns = []
-    for idx, column in enumerate(columns):
-        if dataDescription[idx] == 'continuous':
-            column = min_max_scaler.fit_transform( column )
-            cleanedColumns.append(column)
-        else:
-            cleanedColumns.append(column)
-    rowMatrix = zip(*cleanedColumns)
-    return rowMatrix
+# Note: we're assuming that binarization of categorical data has already happened, and we don't need to do a check for categorical data here. 
+def normalize( X ):
+    X = min_max_scaler.fit_transform(X)
+    return X
