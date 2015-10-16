@@ -58,7 +58,8 @@ if(test):
         # make sure that rfecv is saved and written to file!
     # 5. run testing data through that same rfecv to make sure it's handled in the exact same way
 printParent('about to invoke featureSelecting.py')
-featureSelectedResults = featureSelecting.select(vectorized, outputColumn, trainingLength, 0.001 )
+# passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
+featureSelectedResults = featureSelecting.select(vectorized, outputColumn, trainingLength, 0.001, vectorizedHeaderRow )
 printParent('got back results from featureSelecting')
 
 if(test):
