@@ -29,7 +29,7 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow ):
 
     X = cleanedX
 
-    return X
+    return [ X, filteredHeaderRow ]
 
 
     # MVP: train a RF, take all the features with an importance > .1. 
