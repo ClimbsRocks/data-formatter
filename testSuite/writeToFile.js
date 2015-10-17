@@ -2,7 +2,12 @@
 
 // it should write to a file in the directory where it was invoked from by default
 // it should write to a user-specified path if passed in
-// it should write to separate testing and training files (and appropriately name them)
+// it should write several files
+  // id column
+  // y
+  // X
+  // testing dataset
+
 // the files should be named very spcific things (ppC will rely on this)
   // it should include the flag that was passed in for the type of data formatting we are doing ('scikit-learn', 'brainjs','neuralNetwork')
   // it should include the input data file name

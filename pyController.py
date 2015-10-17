@@ -69,6 +69,10 @@ filteredHeaderRow = featureSelectingResults[1]
 if(test):
     messageParent(X.tolist(), 'featureSelecting.py')
 
+# TODO: write data to a file at this stage, for scikit-learn
+    # then we can format for brain.js
+    # then we can format for any old neural network. 
+
 # Post-MVP:
 # if we wanted to be memory efficient, we'd 
     # write the data to a file, 
