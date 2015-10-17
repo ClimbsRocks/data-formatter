@@ -5,7 +5,7 @@ var fileConcatting = require('./fileConcatting');
 var imputingMissingValues = require('./imputingMissingValues');
 var dictVectorizing = require('./dictVectorizing');
 var featureSelecting = require('./featureSelecting');
-var minMaxScaling = require('./minMaxScaling');
+var brainjsTest = require('./brainjsTest');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
@@ -19,7 +19,7 @@ describe('data-formatter', function() {
 
   featureSelecting();      
 
-  minMaxScaling();
+  brainjsTest();
 
   // write results to file
 
