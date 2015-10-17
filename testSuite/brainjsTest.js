@@ -32,6 +32,7 @@ module.exports = function() {
       function checkProperties(arr) {
         for( var i = 0; i < results.length; i++) {
           if( results[i].id === undefined || results[i].input === undefined || results[i].output === undefined) {
+            console.log('i', i, 'results[i]', results[i] );
             return false;
           }
         }
@@ -41,10 +42,15 @@ module.exports = function() {
       expect( checkProperties(results) ).to.be.true;
     });
 
-    it('id should be a number, input and output should be arrays', function() {
+    it('input and output should be arrays', function() {
       function checkPropertyTypes(arr) {
         for( var i = 0; i < results.length; i++) {
-          if( typeof results[i].id !== 'number' || !Array.isArray( results[i].input ) || !Array.isArray( results[i].output ) ) {
+          if( !Array.isArray( results[i].input ) || !Array.isArray( results[i].output ) ) {
+            console.log('i', i, 'results[i]', results[i] );
+            console.log('Array.isArray(results[i].input)')
+            console.log(Array.isArray(results[i].input))
+            console.log('Array.isArray(results[i].output)')
+            console.log(Array.isArray(results[i].output))
             return false;
           }
         }
@@ -57,7 +63,10 @@ module.exports = function() {
     it('should have input array length equal to number chosen in featureSelection', function() {
       function checkInputLength(arr) {
         for( var i = 0; i < results.length; i++) {
-          if( results[i].length !==expectedInputLength ) {
+          if( results[i].input.length !== expectedInputLength ) {
+            console.log(results[i].input.length);
+            console.log(expectedInputLength);
+            console.log('i', i, 'results[i]', results[i] );
             return false;
           }
         }
@@ -72,8 +81,9 @@ module.exports = function() {
       // check each number in each row of the array to make sure it is between 0 and 1, inclusive
       function checkAllCorrectRanges (arr) {
         for (var i = 0; i < arr.length; i++) {
-          for (var j = 2; j < arr[i].length; j++) {
-            if( arr[i][j] < 0 || arr[i][j] > 1 ) {
+          for (var j = 0; j < arr[i].input.length; j++) {
+            if( arr[i].input[j] < 0 || arr[i].input[j] > 1 ) {
+              console.log('i', i, 'results[i]', results[i] );
               return false;
             }
           }
@@ -81,8 +91,7 @@ module.exports = function() {
         return true;
       }
 
-      expect( checkAllCorrectRanges( results[0] )).to.be.true;
-      done();
+      expect( checkAllCorrectRanges( results )).to.be.true;
     });
 
     // attempt to delete results
