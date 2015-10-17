@@ -7,7 +7,7 @@ from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
 
-def select( X, y, trainingLength, featureImportanceThreshold, headerRow ):
+def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test ):
 
     classifier = RandomForestClassifier( n_jobs=-1, n_estimators=30 )
     classifier.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
@@ -20,12 +20,13 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow ):
     filteredHeaderRow = []
     for idx, importance in enumerate( classifier.feature_importances_ ):
         if( classifier.feature_importances_[idx] > featureImportanceThreshold ):
-            printingOutput.append( [ headerRow[idx], importance ])
+            printingOutput.append( [ headerRow[idx], round( importance, 4) ])
             filteredHeaderRow.append( headerRow[idx] )
 
     printingOutput = sorted(printingOutput, key=lambda x: x[1], reverse=True)
-    printParent('here are the features that were kept, sorted by their feature importance')
-    printParent(printingOutput)
+    if( not test ):
+        printParent('here are the features that were kept, sorted by their feature importance')
+        printParent(printingOutput)
 
     X = cleanedX
 

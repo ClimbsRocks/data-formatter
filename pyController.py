@@ -64,7 +64,7 @@ if(test):
     # 5. run testing data through that same rfecv to make sure it's handled in the exact same way
 
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
-featureSelectingResults = featureSelecting.select(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow )
+featureSelectingResults = featureSelecting.select(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
 X = featureSelectingResults[0]
 filteredHeaderRow = featureSelectingResults[1]
 
