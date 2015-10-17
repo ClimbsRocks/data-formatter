@@ -26,10 +26,10 @@ module.exports = function() {
 
     it('should return only values between 0 and 1', function(done) {
       // check each number in each row of the array to make sure it is between 0 and 1, inclusive
-      function checkAllCorrectRanges (arr) {
-        for (var i = 0; i < arr.length; i++) {
-          for (var j = 2; j < arr[i].length; j++) {
-            if( arr[i][j] < 0 || arr[i][j] > 1 ) {
+      function checkAllCorrectRanges (matrix) {
+        for (var i = 0; i < matrix.length; i++) {
+          for (var j = 2; j < matrix[i].length; j++) {
+            if( matrix[i][j] < 0 || matrix[i][j] > 1 ) {
               return false;
             }
           }
@@ -66,7 +66,7 @@ module.exports = function() {
     });
 
     // attempt to delete results
-    after(function(done) {
+    after(function() {
       results = [];
     });
 
