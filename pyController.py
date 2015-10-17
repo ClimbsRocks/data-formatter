@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import numpy as np
@@ -12,11 +13,13 @@ import listToDict
 import dictVectorizing
 import featureSelecting
 import writeToFile
+import brainjs
 
 # grab arguments
 trainingFile = sys.argv[1]
 testingFile = sys.argv[2]
 test = sys.argv[3]
+invocationDirectory = os.getcwd()
 
 concattedResults = concat.inputFiles(trainingFile, testingFile)
 
@@ -59,7 +62,9 @@ if(test):
     # 5. run testing data through that same rfecv to make sure it's handled in the exact same way
 
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
-X = featureSelecting.select(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow )
+featureSelectingResults = featureSelecting.select(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow )
+X = featureSelectingResults[0]
+filteredHeaderRow = featureSelectingResults[1]
 
 if(test):
     messageParent(X.tolist(), 'featureSelecting.py')
@@ -73,13 +78,17 @@ if(test):
     # each new Python process would write it's own results to file
 
 
-    # 6. at this point, we are ready to start considering specific formatting (min-max, brain.js, and sci-kit learn)
-X = minMax.normalize( X )
 
-if(test):
-    messageParent( [X.tolist(), idColumn, outputColumn], 'minMax.py')
+    # 6. at this point, we are ready to start considering specific formatting (min-max, brain.js, and sci-kit learn)
+# X = minMax.normalize( X )
+# if(test):
+#     messageParent( [X.tolist(), idColumn, outputColumn], 'minMax.py')
+
+brainX = brainjs.format( X, outputColumn, idColumn )
+if( test ):
+    messageParent( brainX, 'brainjs.py' )
 
 
 # write results to file
-writeToFile.writeFile(X)
+# writeToFile.writeFile(X, outputColumn, idColumn, invocationDirectory, trainingFile )
 
