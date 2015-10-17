@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import json
 import numpy as np
 from sendMessages import printParent
 from sendMessages import messageParent
@@ -16,9 +17,10 @@ import writeToFile
 import brainjs
 
 # grab arguments
-trainingFile = sys.argv[1]
-testingFile = sys.argv[2]
-test = sys.argv[3]
+args = json.loads( sys.argv[1] )
+trainingFile = args['trainingData']
+testingFile = args['testingData']
+test = args['test']
 invocationDirectory = os.getcwd()
 
 concattedResults = concat.inputFiles(trainingFile, testingFile)

@@ -22,11 +22,11 @@ var attachListeners = function(pyShell) {
       console.log('message from Python:',message.text);
     }
   });
-}
+};
 
-module.exports = function(trainingDataPath, testingDataPath) {
+module.exports = function(argsObject) {
 
-  var pyOptions = makePyOptions( trainingDataPath, testingDataPath );
+  var pyOptions = makePyOptions( JSON.stringify( argsObject ) );
 
   var pyController = PythonShell.run('pyController.py', pyOptions, function(err) {
     if(err) {
@@ -40,4 +40,4 @@ module.exports = function(trainingDataPath, testingDataPath) {
 
   attachListeners(pyController);
   return pyController;
-}
+};

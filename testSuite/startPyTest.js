@@ -25,7 +25,13 @@ var attachListeners = function(pyShell) {
 }
 
 module.exports = function() {
-  var pyOptions = makePyOptions(path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'), path.join(testFolder, 'testKaggleGiveMeSomeCredit.csv'), 'test');
+  var args = {
+    trainingData: path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'),
+    testingData: path.join(testFolder, 'testKaggleGiveMeSomeCredit.csv'),
+    test: true
+  };
+  var pyOptions = makePyOptions( JSON.stringify( args ) );
+  // var pyOptions = makePyOptions(path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'), path.join(testFolder, 'testKaggleGiveMeSomeCredit.csv'), 'test');
 
   var pyController = PythonShell.run('pyController.py', pyOptions, function(err) {
     if(err) {
