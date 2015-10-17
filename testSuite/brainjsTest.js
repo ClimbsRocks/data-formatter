@@ -1,0 +1,95 @@
+var expect = require('chai').expect;
+var mocha = require('mocha');
+var startPyTest = require('./startPyTest');
+var killChildProcess = require('./killChildProcess');
+
+module.exports = function() {
+  describe('brain.js formatting', function() {
+
+    var results;
+    var expectedInputLength;
+
+    before(function(done) {
+      console.time('brainjs time');
+      var pyController = startPyTest();
+
+
+      pyController.on('message', function(message) {
+        if(message.type === 'brainjs.py') {
+          killChildProcess(pyController.childProcess);
+          results = message.text;
+          console.timeEnd('brainjs time');
+          done();
+        } else if( message.type === 'featureSelecting.py' ){ 
+          expectedInputLength = message.text[0].length;
+        } else {
+          message.text = [];
+        }
+      });
+    });
+
+    it('should have id, input, and output properties', function() {
+      function checkProperties(arr) {
+        for( var i = 0; i < results.length; i++) {
+          if( results[i].id === undefined || results[i].input === undefined || results[i].output === undefined) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      expect( checkProperties(results) ).to.be.true;
+    });
+
+    it('id should be a number, input and output should be arrays', function() {
+      function checkPropertyTypes(arr) {
+        for( var i = 0; i < results.length; i++) {
+          if( typeof results[i].id !== 'number' || !Array.isArray( results[i].input ) || !Array.isArray( results[i].output ) ) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      expect( checkPropertyTypes(results) ).to.be.true;
+    });
+
+    it('should have input array length equal to number chosen in featureSelection', function() {
+      function checkInputLength(arr) {
+        for( var i = 0; i < results.length; i++) {
+          if( results[i].length !==expectedInputLength ) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      expect( checkInputLength(results) ).to.be.true;
+    });
+
+
+    it('should return only input values between 0 and 1', function() {
+      // check each number in each row of the array to make sure it is between 0 and 1, inclusive
+      function checkAllCorrectRanges (arr) {
+        for (var i = 0; i < arr.length; i++) {
+          for (var j = 2; j < arr[i].length; j++) {
+            if( arr[i][j] < 0 || arr[i][j] > 1 ) {
+              return false;
+            }
+          }
+        }
+        return true;
+      }
+
+      expect( checkAllCorrectRanges( results[0] )).to.be.true;
+      done();
+    });
+
+    // attempt to delete results
+    after(function() {
+      results = [];
+    });
+
+  });
+  
+};
