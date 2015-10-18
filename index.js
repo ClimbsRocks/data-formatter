@@ -2,7 +2,7 @@ var cwd = process.cwd();
 var path = require('path');
 var startPyChild = require('./startPyChild.js');
 
-module.exports= function(args) {
+module.exports= function( args, callback ) {
   // the following is a way-past-MVP idea that probably makes more sense for users to do themselves. 
   // TODO: allow the user to pass in a flag for "decideCategoricalOrContinuous"
     // do the data formatting process twice:
@@ -30,7 +30,7 @@ module.exports= function(args) {
           fs.mkdirSync( args.outputFolder + 'Folder' );
         }
       }
-      startPyChild(args);
+      startPyChild( args, callback );
     });
   }
   

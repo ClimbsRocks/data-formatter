@@ -24,7 +24,7 @@ var attachListeners = function(pyShell) {
   });
 };
 
-module.exports = function(argsObject) {
+module.exports = function( argsObject, callback ) {
 
   var pyOptions = makePyOptions( JSON.stringify( argsObject ) );
 
@@ -34,6 +34,10 @@ module.exports = function(argsObject) {
       if(err.exitCode !== null) {
         console.log('heard an error!');
         console.error(err);
+      }
+    } else {
+      if (typeof callback === 'function' ) {
+        callback();
       }
     }
   });
