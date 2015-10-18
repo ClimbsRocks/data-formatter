@@ -33,6 +33,7 @@
     "mocha": "^2.3.3"
   },
   "dependencies": {
-    "python-shell": "^0.2.0"
+    "python-shell": "^0.2.0",
+    "sinon": "^1.17.1"
   }
 }
