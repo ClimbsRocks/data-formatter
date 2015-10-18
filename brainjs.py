@@ -4,11 +4,12 @@ import os
 import os.path as path
 import csv
 import json
+import writeToFile
 from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
 
-def format( X, y, idColumn ):
+def format( X, y, idColumn, args ):
     X = minMax.normalize( X ).tolist()
 
     brainArr = []
@@ -28,12 +29,19 @@ def format( X, y, idColumn ):
         rowObj['input'] = row
         brainArr.append( rowObj )
 
-    with open( path.join( os.getcwd(), 'brainJSData.csv' ), 'w+') as outputFile:
+    with open( path.join( args['outputFolder'], 'brainJS' + args['trainingFile'] ), 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
-        for row in brainArr:
-            csvOutputFile.writerow( [ row ] )
-        # csvOutputFile.writerows( brainArr )
-        printParent('we have written your fully transformed data to a file at:')
-        printParent( path.join( os.getcwd(), 'brainJSData.csv' ) )
+        for rowIndex, row in enumerate(brainArr):
+            if( rowIndex < args['trainingLength'] ):
+                csvOutputFile.writerow( [ row ] )
+
+    with open( path.join( args['outputFolder'], 'brainJS' + args['testingFile'] ), 'w+') as outputFile:
+        csvOutputFile = csv.writer(outputFile)
+        for rowIndex, row in enumerate(brainArr):
+            if( rowIndex >= args['trainingLength'] ):
+                csvOutputFile.writerow( [ row ] )
+
+    printParent('we have written your fully transformed brainJS data to a file at:')
+    printParent( args['outputFolder'] )
 
     return brainArr
