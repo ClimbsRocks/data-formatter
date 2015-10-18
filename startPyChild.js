@@ -3,6 +3,10 @@ var dfDirectory = path.dirname(__filename);
 var child_process = require('child_process');
 var PythonShell = require('python-shell');
 
+var fileNames = {
+  // this will be filled with messages returned to us by the python scripts
+};
+
 
 var makePyOptions = function() {
   var pyOptions = {
@@ -20,6 +24,10 @@ var attachListeners = function(pyShell) {
   pyShell.on('message', function(message) {
     if(message.type === 'console.log') {
       console.log('message from Python:',message.text);
+    } else if( message.type === 'fileNames' ) {
+      for( var key in message.text ) {
+        fileNames[key] = message.text[key];
+      }
     }
   });
 };
@@ -37,7 +45,7 @@ module.exports = function( argsObject, callback ) {
       }
     } else {
       if (typeof callback === 'function' ) {
-        callback();
+        callback(fileNames);
       }
     }
   });
