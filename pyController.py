@@ -76,9 +76,10 @@ writeToFile.writeData(X, args, filteredHeaderRow )
 if(test):
     messageParent(X.tolist(), 'featureSelecting.py')
 
-brainX = brainjs.format( X, outputColumn, idColumn, args )
-if( test ):
-    messageParent( brainX, 'brainjs.py' )
+# brainX = brainjs.format( X, outputColumn, idColumn, args )
+# if( test ):
+#     messageParent( brainX, 'brainjs.py' )
 
+messageParent( '', 'finishedFormatting' )
 
 
