@@ -1,4 +1,5 @@
 import os
+import os.path as path
 import sys
 import time
 import json
@@ -21,7 +22,6 @@ args = json.loads( sys.argv[1] )
 trainingFile = args['trainingData']
 testingFile = args['testingData']
 test = args['test']
-invocationDirectory = os.getcwd()
 
 concattedResults = concat.inputFiles(trainingFile, testingFile)
 
@@ -34,6 +34,7 @@ del headerRow[ dataDescription.index('output') ]
 dataDescription.remove('output')
 
 trainingLength = concattedResults[2]
+args['trainingLength'] = trainingLength
 X = concattedResults[3]
 idColumn = concattedResults[4]
 outputColumn = concattedResults[5]
@@ -68,33 +69,16 @@ featureSelectingResults = featureSelecting.select(X, outputColumn, trainingLengt
 X = featureSelectingResults[0]
 filteredHeaderRow = featureSelectingResults[1]
 
+# write results to file
+writeToFile.writeMetadata( outputColumn, idColumn, args, filteredHeaderRow )
+writeToFile.writeData(X, args, filteredHeaderRow )
+
 if(test):
     messageParent(X.tolist(), 'featureSelecting.py')
 
-# TODO: write data to a file at this stage, for scikit-learn
-    # then we can format for brain.js
-    # then we can format for any old neural network. 
-
-# Post-MVP:
-# if we wanted to be memory efficient, we'd 
-    # write the data to a file, 
-    # close this Python process
-    # have index.js start new processes for each type of specific data transformation we want
-        # start each one only after the previous one has finished (intentionally trianing in series, not parallel)
-    # each new Python process would write it's own results to file
-
-
-
-    # 6. at this point, we are ready to start considering specific formatting (min-max, brain.js, and sci-kit learn)
-# X = minMax.normalize( X )
-# if(test):
-#     messageParent( [X.tolist(), idColumn, outputColumn], 'minMax.py')
-
-brainX = brainjs.format( X, outputColumn, idColumn )
+brainX = brainjs.format( X, outputColumn, idColumn, args )
 if( test ):
     messageParent( brainX, 'brainjs.py' )
 
 
-# write results to file
-# writeToFile.writeFile(X, outputColumn, idColumn, invocationDirectory, trainingFile )
 
