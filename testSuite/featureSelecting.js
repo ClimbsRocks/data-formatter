@@ -11,6 +11,7 @@ module.exports = function() {
     var allData = [];
 
     before(function(done) {
+      console.time('feature selecting time');
       var pyController = startPyTest();
 
       pyController.on('message', function(message) {
@@ -21,8 +22,11 @@ module.exports = function() {
           }
           if (allData.length > 250000) {
             killChildProcess(pyController.childProcess);
+            console.timeEnd('feature selecting time');
             done();
           }
+        } else {
+          message.text = [];
         }
       });
     });
