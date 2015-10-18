@@ -29,13 +29,16 @@ def format( X, y, idColumn, args ):
         rowObj['input'] = row
         brainArr.append( rowObj )
 
-    with open( path.join( args['outputFolder'], 'brainJS' + args['trainingFile'] ), 'w+') as outputFile:
+    trainingFileName = path.split( args['trainingData'] )[ -1 ]
+    testingFileName = path.split( args['testingData'] )[ -1 ]
+
+    with open( path.join( args['outputFolder'], 'brainJS' + trainingFileName ), 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
         for rowIndex, row in enumerate(brainArr):
             if( rowIndex < args['trainingLength'] ):
                 csvOutputFile.writerow( [ row ] )
 
-    with open( path.join( args['outputFolder'], 'brainJS' + args['testingFile'] ), 'w+') as outputFile:
+    with open( path.join( args['outputFolder'], 'brainJS' + testingFileName ), 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
         for rowIndex, row in enumerate(brainArr):
             if( rowIndex >= args['trainingLength'] ):
