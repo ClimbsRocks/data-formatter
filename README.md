@@ -19,17 +19,21 @@ This library is designed to work with ppComplete, but is so broadly useful that 
 6. Make sure any strings are formatted using UTF-8. 
 
 
-### Format of Output File:
+### Format of Output Files:
 
 
 
 ### API
 
-#### trainingData
-A .csv file with the full absolute path to the training data. See above for more info on the .csv file itself
+#### an `args` object with the following properties:
 
-#### testingData
-A .csv file with the full absolute path to the testing data (the data you want to eventually make predictions against)
+##### `trainingData`
+A full, absolute path to a .csv file. See above for more info on adding an additional header row to the .csv file itself.
 
+##### `testingData`
+A full, absolute path to a .csv file. See above for more info on adding an additional header row to the .csv file itself.
+
+#### a callback function [OPTIONAL]
+A callback function that will be invoked once training is done. This parameter is optional. 
 
 
