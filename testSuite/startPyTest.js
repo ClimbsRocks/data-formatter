@@ -22,7 +22,7 @@ var attachListeners = function(pyShell) {
       console.log('message from Python:',message.text);
     }
   });
-}
+};
 
 module.exports = function() {
   var args = {
@@ -46,4 +46,4 @@ module.exports = function() {
 
   attachListeners(pyController);
   return pyController;
-}
+};

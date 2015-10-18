@@ -43,4 +43,4 @@ module.exports= function(args) {
     // take in testingData path
       // make testingData optional?
     // take in optional output folder path?
-}
+};
