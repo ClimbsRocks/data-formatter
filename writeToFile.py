@@ -14,32 +14,44 @@ from sendMessages import obviousPrint
 # 3. write X training to it's own file
 # 4. write X testing to it's own file
 
-def writeFile(X, y, idColumn, args ):
+def writeMetadata(y, idColumn, args, headerRow ):
     # grab the name of the training and testing files from the full path to those datasets
     trainingFileName = path.split( args['trainingData'] )[ -1 ]
     testingFileName = path.split( args['testingData'] )[ -1 ]
     # we will take in the invocation directory as an argument from Node.js. for now, just use os.getcwd()
-    with open( path.join( args['outputFolder'], trainingFileName ), 'w+') as outputFile:
-        csvOutputFile = csv.writer(outputFile)
-        # grab only the rows that were part of our training file from the combined X dataset
-        csvOutputFile.writerows( X[ 0 : args['trainingLength'] ])
 
     with open( path.join( args['outputFolder'], 'y' + trainingFileName ), 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
-        # grab only the rows that were part of our training file from the combined X dataset
+        # grab only the rows that were part of our training file from the combined dataset
         csvOutputFile.writerows( y[ 0 : args['trainingLength'] ])
 
-    with open( path.join( args['outputFolder'], testingFileName ), 'w+') as outputFile:
+    with open( path.join( args['outputFolder'], 'id' + trainingFileName ), 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
+        # grab only the rows that were part of our training file from the combined dataset
+        csvOutputFile.writerows( idColumn[ 0 : args['trainingLength'] ])
+
+    with open( path.join( args['outputFolder'], 'id' + testingFileName ), 'w+') as outputFile:
+        csvOutputFile = csv.writer(outputFile)
+        # grab only the rows that were part of our testing file from the combined dataset
+        csvOutputFile.writerows( idColumn[ args['trainingLength']: ])
+
+
+def writeData(X, args, headerRow ):
+    # grab the name of the training and testing files from the full path to those datasets
+    trainingFileName = path.split( args['trainingData'] )[ -1 ]
+    testingFileName = path.split( args['testingData'] )[ -1 ]
+    # we will take in the invocation directory as an argument from Node.js. for now, just use os.getcwd()
+    with open( path.join( args['outputFolder'],  'dfResults' + trainingFileName ), 'w+') as outputFile:
+        csvOutputFile = csv.writer(outputFile)
+        csvOutputFile.writerow( headerRow )
+        # grab only the rows that were part of our training file from the combined X dataset
+        csvOutputFile.writerows( X[ 0 : args['trainingLength'] ])
+
+    with open( path.join( args['outputFolder'], 'dfResults' + testingFileName ), 'w+') as outputFile:
+        csvOutputFile = csv.writer(outputFile)
+        csvOutputFile.writerow( headerRow )
         # grab the rest of the rows from our X dataset, which comprise the testing dataset
         csvOutputFile.writerows( X[ args['trainingLength'] :  ])
 
-
-
-
-
-        printParent('we have written your fully transformed data to a file at:')
-        printParent( path.join( os.getcwd(), 'testWrittenData.csv' ) )
-
-
-
+    printParent('we have written your fully transformed data to a file at:')
+    printParent( args['outputFolder'] )
