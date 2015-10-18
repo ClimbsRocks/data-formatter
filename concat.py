@@ -65,9 +65,4 @@ def inputFiles(trainingFile, testingFile):
                     # if we treated them separately, it could cause an issue if we have a feature present in the testing data but not the training data, for example
                 outputData.append(trimmedRow)
 
-    # TODO: add in input checking
-        # give the user a nice message if the format of the dataDescription row is not right
-    for name in headerRow:
-
-
     return [dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn]

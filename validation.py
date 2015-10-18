@@ -1,15 +1,19 @@
+from sendMessages import printParent
+from sendMessages import messageParent
+from sendMessages import obviousPrint
+
 def dataDescription(arr):
-    expectedValues={
-        'id': False
+    expectedValues = {
+        'id': False,
         'output': False
     }
-    allowableValues['id','output','continuous','categorical']
+    allowableValues = ['id','output','continuous','categorical']
 
     for name in arr:
         try:
             allowableValues.index(name)
             expectedValues[name] = True
-        except TypeError:
+        except:
             printParent('Warning, we have received a value in the first row that is not valid:')
             printParent(name)
             printParent('Please remember that the first row must contain information describing that column of data')
