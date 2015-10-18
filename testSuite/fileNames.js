@@ -31,9 +31,7 @@ module.exports = function() {
       console.time('callback invocation time');
   
       function spyFunc() {
-        console.log('this function is being called now');
         console.timeEnd('callback invocation time');
-        // done();
       };
 
       spy = sinon.spy( spyFunc );
@@ -49,9 +47,6 @@ module.exports = function() {
 
       process.on('finishedFormatting', function() {
         console.log('heard a finishedFormatting event');
-        // setTimeout(function() {
-        //   done();
-        // });
         done();
       });
     });

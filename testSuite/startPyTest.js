@@ -25,14 +25,15 @@ var attachListeners = function(pyShell) {
 };
 
 module.exports = function() {
+
+  // by intentionally leaving the outputFolder field blank, we are implicitly adding in a test to make sure we are creating a directory at the right location (data-formatter should automatically detect which folder it is bieng invoked from, and create a directory there if one does not exist already)
   var args = {
-    outputFolder: path.join( testFolder, 'formattedResults'),
+    outputFolder: path.join(testFolder, 'formattedResults'),
     trainingData: path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'),
     testingData: path.join(testFolder, 'testKaggleGiveMeSomeCredit.csv'),
     test: true
   };
   var pyOptions = makePyOptions( JSON.stringify( args ) );
-  // var pyOptions = makePyOptions(path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'), path.join(testFolder, 'testKaggleGiveMeSomeCredit.csv'), 'test');
 
   var pyController = PythonShell.run('pyController.py', pyOptions, function(err) {
     if(err) {

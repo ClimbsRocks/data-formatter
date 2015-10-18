@@ -1,6 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 
+var mkdirp = require('mkdirp');
+
 var startPyChild = require('./startPyChild.js');
 
 var cwd = process.cwd();
@@ -24,17 +26,9 @@ module.exports= function( args, callback ) {
   }
 
   // make sure the output folder exists. if not, create it.
-  fs.stat( args.outputFolder, function(err, stats) {
+  mkdirp( args.outputFolder, function(err) {
     if(err) {
       console.error(err);
-    }
-    if( !stats.isDirectory() ) {
-      if( !stats.isFile() ) {
-        // the several millisecond hit to performance is not going to be noticeable compared to the minutes or hours this module will take to run, and makes the code much easier to read. 
-        fs.mkdirSync(args.outputFolder);
-      } else {
-        fs.mkdirSync( args.outputFolder + 'Folder' );
-      }
     }
     startPyChild( args, callback );
   });
