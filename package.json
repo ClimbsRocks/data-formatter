@@ -1,6 +1,6 @@
 {
   "name": "data-formatter",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Formats and cleans your data to get it ready for machine learning!",
   "main": "index.js",
   "scripts": {

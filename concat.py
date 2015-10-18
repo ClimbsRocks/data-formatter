@@ -1,4 +1,5 @@
 import csv
+import validation
 from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
@@ -22,6 +23,7 @@ def inputFiles(trainingFile, testingFile):
                 # grab the dataDescription row and the header row, and make them both lowercase
                 if firstRow == 0:
                     dataDescription = [x.lower() for x in row]
+                    validation.dataDescription( dataDescription )
                 else: 
                     headerRow = [x.lower() for x in row]
                 firstRow = firstRow + 1
@@ -62,5 +64,10 @@ def inputFiles(trainingFile, testingFile):
                 # this ensures we will be processing them consistently
                     # if we treated them separately, it could cause an issue if we have a feature present in the testing data but not the training data, for example
                 outputData.append(trimmedRow)
+
+    # TODO: add in input checking
+        # give the user a nice message if the format of the dataDescription row is not right
+    for name in headerRow:
+
 
     return [dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn]
