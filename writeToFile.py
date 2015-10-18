@@ -18,14 +18,8 @@ def writeMetadata(y, idColumn, args, headerRow ):
     # grab the name of the training and testing files from the full path to those datasets
     trainingFileName = path.split( args['trainingData'] )[ -1 ]
     testingFileName = path.split( args['testingData'] )[ -1 ]
-    # we will take in the invocation directory as an argument from Node.js. for now, just use os.getcwd()
 
-    # TODO:
-        # 1. figure out what we want to call each file, then be super consistent in that name
-            # make sure it's called the same thing here, in the fileNames hash, and in ppc
-            # take what we're currently passing into the with open() lines and save into variables that follow this naming convention
-        # 2. create an obj with those properties
-        # 3. send that obj back to parent
+    # save the file names into variables- we will use them to create the file and in the fileNames hash messaged out to the parent.
     y_train= path.join( args['outputFolder'], 'y_train_' + trainingFileName )
     id_train= path.join( args['outputFolder'], 'id_train_' + trainingFileName )
     id_test= path.join( args['outputFolder'], 'id_test_' + testingFileName )
@@ -46,21 +40,23 @@ def writeMetadata(y, idColumn, args, headerRow ):
         csvOutputFile.writerows( idColumn[ args['trainingLength']: ])
 
     fileNames = {
-        y_train: y_train,
-        id_train: id_train,
-        id_test: id_test
+        'y_train': y_train,
+        'id_train': id_train,
+        'id_test': id_test
     }
     messageParent( fileNames, 'fileNames' )
 
 
 def writeData(X, args, headerRow ):
-    X_train= path.join( args['outputFolder'],  'dfResults' + trainingFileName )
-    X_test= path.join( args['outputFolder'], 'dfResults' + testingFileName )
 
     # grab the name of the training and testing files from the full path to those datasets
     trainingFileName = path.split( args['trainingData'] )[ -1 ]
     testingFileName = path.split( args['testingData'] )[ -1 ]
-    # we will take in the invocation directory as an argument from Node.js. for now, just use os.getcwd()
+
+    # save the file names into variables- we will use them to create the file and in the fileNames hash messaged out to the parent.
+    X_train= path.join( args['outputFolder'],  'X_train' + trainingFileName )
+    X_test= path.join( args['outputFolder'], 'X_test' + testingFileName )
+
     with open( X_train, 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
         csvOutputFile.writerow( headerRow )
@@ -74,8 +70,8 @@ def writeData(X, args, headerRow ):
         csvOutputFile.writerows( X[ args['trainingLength'] :  ])
 
     fileNames = {
-        X_train: X_train,
-        X_test: X_test
+        'X_train': X_train,
+        'X_test': X_test
     }
     messageParent( fileNames, 'fileNames' )
 

@@ -3,6 +3,9 @@ var mocha = require('mocha');
 var startPyTest = require('./startPyTest');
 var killChildProcess = require('./killChildProcess');
 
+
+// TODO: duplicate and modify this file for the format needed by scikit-neuralnetworks, not the format needed by brainjs
+  // we will still want this file available for when we let the user pass in a flag to do brainjs formatting
 module.exports = function() {
   describe('brain.js formatting', function() {
 

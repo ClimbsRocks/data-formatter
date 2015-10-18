@@ -6,10 +6,13 @@ var imputingMissingValues = require('./imputingMissingValues');
 var dictVectorizing = require('./dictVectorizing');
 var featureSelecting = require('./featureSelecting');
 var brainjsTest = require('./brainjsTest');
+var fileNames = require('./fileNames');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
   this.timeout(600000);
+
+  fileNames();
 
   fileConcatting();
 
@@ -19,7 +22,8 @@ describe('data-formatter', function() {
 
   featureSelecting();      
 
-  brainjsTest();
+  // brainjsTest();
+
 
   // write results to file
 

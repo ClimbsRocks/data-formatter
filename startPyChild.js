@@ -45,6 +45,7 @@ module.exports = function( argsObject, callback ) {
       }
     } else {
       if (typeof callback === 'function' ) {
+        process.emit('finishedFormatting');
         callback(fileNames);
       }
     }
