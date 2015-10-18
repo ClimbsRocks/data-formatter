@@ -26,6 +26,7 @@ var attachListeners = function(pyShell) {
 
 module.exports = function() {
   var args = {
+    outputFolder: path.join( testFolder, 'formattedResults'),
     trainingData: path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'),
     testingData: path.join(testFolder, 'testKaggleGiveMeSomeCredit.csv'),
     test: true
