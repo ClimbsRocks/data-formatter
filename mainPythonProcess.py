@@ -97,8 +97,9 @@ writeToFile.writeData(X, args, filteredHeaderRow, True )
 if( test ):
     messageParent(X.tolist(), 'minMax.py')
 
+# 7. format data specifically for brain.js, which takes a different format than scikit-neural-network
 # brainX = brainjs.format( X, outputColumn, idColumn, args )
 # if( test ):
-#     messageParent( brainX, 'brainjs.py' )
+#     messageParent( brainX.tolist(), 'brainjs.py' )
 
 messageParent( '', 'finishedFormatting' )

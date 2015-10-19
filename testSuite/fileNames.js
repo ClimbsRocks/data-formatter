@@ -56,7 +56,7 @@ module.exports = function() {
     });
 
     it('should invoke the callback function with the fileNames obj', function() {
-      var expectedProperties = ['X_train','X_test','y_train','id_train','id_test','X_train_nn','X_test_nn'];
+      var expectedProperties = ['X_train','X_test','y_train','id_train','id_test','X_train_nn','X_test_nn','brainJS_train','brainJS_test'];
       function checkProps() {
         for( var i = 0; i < expectedProperties.length; i++) {
           var propName = expectedProperties[i];
