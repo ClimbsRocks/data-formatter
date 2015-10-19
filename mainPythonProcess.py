@@ -72,23 +72,26 @@ if(test):
     messageParent( X[0:150000], 'dictVectorizing.py' )
     messageParent( X[150000:], 'dictVectorizing.py' )
 
-# immediate next steps:
-    # 4. run training data through rfecv- fit_transform
-        # make sure that rfecv is saved and written to file!
-    # 5. run testing data through that same rfecv to make sure it's handled in the exact same way
-
+# 4. Feature Selection means picking only those features that are actually predictive and useful
+    # say a column of names is passed in. This will then be turned into categorical data ("Suzy=True","Preston=True"), one for each name
+    # clearly, this data is not going to be useful, unless we way overfit the training set. 
+    # feature selection helps avoid such cases by only including the data that is actually predictive. 
+    # this helps models train faster, and is actually more predictive in the end since there's less noise to distract from the valuable features. 
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
 featureSelectingResults = featureSelecting.select(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
 X = featureSelectingResults[0]
 filteredHeaderRow = featureSelectingResults[1]
 
-# write results to file
+# 5. write results to file
+# this is the data we need for most scikit-learn algorithms!
 writeToFile.writeMetadata( outputColumn, idColumn, args, filteredHeaderRow )
 writeToFile.writeData(X, args, filteredHeaderRow, False )
 
 if(test):
     messageParent(X.tolist(), 'featureSelecting.py')
 
+# 6. for neural networks:
+# normalize the data to be values between -1 and 1
 X = minMax.normalize( X )
 writeToFile.writeData(X, args, filteredHeaderRow, True )
 if( test ):
@@ -99,5 +102,3 @@ if( test ):
 #     messageParent( brainX, 'brainjs.py' )
 
 messageParent( '', 'finishedFormatting' )
-
-
