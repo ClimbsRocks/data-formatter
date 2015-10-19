@@ -53,15 +53,19 @@ def writeMetadata(y, idColumn, args, headerRow ):
     messageParent( fileNames, 'fileNames' )
 
 
-def writeData(X, args, headerRow ):
+def writeData(X, args, headerRow, nn ):
 
     # grab the name of the training and testing files from the full path to those datasets
     trainingFileName = path.split( args['trainingData'] )[ -1 ]
     testingFileName = path.split( args['testingData'] )[ -1 ]
 
+    if nn:
+        trainingFileName = 'nn_' + trainingFileName
+        testingFileName = 'nn_' + testingFileName
+
     # save the file names into variables- we will use them to create the file and in the fileNames hash messaged out to the parent.
-    X_train= path.join( args['outputFolder'],  'X_train' + trainingFileName )
-    X_test= path.join( args['outputFolder'], 'X_test' + testingFileName )
+    X_train= path.join( args['outputFolder'],  'X_train_' + trainingFileName )
+    X_test= path.join( args['outputFolder'], 'X_test_' + testingFileName )
 
     with open( X_train, 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
@@ -75,10 +79,19 @@ def writeData(X, args, headerRow ):
         # grab the rest of the rows from our X dataset, which comprise the testing dataset
         csvOutputFile.writerows( X[ args['trainingLength'] :  ])
 
-    fileNames = {
-        'X_train': X_train,
-        'X_test': X_test
-    }
+
+    if nn:
+        fileNames = {
+            'X_train_nn': X_train,
+            'X_test_nn': X_test
+        }
+    else:
+        fileNames = {
+            'X_train': X_train,
+            'X_test': X_test
+        }
+        
+
     messageParent( fileNames, 'fileNames' )
 
     printParent('we have written your fully transformed data to a file at:')
