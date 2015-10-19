@@ -7,6 +7,7 @@ var dictVectorizing = require('./dictVectorizing');
 var featureSelecting = require('./featureSelecting');
 var brainjsTest = require('./brainjsTest');
 var fileNames = require('./fileNames');
+var neuralNetwork = require('./neuralNetwork');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
@@ -14,18 +15,17 @@ describe('data-formatter', function() {
 
   fileNames();
 
+  neuralNetwork(); 
+    
   fileConcatting();
 
   imputingMissingValues();
 
   dictVectorizing();
 
-  featureSelecting();      
+  featureSelecting();   
 
   // brainjsTest();
-
-
-  // write results to file
 
   // make it work from the command line and from module.exports
 
