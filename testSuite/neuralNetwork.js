@@ -10,7 +10,7 @@ module.exports = function() {
     var expectedInputLength;
 
     before(function(done) {
-      console.time('minMax time');
+      console.time('Neural Network time');
       var pyController = startPyTest();
 
 
@@ -18,7 +18,7 @@ module.exports = function() {
         if(message.type === 'minMax.py') {
           killChildProcess(pyController.childProcess);
           results = message.text;
-          console.timeEnd('minMax time');
+          console.timeEnd('Neural Network time');
           done();
         } else if( message.type === 'featureSelecting.py' ){ 
           expectedInputLength = message.text[0].length;
@@ -46,12 +46,12 @@ module.exports = function() {
     });
 
 
-    it('should return only input values between 0 and 1', function() {
+    it('should return only input values between -1 and 1', function() {
       // check each number in each row of the array to make sure it is between 0 and 1, inclusive
       function checkAllCorrectRanges (matrix) {
         for (var i = 0; i < matrix.length; i++) {
           for (var j = 0; j < matrix[i].length; j++) {
-            if( matrix[i][j] < 0 || matrix[i][j] > 1 ) {
+            if( matrix[i][j] < -1 || matrix[i][j] > 1 ) {
               console.log('i', i, 'results[i]', results[i] );
               return false;
             }

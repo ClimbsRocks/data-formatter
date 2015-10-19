@@ -59,7 +59,7 @@ def writeData(X, args, headerRow, nn ):
     trainingFileName = path.split( args['trainingData'] )[ -1 ]
     testingFileName = path.split( args['testingData'] )[ -1 ]
 
-    if nn:
+    if( nn ):
         trainingFileName = 'nn_' + trainingFileName
         testingFileName = 'nn_' + testingFileName
 
@@ -80,7 +80,7 @@ def writeData(X, args, headerRow, nn ):
         csvOutputFile.writerows( X[ args['trainingLength'] :  ])
 
 
-    if nn:
+    if( nn ):
         fileNames = {
             'X_train_nn': X_train,
             'X_test_nn': X_test

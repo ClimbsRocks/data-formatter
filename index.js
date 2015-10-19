@@ -3,7 +3,7 @@ var path = require('path');
 
 var mkdirp = require('mkdirp');
 
-var startPyChild = require('./startPyChild.js');
+var startPyChild = require('./helperFunctions/startPyChild.js');
 
 var cwd = process.cwd();
 

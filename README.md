@@ -24,7 +24,7 @@ npm install data-formatter
 Does some of that make your head spin? Have no idea what one (or more) of those bullet points means? No worries, that's the entire point of letting a library do this work for you! 
 
 #### Expert?
-Did any of the above get your heart racing and make you want to dive in to customize for your own project or kaggle competition? Awesome, follow along with `pyController.py` and customize to your heart's content, while still having in place a structure to automate the process for you!
+Did any of the above get your heart racing and make you want to dive in to customize for your own project or kaggle competition? Awesome, follow along with `mainPythonProcess.py` and customize to your heart's content, while still having in place a structure to automate the process for you!
 
 ## How to Use:
 1. Add a dataDescription row to the top of your training data (more info in a following section)
