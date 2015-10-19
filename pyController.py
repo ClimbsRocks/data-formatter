@@ -71,10 +71,15 @@ filteredHeaderRow = featureSelectingResults[1]
 
 # write results to file
 writeToFile.writeMetadata( outputColumn, idColumn, args, filteredHeaderRow )
-writeToFile.writeData(X, args, filteredHeaderRow )
+writeToFile.writeData(X, args, filteredHeaderRow, False )
 
 if(test):
     messageParent(X.tolist(), 'featureSelecting.py')
+
+X = minMax.normalize( X )
+writeToFile.writeData(X, args, filteredHeaderRow, True )
+if( test ):
+    messageParent(X.tolist(), 'minMax.py')
 
 # brainX = brainjs.format( X, outputColumn, idColumn, args )
 # if( test ):

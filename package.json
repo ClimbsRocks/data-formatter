@@ -1,6 +1,6 @@
 {
   "name": "data-formatter",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "Formats and cleans your data to get it ready for machine learning!",
   "main": "index.js",
   "scripts": {
@@ -56,11 +56,11 @@
   ],
   "devDependencies": {
     "chai": "^3.3.0",
-    "mocha": "^2.3.3"
+    "mocha": "^2.3.3",
+    "sinon": "^1.17.1"
   },
   "dependencies": {
     "mkdirp": "^0.5.1",
-    "python-shell": "^0.2.0",
-    "sinon": "^1.17.1"
+    "python-shell": "^0.2.0"
   }
 }

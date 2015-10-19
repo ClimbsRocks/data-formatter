@@ -33,11 +33,4 @@ module.exports= function( args, callback ) {
     startPyChild( args, callback );
   });
   
-  // TODO:
-    // figure out where this file is being invoked from
-      // module.parent.filename: https://nodejs.org/api/modules.html#modules_module_parent
-      // http://stackoverflow.com/questions/20292278/node-get-path-of-the-requiring-parent-file
-    // take in flag for neural network, and handle differently than our default assumption of scikit learn and brainjs
-    // take in testingData path
-      // make testingData optional?
 };

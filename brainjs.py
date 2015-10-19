@@ -10,19 +10,20 @@ from sendMessages import messageParent
 from sendMessages import obviousPrint
 
 def format( X, y, idColumn, args ):
-    X = minMax.normalize( X ).tolist()
+    # we should be handling the min-max normalization in an earlier step
+    # X = minMax.normalize( X ).tolist()
 
     brainArr = []
     for rowIndex, row in enumerate(X):
         rowObj = {}
-        # we might need to wrap output in an array if the output is a single number, like we have. 
-            # input is an array, so 
+        # we might need to wrap output in a list if the output is a single number, like we have. 
+            # input is a list, so 
         rowObj['output'] = []
         yRow = y[ rowIndex ]
         if( isinstance( yRow, list )):
             rowObj['output'].extend( yRow )
         else:
-            # the output value is expected to be an array, so if y values are not arrays (they have no len() ability), then we need to wrap the y value in an array
+            # the output value is expected to be a list, so if y values are not lists, then we need to wrap the y value in a list
             rowObj['output'].append( yRow )
         rowObj[ 'id' ] = idColumn[ rowIndex ]
             
