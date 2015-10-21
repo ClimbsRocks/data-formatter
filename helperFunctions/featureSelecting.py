@@ -9,13 +9,18 @@ from sendMessages import obviousPrint
 
 def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test ):
 
+    # train a random forest
     classifier = RandomForestClassifier( n_jobs=-1, n_estimators=30 )
     classifier.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
+    # that forest will tell us the feature_importances_ of each of the features it was trained on
+    # we want to grab only those column indices that pass the featureImportanceThreshold passed in to us
     columnIndicesThatPass = [idx for idx, x in enumerate( classifier.feature_importances_ ) if x > featureImportanceThreshold]
 
+    # use numpy to grab only those columns that passed the previous step
     cleanedX = np.array( X )[ :, columnIndicesThatPass ]
 
+    # create the new header row that contains only the column names that passed the test
     printingOutput = []
     filteredHeaderRow = []
     for idx, importance in enumerate( classifier.feature_importances_ ):
@@ -23,6 +28,7 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test ):
             printingOutput.append( [ headerRow[idx], round( importance, 4) ])
             filteredHeaderRow.append( headerRow[idx] )
 
+    # print the features that passed out to the console for the user to see. 
     printingOutput = sorted(printingOutput, key=lambda x: x[1], reverse=True)
     if( not test ):
         printParent('here are the features that were kept, sorted by their feature importance')
@@ -31,13 +37,6 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test ):
     X = cleanedX
 
     return [ X, filteredHeaderRow ]
-
-
-    # MVP: train a RF, take all the features with an importance > .1. 
-        # don't worry about recursing, don't worry about other models
-        # don't worry about including feature names
-        # just train a RF and take all features that have an importance > 0.1
-        # this will definitely be refactored over time. 
 
 
     # post MVP ideas:
@@ -59,17 +58,5 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test ):
 
 
     # right now, RFECV assumes categorical data
-    # two options:
-        # 1. assume all continuous data is good, separate out those columns, only run RFECV on categorical columns, add continuous columns back in
-        # 2. scrap RFECV (or re-implement my own), and switch over to using random forests
-            # you can get the feature importance from a trained random forest
-            # from there, just choose all features that have an importance above 0.1, or some other arbitrary number like that
-            # we could accompany this with a decent amount of logging (verbose=true)
-                # here is the feature importance
-                # here are the features that got selected
-                # here are the features that got dropped
-                # feel free to adjust the feature importance parameter in XYZ file to adjust this
-            # we could also do this inside of our own recursive feature elimination (or borrow theirs and see if we can make it work on continuous data)
-            # the benefit of doing it this way is we can probably keep the category names in the output relatively easily. 
-            # the drawback is, of course, that it would be our implementation, not one that's validated and maintained by sklearn
-    
+    # another option to our current implementation:
+        # assume all continuous data is good, separate out those columns, only run RFECV on categorical columns, add continuous columns back in

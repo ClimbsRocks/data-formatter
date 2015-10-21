@@ -25,6 +25,8 @@ var attachListeners = function(pyShell) {
     if(message.type === 'console.log') {
       console.log('message from Python:',message.text);
     } else if( message.type === 'fileNames' ) {
+      console.log('fileNames:');
+      console.log(message.text);
       for( var key in message.text ) {
         fileNames[key] = message.text[key];
       }
