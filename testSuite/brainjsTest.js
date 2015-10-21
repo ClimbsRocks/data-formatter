@@ -96,7 +96,7 @@ module.exports = function() {
 
     // attempt to delete results
     after(function() {
-      results = [];
+      results = null;
     });
 
   });

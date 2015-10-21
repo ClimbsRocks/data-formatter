@@ -98,8 +98,11 @@ if( test ):
     messageParent(X.tolist(), 'minMax.py')
 
 # 7. format data specifically for brain.js, which takes a different format than scikit-neural-network
-# brainX = brainjs.format( X, outputColumn, idColumn, args )
-# if( test ):
-#     messageParent( brainX.tolist(), 'brainjs.py' )
+brainX = brainjs.format( X.tolist(), outputColumn, idColumn, args )
+if( test ):
+    messageParent( brainX, 'brainjs.py' )
+
+printParent('we have written your fully transformed data to a file at:')
+printParent( args['outputFolder'] )
 
 messageParent( '', 'finishedFormatting' )

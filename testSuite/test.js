@@ -12,7 +12,7 @@ var neuralNetwork = require('./neuralNetwork');
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
   // this timeout should be long enough to handle tests on a variety of machines
-  this.timeout(240000);
+  this.timeout(360000);
 
   fileNames();
     
@@ -26,7 +26,7 @@ describe('data-formatter', function() {
 
   neuralNetwork(); 
   
-  // brainjsTest();
+  brainjsTest();
 
   // make it work from the command line and from module.exports
 
