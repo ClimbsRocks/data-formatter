@@ -91,8 +91,4 @@ def writeData(X, args, headerRow, nn ):
             'X_test': X_test
         }
         
-
     messageParent( fileNames, 'fileNames' )
-
-    printParent('we have written your fully transformed data to a file at:')
-    printParent( args['outputFolder'] )
