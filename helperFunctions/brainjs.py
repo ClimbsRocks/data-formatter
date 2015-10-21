@@ -14,7 +14,7 @@ from sendMessages import obviousPrint
 min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0, 1), copy=False)
 
 def format( X, y, idColumn, args ):
-    X = min_max_scaler.fit_transform( X )
+    X = min_max_scaler.fit_transform( X ).tolist()
 
     brainArr = []
     for rowIndex, row in enumerate(X):
@@ -34,6 +34,14 @@ def format( X, y, idColumn, args ):
             rowObj['output'].append( yRow )
 
         rowObj[ 'id' ] = idColumn[ rowIndex ]
+
+        for idx, val in enumerate(row):
+            # python saves floats in their binary representation, which gets written to file in scientific notation
+            # this scientific notation is not necessarily json compatible
+            # so we format these values as a string
+            # unfortunately, these strings will only have 6 decimal places after the 0. this should not be a major limitation, as that still allows 6 orders of magnitude of differentiation. it would be a rather surprising neural network who could draw meaningful distinctions between values that are 7 orders of magnitude different from the max value vs values that are 6 orders of magnitude different from the max value. 
+            # in our case, they'll both just get saved as 0. 
+            row[idx] = '{:f}'.format(val)
             
         rowObj['input'] = row
         brainArr.append( rowObj )
@@ -50,7 +58,7 @@ def format( X, y, idColumn, args ):
             if( rowIndex < args['trainingLength'] ):
                 # csvWriter.writerow expects each row to be a list
                 # since our rows are actually just dictionaries, we need to wrap it in a list each time so the writer knows this is a single row
-                csvOutputFile.writerow( [ row ] )
+                csvOutputFile.writerow( [ json.dumps( row ) ] )
 
     with open( brainJS_test, 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
@@ -63,9 +71,5 @@ def format( X, y, idColumn, args ):
         'brainJS_test': brainJS_test
     }
     messageParent( fileNames, 'fileNames' )
-
-
-    printParent('we have written your fully transformed brainJS data to a file at:')
-    printParent( args['outputFolder'] )
 
     return brainArr
