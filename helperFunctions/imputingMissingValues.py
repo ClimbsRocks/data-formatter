@@ -62,6 +62,8 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
         # keep track of this new column in our headerRow and our dataDescription row
         dataDescription.append( 'Continuous' )
         headerRow.append( 'countOfMissingValues' )
+        # keep track of where this new column is
+        columnsWithMissingValues[ 'countOfMissingValues' ] = len(headerRow) - 1
     
     for colIndex in columnsWithMissingValues:
         # create a copy of the existing column and append it to the end. this way we can modify one column, but leave the other untouched
@@ -71,6 +73,9 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
         # include prettyNames for dataDescription and header row
         dataDescription.append( dataDescription[colIndex] ) 
         headerRow.append( 'missing' + headerRow[ colIndex ] )
+
+        # we now have a map between the original (untouched) column index, and the new cloned (with imputed values) column index
+        columnsWithMissingValues[ colIndex ] = len( headerRow ) -1
 
         # create a new empty column to hold information on whether this row has an imputed value for the current column
         emptyList = [ 0 ] * len( columnMatrix[0] )
@@ -82,6 +87,12 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
     return [ columnMatrix, dataDescription, columnsWithMissingValues, headerRow ]
 
 # TODO:
+    # make columnsWithMissingValues into a map-
+        # original (untouched) column index is the key
+        # cloned (with imputed values) column index is the value
+            # we just know that one over from that cloned column is the boolean flag column for that column
+        # have another property for totalMissingValuesCount, pointing to whichever columnIndex is appropriate there.
+
     # redefine impute
         # get median value for continuous columns
         # get mode value for categorical columns
@@ -96,11 +107,6 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
                                 # set that value equal to 1
                             # find the column holding the count of all missing values for that row
                                 # increment that value by 1
-    # make columnsWithMissingValues into a map-
-        # original (untouched) column index is the key
-        # cloned (with imputed values) column index is the value
-            # we just know that one over from that cloned column is the boolean flag column for that column
-        # have another property for totalMissingValuesCount, pointing to whichever columnIndex is appropriate there.
 
     # return all the new values (X, dataDescription, headerRow)
     # handle all these new return values in mainPythonProcess
