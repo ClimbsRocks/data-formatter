@@ -88,79 +88,97 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
 
 # TODO:
     # redefine impute
-def impute( columnMatrix, dataDescription, columnsWithMissingValues ):
+def impute( columnMatrix, dataDescription, colMap ):
+    # we have one column dedicated just to holding the count of the total number of missing values for this row
+    countOfMissingValsColIndex = colMap[ 'countOfMissingValues' ]
     # fillInVals will have keys for each column index, and values for what the filled in value should be
         # this way we only need to check continuous or categorical once
     fillInVals = {}
     for colIndex, column in columnMatrix:
+        # FUTURE: we can calculate this for only columns that are actually missing data
         if dataDescription[ colIndex ] == 'continuous':
             # the median value
             fillInVals[ colIndex ] = np.median(np.array(column))
         elif dataDescription[ colIndex ] == 'categorical':
             # the mode value
             fillInVals[ colIndex ] = max(set(values), key=values.count)
-    medianVal = np.median(np.array())
+
+    for colIndex, column in enumerate(columnMatrix):
         # iterate through columns list, starting at the index position of the new columns
+        try:
             # check to make sure this colIndex is indeed a cloned column with missing values (not a column holding a boolean flag for whether a missing value was found)
+            # find the column where we are going to store the imputed values for this column
+            # if this column is not one of the columns we've identified earlier as having missing values, this will throw an error and exit the try statement
+            imputedColIndex = colMap[ colIndex ]
             # if so
+            for rowIndex, value in enumerate(column):
                 # iterate through list, with rowIndex
-                    # for each item:
-                        # check for missing values. if they exist:
-                            # replace missing value
-                            # find the flag column for this column in columnsWithMissingValues dictionary
-                                # set that value equal to 1
-                            # find the column holding the count of all missing values for that row
-                                # increment that value by 1
+                # for each item:
+                # check for missing values. if they exist:
+                if val == np.nan:
+                    # replace missing value in the imputedColumn we have appended at the right-hand side of the dataset for each column with missing values
+                    # replace it for this row that we are iterating over
+                    # replace it with the previously calculated value for this column
+                    columnMatrix[ imputedColIndex ][ rowIndex ] = fillInVals[ colIndex ]
+                    # find the flag column for this column in colMap dictionary
+                        # it is just one over from the imputedColumn
+                        # set that value equal to 1
+                    columnMatrix[ imputedColIndex + 1 ][ rowIndex ] = 1
+                    # find the column holding the count of all missing values for that row
+                        # increment that value by 1
+                    columnMatrix[ countOfMissingValsColIndex ] += 1
 
-    # return all the new values (X, dataDescription, headerRow)
-    # handle all these new return values in mainPythonProcess
-    # might have to tweak a test or two further down the line for this new number of columns. 
+        except:
+            # if this is not a column we've previously identified as having missing values, do nothing
+    return columnMatrix
 
 
-# This function is just a slightly tweaked version from:
-# http://stackoverflow.com/a/25562948
-def stackOverflowImpute(dataDescription, columnMatrix):
-    rowMatrix = zip(*columnMatrix)
 
-    import pandas as pd
-    import numpy as np
+# This function is in the process of being deprecated. 
+# # This function is just a slightly tweaked version from:
+# # http://stackoverflow.com/a/25562948
+# def stackOverflowImpute(dataDescription, columnMatrix):
+#     rowMatrix = zip(*columnMatrix)
 
-    from sklearn.base import TransformerMixin
+#     import pandas as pd
+#     import numpy as np
 
-    class DataFrameImputer(TransformerMixin):
+#     from sklearn.base import TransformerMixin
 
-        def __init__(self):
-            """Impute missing values.
+#     class DataFrameImputer(TransformerMixin):
 
-            Columns of dtype object are imputed with the most frequent value 
-            in column.
+#         def __init__(self):
+#             """Impute missing values.
 
-            Columns of other types are imputed with mean of column.
+#             Columns of dtype object are imputed with the most frequent value 
+#             in column.
 
-            """
-        def fit(self, X, y=None):
+#             Columns of other types are imputed with mean of column.
 
-            self.fill = pd.Series(
-                # for categorical columns, use the most frequently occurring value for that column
-                [ X[c].value_counts().index[0]
-                # for continuous columns, use the median value for that column
-                if X[c].dtype == np.dtype('O') else X[c].median() for c in X ],
-                index=X.columns
-            )
+#             """
+#         def fit(self, X, y=None):
 
-            return self
+#             self.fill = pd.Series(
+#                 # for categorical columns, use the most frequently occurring value for that column
+#                 [ X[c].value_counts().index[0]
+#                 # for continuous columns, use the median value for that column
+#                 if X[c].dtype == np.dtype('O') else X[c].median() for c in X ],
+#                 index=X.columns
+#             )
 
-        def transform(self, X, y=None):
-            return X.fillna(self.fill)
+#             return self
 
-    # our imputer assumes a format of pandas DataFrames
-    X = pd.DataFrame(rowMatrix)
-    X = DataFrameImputer().fit_transform(X)
+#         def transform(self, X, y=None):
+#             return X.fillna(self.fill)
 
-    # convert from pandas DataFrame back to a standard python list
-    X = X.values.tolist()
+#     # our imputer assumes a format of pandas DataFrames
+#     X = pd.DataFrame(rowMatrix)
+#     X = DataFrameImputer().fit_transform(X)
 
-    return X
+#     # convert from pandas DataFrame back to a standard python list
+#     X = X.values.tolist()
+
+#     return X
 
 
 # cleanAll is the function that will be publicly invoked. 
@@ -170,8 +188,17 @@ def cleanAll(dataDescription, matrix, headerRow ):
     cleanedColumnMatrix = standardizedResults[ 0 ]
     columnsWithMissingValues = standardizedResults[ 1 ]
 
-    newColumnsList = createImputedColumns( cleanedColumnMatrix, dataDescription, columnsWithMissingValues, headerRow )
+    # [ columnMatrix, dataDescription, columnsWithMissingValues, headerRow ]
+    newColumnsResults = createImputedColumns( cleanedColumnMatrix, dataDescription, columnsWithMissingValues, headerRow )
+    cleanedColumnMatrix = newColumnsResults[ 0 ]
+    dataDescription = newColumnsResults[ 1 ]
+    columnsWithMissingValues = newColumnsResults[ 2 ]
+    headerRow = newColumnsResults[ 3 ]
+    cleanedColumnMatrix = impute( cleanedColumnMatrix )
 
-    return cleanedColumnMatrix
+    # return all the new values (X, dataDescription, headerRow)
+    # handle all these new return values in mainPythonProcess
+    # might have to tweak a test or two further down the line for this new number of columns. 
+    return [ cleanedColumnMatrix, dataDescription, headerRow ]
     # results = stackOverflowImpute(dataDescription, cleanedColumnMatrix)
     # return results
