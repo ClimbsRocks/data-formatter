@@ -188,17 +188,16 @@ def cleanAll(dataDescription, matrix, headerRow ):
     cleanedColumnMatrix = standardizedResults[ 0 ]
     columnsWithMissingValues = standardizedResults[ 1 ]
 
-    # [ columnMatrix, dataDescription, columnsWithMissingValues, headerRow ]
     newColumnsResults = createImputedColumns( cleanedColumnMatrix, dataDescription, columnsWithMissingValues, headerRow )
+
     cleanedColumnMatrix = newColumnsResults[ 0 ]
     dataDescription = newColumnsResults[ 1 ]
     columnsWithMissingValues = newColumnsResults[ 2 ]
     headerRow = newColumnsResults[ 3 ]
-    cleanedColumnMatrix = impute( cleanedColumnMatrix )
+
+    cleanedColumnMatrix = impute( cleanedColumnMatrix, dataDescription, columnsWithMissingValues )
 
     # return all the new values (X, dataDescription, headerRow)
-    # handle all these new return values in mainPythonProcess
-    # might have to tweak a test or two further down the line for this new number of columns. 
     return [ cleanedColumnMatrix, dataDescription, headerRow ]
     # results = stackOverflowImpute(dataDescription, cleanedColumnMatrix)
     # return results

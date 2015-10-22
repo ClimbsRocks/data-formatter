@@ -54,7 +54,13 @@ if(test):
     messageParent([dataDescription, headerRow, trainingLength, X], 'concat.py')
 
 # 2. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
-X = imputingMissingValues.cleanAll(dataDescription, trainingLength, X)
+imputedValuesResults = imputingMissingValues.cleanAll(dataDescription, X, headerRow )
+X = imputedValuesResults[ 0 ]
+dataDescription = imputedValuesResults[ 1 ]
+headerRow = imputedValuesResults[ 2 ]
+# handle all these new return values in mainPythonProcess
+# might have to tweak a test or two further down the line for this new number of columns. 
+
 
 if(test):
     messageParent([X, idColumn, outputColumn], 'imputingMissingValues.py')
@@ -78,6 +84,7 @@ if(test):
     # feature selection helps avoid such cases by only including the data that is actually predictive. 
     # this helps models train faster, and is actually more predictive in the end since there's less noise to distract from the valuable features. 
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
+
 featureSelectingResults = featureSelecting.select(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
 X = featureSelectingResults[0]
 filteredHeaderRow = featureSelectingResults[1]
