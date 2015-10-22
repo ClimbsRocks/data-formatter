@@ -12,8 +12,9 @@ emptyEquivalents = ["na","n/a","none",'',"undefined","missing","blank","empty", 
 # removes all strings (values that can't be converted to a float) from "Numerical" columns
 # removes all values in the emptyEquivalents array from categorical columns
 # doesn't touch ID or Output columns
-def standardizeMissingValues(dataDescription, trainingLength, matrix ):
-    cleanedMatrix = []
+def standardizeMissingValues(dataDescription, matrix ):
+    cleanedColumnMatrix = []
+    columnsWithMissingValues = {}
 
     # split data into columns
     columns = zip(*matrix)
@@ -32,22 +33,60 @@ def standardizeMissingValues(dataDescription, trainingLength, matrix ):
                     # remove all non-numerical values
                     # Note: passing in None breaks Imputer in the next step. Passing in np.nan works with Imputer
                     cleanColumn.append( np.nan )
+                    # and keep track of this column as having msising values
+                    columnsWithMissingValues[idx] = True
+
         elif dataDescription[idx] == "categorical":
             # if it's categorical
             for value in column:
                 if str(value).lower() in emptyEquivalents:
                     # replace all values we have defined above as being equivalent to a missing value with the standardized version the inputer will recognize next: np.nan
                     cleanColumn.append( np.nan )
+                    # and keep track of this column as having msising values
+                    columnsWithMissingValues[idx] = True
+                
                 else:
                     cleanColumn.append(value)
 
-        cleanedMatrix.append( cleanColumn )
-    return cleanedMatrix
+        cleanedColumnMatrix.append( cleanColumn )
+    return [ cleanedColumnMatrix, columnsWithMissingValues ]
+
+def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValues, headerRow ):
+    # we want to keep track of the total number of imputed values for each row
+    # but it only makes sense to have a total column if we have more than 1 column with missing values
+    # we can probably get rid of this with robust feature selection
+    if( len( columnsWithMissingValues.keys() ) > 1 ):
+        # create a new empty list that is filled with blank values (None) that is the length of a standard column
+        emptyList = [ 0 ] * len( columnMatrix[0] )
+        columnMatrix.append( emptyList )
+        # keep track of this new column in our headerRow and our dataDescription row
+        dataDescription.append( 'Continuous' )
+        headerRow.append( 'countOfMissingValues' )
+    
+    for colIndex in columnsWithMissingValues:
+        # create a copy of the existing column and append it to the end. this way we can modify one column, but leave the other untouched
+        newColumn = list( columnMatrix[ colIndex ])
+        columnMatrix.append( newColumn )
+
+        # include prettyNames for dataDescription and header row
+        dataDescription.append( dataDescription[colIndex] ) 
+        headerRow.append( 'missing' + headerRow[ colIndex ] )
+
+        # create a new empty column to hold information on whether this row has an imputed value for the current column
+        emptyList = [ 0 ] * len( columnMatrix[0] )
+        columnMatrix.append( emptyList )
+        # keep track of this new column in our headerRow and our dataDescription row
+        dataDescription.append( 'Continuous' )
+        headerRow.append( 'missing' + headerRow[ colIndex ] )
+
+    return [ columnMatrix, dataDescription, columnsWithMissingValues, headerRow ]
+
+
 
 # This function is just a slightly tweaked version from:
 # http://stackoverflow.com/a/25562948
-def stackOverflowImpute(dataDescription, matrix):
-    rowMatrix = zip(*matrix)
+def stackOverflowImpute(dataDescription, columnMatrix):
+    rowMatrix = zip(*columnMatrix)
 
     import pandas as pd
     import numpy as np
@@ -92,7 +131,13 @@ def stackOverflowImpute(dataDescription, matrix):
 
 # cleanAll is the function that will be publicly invoked. 
 # cleanAll defers to the standardize and impute functions above
-def cleanAll(dataDescription, trainingLength, matrix ):
-    cleanedMatrix = standardizeMissingValues(dataDescription, trainingLength, matrix)
-    results = stackOverflowImpute(dataDescription, cleanedMatrix)
-    return results
+def cleanAll(dataDescription, matrix, headerRow ):
+    standardizedResults = standardizeMissingValues(dataDescription, matrix)
+    cleanedColumnMatrix = standardizedResults[ 0 ]
+    columnsWithMissingValues = standardizedResults[ 1 ]
+
+    newColumnsList = createImputedColumns( cleanedColumnMatrix, dataDescription, columnsWithMissingValues, headerRow )
+
+    return cleanedColumnMatrix
+    # results = stackOverflowImpute(dataDescription, cleanedColumnMatrix)
+    # return results
