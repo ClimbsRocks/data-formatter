@@ -87,15 +87,19 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
     return [ columnMatrix, dataDescription, columnsWithMissingValues, headerRow ]
 
 # TODO:
-    # make columnsWithMissingValues into a map-
-        # original (untouched) column index is the key
-        # cloned (with imputed values) column index is the value
-            # we just know that one over from that cloned column is the boolean flag column for that column
-        # have another property for totalMissingValuesCount, pointing to whichever columnIndex is appropriate there.
-
     # redefine impute
-        # get median value for continuous columns
-        # get mode value for categorical columns
+def impute( columnMatrix, dataDescription, columnsWithMissingValues ):
+    # fillInVals will have keys for each column index, and values for what the filled in value should be
+        # this way we only need to check continuous or categorical once
+    fillInVals = {}
+    for colIndex, column in columnMatrix:
+        if dataDescription[ colIndex ] == 'continuous':
+            # the median value
+            fillInVals[ colIndex ] = np.median(np.array(column))
+        elif dataDescription[ colIndex ] == 'categorical':
+            # the mode value
+            fillInVals[ colIndex ] = max(set(values), key=values.count)
+    medianVal = np.median(np.array())
         # iterate through columns list, starting at the index position of the new columns
             # check to make sure this colIndex is indeed a cloned column with missing values (not a column holding a boolean flag for whether a missing value was found)
             # if so
