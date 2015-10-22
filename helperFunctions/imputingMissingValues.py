@@ -81,6 +81,30 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
 
     return [ columnMatrix, dataDescription, columnsWithMissingValues, headerRow ]
 
+# TODO:
+    # redefine impute
+        # get median value for continuous columns
+        # get mode value for categorical columns
+        # iterate through columns list, starting at the index position of the new columns
+            # check to make sure this colIndex is indeed a cloned column with missing values (not a column holding a boolean flag for whether a missing value was found)
+            # if so
+                # iterate through list, with rowIndex
+                    # for each item:
+                        # check for missing values. if they exist:
+                            # replace missing value
+                            # find the flag column for this column in columnsWithMissingValues dictionary
+                                # set that value equal to 1
+                            # find the column holding the count of all missing values for that row
+                                # increment that value by 1
+    # make columnsWithMissingValues into a map-
+        # original (untouched) column index is the key
+        # cloned (with imputed values) column index is the value
+            # we just know that one over from that cloned column is the boolean flag column for that column
+        # have another property for totalMissingValuesCount, pointing to whichever columnIndex is appropriate there.
+
+    # return all the new values (X, dataDescription, headerRow)
+    # handle all these new return values in mainPythonProcess
+    # might have to tweak a test or two further down the line for this new number of columns. 
 
 
 # This function is just a slightly tweaked version from:
