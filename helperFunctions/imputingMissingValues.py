@@ -32,7 +32,7 @@ def standardizeMissingValues(dataDescription, matrix ):
                 except:
                     # remove all non-numerical values
                     # Note: passing in None breaks Imputer in the next step. Passing in np.nan works with Imputer
-                    cleanColumn.append( np.nan )
+                    cleanColumn.append( None )
                     # and keep track of this column as having msising values
                     columnsWithMissingValues[idx] = True
 
@@ -41,7 +41,7 @@ def standardizeMissingValues(dataDescription, matrix ):
             for value in column:
                 if str(value).lower() in emptyEquivalents:
                     # replace all values we have defined above as being equivalent to a missing value with the standardized version the inputer will recognize next: np.nan
-                    cleanColumn.append( np.nan )
+                    cleanColumn.append( None )
                     # and keep track of this column as having msising values
                     columnsWithMissingValues[idx] = True
                 
@@ -66,23 +66,28 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
         columnsWithMissingValues[ 'countOfMissingValues' ] = len(headerRow) - 1
     
     for colIndex in columnsWithMissingValues:
-        # create a copy of the existing column and append it to the end. this way we can modify one column, but leave the other untouched
-        newColumn = list( columnMatrix[ colIndex ])
-        columnMatrix.append( newColumn )
+        try:
+            # we have countOfMissingValues as a key in columnsWithMissingValues, so we need to skip over that
+            colIndex = int(colIndex)
+            # create a copy of the existing column and append it to the end. this way we can modify one column, but leave the other untouched
+            newColumn = list( columnMatrix[ colIndex ])
+            columnMatrix.append( newColumn )
 
-        # include prettyNames for dataDescription and header row
-        dataDescription.append( dataDescription[colIndex] ) 
-        headerRow.append( 'missing' + headerRow[ colIndex ] )
+            # include prettyNames for dataDescription and header row
+            dataDescription.append( dataDescription[colIndex] ) 
+            headerRow.append( 'imputedValues' + headerRow[ colIndex ] )
 
-        # we now have a map between the original (untouched) column index, and the new cloned (with imputed values) column index
-        columnsWithMissingValues[ colIndex ] = len( headerRow ) -1
+            # we now have a map between the original (untouched) column index, and the new cloned (with imputed values) column index
+            columnsWithMissingValues[ colIndex ] = len( headerRow ) -1
 
-        # create a new empty column to hold information on whether this row has an imputed value for the current column
-        emptyList = [ 0 ] * len( columnMatrix[0] )
-        columnMatrix.append( emptyList )
-        # keep track of this new column in our headerRow and our dataDescription row
-        dataDescription.append( 'Continuous' )
-        headerRow.append( 'missing' + headerRow[ colIndex ] )
+            # create a new empty column to hold information on whether this row has an imputed value for the current column
+            emptyList = [ 0 ] * len( columnMatrix[0] )
+            columnMatrix.append( emptyList )
+            # keep track of this new column in our headerRow and our dataDescription row
+            dataDescription.append( 'Continuous' )
+            headerRow.append( 'missing' + headerRow[ colIndex ] )
+        except:
+            pass
 
     return [ columnMatrix, dataDescription, columnsWithMissingValues, headerRow ]
 
@@ -94,16 +99,20 @@ def impute( columnMatrix, dataDescription, colMap ):
     # fillInVals will have keys for each column index, and values for what the filled in value should be
         # this way we only need to check continuous or categorical once
     fillInVals = {}
-    for colIndex, column in columnMatrix:
+    for colIndex, column in enumerate(columnMatrix):
         # FUTURE: we can calculate this for only columns that are actually missing data
         if dataDescription[ colIndex ] == 'continuous':
             # the median value
             fillInVals[ colIndex ] = np.median(np.array(column))
         elif dataDescription[ colIndex ] == 'categorical':
             # the mode value
-            fillInVals[ colIndex ] = max(set(values), key=values.count)
+            fillInVals[ colIndex ] = max(set(column), key=column.count)
 
     for colIndex, column in enumerate(columnMatrix):
+        if dataDescription[ colIndex ] == 'categorical':
+            isCategorical = True
+        else:
+            isCategorical = False
         # iterate through columns list, starting at the index position of the new columns
         try:
             # check to make sure this colIndex is indeed a cloned column with missing values (not a column holding a boolean flag for whether a missing value was found)
@@ -115,7 +124,16 @@ def impute( columnMatrix, dataDescription, colMap ):
                 # iterate through list, with rowIndex
                 # for each item:
                 # check for missing values. if they exist:
-                if val == np.nan:
+                if value == None:
+
+                    # there are several components we must balance here:
+                        # np.median does not like columns with mixed values (numbers and strings)
+                        # the random forest classifier does not appear to like None or nan
+                        # and of course, we need to clean the input (no strings in numerical columns, have a reliable missingValues value we can look for, etc.)
+                    # we need to remove all np.nan from our input, otherwise the classifier fails later on. 
+                    columnMatrix[ colIndex ][ rowIndex ] = "NA"
+
+
                     # replace missing value in the imputedColumn we have appended at the right-hand side of the dataset for each column with missing values
                     # replace it for this row that we are iterating over
                     # replace it with the previously calculated value for this column
@@ -126,9 +144,10 @@ def impute( columnMatrix, dataDescription, colMap ):
                     columnMatrix[ imputedColIndex + 1 ][ rowIndex ] = 1
                     # find the column holding the count of all missing values for that row
                         # increment that value by 1
-                    columnMatrix[ countOfMissingValsColIndex ] += 1
+                    columnMatrix[ countOfMissingValsColIndex ][ rowIndex ] += 1
 
         except:
+            pass
             # if this is not a column we've previously identified as having missing values, do nothing
     return columnMatrix
 
@@ -196,8 +215,9 @@ def cleanAll(dataDescription, matrix, headerRow ):
     headerRow = newColumnsResults[ 3 ]
 
     cleanedColumnMatrix = impute( cleanedColumnMatrix, dataDescription, columnsWithMissingValues )
+    cleanedRowMatrix = zip(*cleanedColumnMatrix)
 
     # return all the new values (X, dataDescription, headerRow)
-    return [ cleanedColumnMatrix, dataDescription, headerRow ]
+    return [ cleanedRowMatrix, dataDescription, headerRow ]
     # results = stackOverflowImpute(dataDescription, cleanedColumnMatrix)
     # return results
