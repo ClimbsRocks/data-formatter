@@ -96,17 +96,40 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
 def impute( columnMatrix, dataDescription, colMap ):
     # we have one column dedicated just to holding the count of the total number of missing values for this row
     countOfMissingValsColIndex = colMap[ 'countOfMissingValues' ]
+
+
     # fillInVals will have keys for each column index, and values for what the filled in value should be
         # this way we only need to check continuous or categorical once
     fillInVals = {}
     for colIndex, column in enumerate(columnMatrix):
         # FUTURE: we can calculate this for only columns that are actually missing data
         if dataDescription[ colIndex ] == 'continuous':
+        # TODO: calculate median myself
+            # copy the list
+            copiedList = list(column)
+            # sort the list
+            copiedList.sort()
+            # find the index of None
+            noneIndex = copiedList.index(None)
+                # might have to sort the list descending or ascending for the code to be obvious
+            # divide that number in half (make it an int)
+            medianIndex = int( noneIndex / 2 )
+            # access that position in the copied & sorted list
+            medianVal = copiedList[ medianIndex ]
+            # store that number into fillInVals
+            fillInVals[ colIndex ] = medianVal
+            # delete that sorted list
+
+            # the np way of doing this assumes that None is a value, and includes it when calculating the median. 
+            # what we really want is the median value excluding the missing values
             # the median value
-            fillInVals[ colIndex ] = np.median(np.array(column))
+            # fillInVals[ colIndex ] = np.median(np.array(column))
         elif dataDescription[ colIndex ] == 'categorical':
             # the mode value
             fillInVals[ colIndex ] = max(set(column), key=column.count)
+
+    printParent('fillInVals')
+    printParent(fillInVals)
 
     for colIndex, column in enumerate(columnMatrix):
         if dataDescription[ colIndex ] == 'categorical':
