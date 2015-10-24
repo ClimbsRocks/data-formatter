@@ -105,6 +105,7 @@ def impute( columnMatrix, dataDescription, colMap ):
         # do this only for columns with missing values
     for colIndex in colMap:
         try:
+            # we have a string in our colMap obj (countOfMissingValues), so we need to try to convert it into an int to make sure we're actually on a numerical key representing a column number
             colIndex = int( colIndex )
             # FUTURE: we can calculate this for only columns that are actually missing data
             if dataDescription[ colIndex ] == 'continuous':
@@ -113,12 +114,15 @@ def impute( columnMatrix, dataDescription, colMap ):
                 copiedList = list( columnMatrix[ colIndex ])
                 printParent('made it into if statement for continuous')
                 # sort the list
-                copiedList.sort()
+                copiedList.sort(reverse=True)
                 # find the index of None
                 # printParent(copiedList)
                 for rowIndex, value in enumerate(copiedList):
                     if value == None:
                         noneIndex = rowIndex
+                        printParent('noneIndex')
+                        printParent(noneIndex)
+                        break
                 # noneIndex = copiedList.index(None)
                     # might have to sort the list descending or ascending for the code to be obvious
                 # divide that number in half (make it an int)
@@ -134,6 +138,7 @@ def impute( columnMatrix, dataDescription, colMap ):
                 # the median value
                 # fillInVals[ colIndex ] = np.median(np.array(column))
             elif dataDescription[ colIndex ] == 'categorical':
+                column = columnMatrix[ colIndex ]
                 # the mode value
                 fillInVals[ colIndex ] = max(set(column), key=column.count)
         except: 
