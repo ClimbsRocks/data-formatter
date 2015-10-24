@@ -82,10 +82,9 @@ module.exports = function() {
 
     var emptyEquivalents = ["na","n/a","none","","undefined","missing","blank","empty", undefined, NaN];
 
-    it('should not change the length or width of the matrix', function(done) {
+    it('should not change the length of the matrix', function(done) {
 
       expect(results[0].length).to.equal(251503)
-      expect(results[0][0].length).to.equal(10)
       done();
     });
 
@@ -125,8 +124,8 @@ module.exports = function() {
       // previously computed value
       // right now the answer matches exactly, but i want to leave some wiggle room if we adjust our methodology at all. 
 
-      console.log('expectedSum', 1629324335);
-      console.log('columnSums',columnSums);
+      // console.log('expectedSum', 1629324335);
+      // console.log('columnSums',columnSums);
       expect(columnSums).to.contain(1629324335)
       // expect(sumOfMonthlyIncomeColumn).to.be.within(1629324335 * .98, 1629324335 * 1.02);
       done();
@@ -139,13 +138,13 @@ module.exports = function() {
 
       // TODO: simply check sums again
       for (var i = 0; i < results[0].length; i++) {
-        if(results[0][i][9] === '0') {
+        if(results[0][i][11] === '0') {
           countNumDependentsIsZero++;
         }
       }
       // previously computed value
-      console.log('countNumDependentsIsZero', countNumDependentsIsZero);
-      console.log('expected:',152070);
+      // console.log('countNumDependentsIsZero', countNumDependentsIsZero);
+      // console.log('expected:',152070);
       expect(countNumDependentsIsZero).to.equal(152070)
       // expect(columnSums).to.contain(152070)
       done();
