@@ -6,7 +6,10 @@ emptyEquivalents = ["na","n/a","none",'',"","undefined","missing","blank","empty
 def remove( rowMatrix, dataDescription, headerRow ):
     columnsToDelete = {}
     columnMatrix = zip(*rowMatrix)
+    cleanedColumns = []
+
     for colIndex, column in enumerate( columnMatrix ):
+        column = list(column)
         # it is perfectly fine for continuous columns to have unique values
         # it is only for categorical data that unique values become uninteresting
         if dataDescription[ colIndex ] == 'categorical':
@@ -14,12 +17,13 @@ def remove( rowMatrix, dataDescription, headerRow ):
             # count the values in this column
             columnCounts = {}
             for rowValue in column:
+                rowValue = str(rowValue)
                 try:
                     columnCounts[ rowValue ] += 1
                 except:
                     columnCounts[ rowValue ] = 1
 
-            keepColumn
+            keepColumn = False
             # now go through and remove values that appear only once
             for rowIndex, rowValue in enumerate( column ):
                 if columnCounts[ rowValue ] == 1:
@@ -37,13 +41,11 @@ def remove( rowMatrix, dataDescription, headerRow ):
             if not keepColumn:
                 # flag this as a column to delete since we didn't find a single useful value in it (such as a column of raw addresses or raw names- data like that is only useful for feature engineering, not raw by itself)
                 columnsToDelete[ colIndex ] = colIndex
+        cleanedColumns.append( column )
 
     for colIndex in columnsToDelete:
-        del columnMatrix[ colIndex ]
+        del cleanedColumns[ colIndex ]
         del headerRow[ colIndex ]
         del dataDescription[ colIndex ]
-                # TODO: Delete this column
-                # delete this entry from headerRow
-                # delete this entry from dataDescription
-    X = zip(*columnMatrix)
+    X = zip(*cleanedColumns)
     return [X, dataDescription, headerRow]
