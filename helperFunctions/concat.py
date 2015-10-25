@@ -47,13 +47,27 @@ def inputFiles(trainingFile, testingFile):
 
         testingRows = csv.reader(testingInput, dialect)
         firstRow = True
+
+        # set missingOutputIndex equal to infinity to start with
+        missingOutputIndex = float('inf')
+
         for row in testingRows:
             if firstRow:
+                # check to see that we have the same number of columns in the testing set as the training set
+                if len( row ) != len( outputData[ 0 ] ):
+                    printParent('we noticed that the testing and training datasets have different numbers of columns')
+                    printParent('we are going to assume that the "Output" column(s) is(are) simply not included for the testing dataset.')
+                    # if not, assume that the missing column is the output column, and store that index position
+                    missingOutputIndex = dataDescription.index('output')
                 # skip the first row
                 firstRow = False
             else:
                 trimmedRow = []
                 for idx, val in enumerate(row):
+                    # if this is the missing column that was supposed to be the output column, move the idx variable up by one to account for skipping over that column
+                        # the idx variable is only used to look for whether this is the id or output column, and is not used to determine hte value
+                    if idx >= missingOutputIndex:
+                        idx = idx + 1
                     if dataDescription[idx] == 'id':
                         idColumn.append(val)
                     elif dataDescription[idx] == 'output':
