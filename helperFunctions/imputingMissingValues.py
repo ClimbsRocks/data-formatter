@@ -173,18 +173,33 @@ def impute( columnMatrix, dataDescription, colMap ):
     printParent(fillInVals)
 
     # TODO:
-        # remove any imputedValues columns that might hold None values
-            # this happens when the median or mode value for that column is None, i.e., when we are just missing TONS of data
-        # 1. remove the imputedValuesCOLNAME and missingCOLNAME columns
-        # 2. adjust indices in colMap
-            # iterate through the keys of colMap. for each one:
-                # if the value is greater than the index of the column we are deleting
-                    # reduce that value by 2 (one for the imputedValuesCOLNAME column and one for the missingCOLNAME column)
-        # 3. see if we still need countOfMissingValues column
-            # if not
-                # delete that column
-                # reduce indices of all relevant values in colMap, similarly to what we did for the previous removal step
+    # remove any imputedValues columns that might hold None values
+    # this happens when the median or mode value for that column is None, i.e., when we are just missing TONS of data
+    for key in fillInVals:
+        if fillInVals[key] == None:
+            # 1. remove the imputedValuesCOLNAME and missingCOLNAME columns
+            printParent('found a fill in val with a value of None')
+            # the key right now is going to be the column index of the original column in the dataset
+            # colMap takes that key and turns it into the location of the copied columns
+            colToRemoveIndex = colMap[ key ]
 
+            # we added in two columns for each column with missing data: one for the imputed values, and one just as a flag noting that this column was missing a value
+            # therefore, we need to delete two columns
+            del columnMatrix[ colToRemoveIndex ]
+            del columnMatrix[ colToRemoveIndex ]
+    # 2. adjust indices in colMap
+            # iterate through the keys of colMap. for each one:
+            for key in colMap:
+                # if the value is greater than the index of the column we are deleting
+                if colMap[ key ] > colToRemoveIndex:
+                    # reduce that value by 2 (one for the imputedValuesCOLNAME column and one for the missingCOLNAME column)
+                    colMap[ key ] = colMap[ key ] -2
+    # 3. see if we still need countOfMissingValues column
+        # if not
+            # delete that column
+            # reduce indices of all relevant values in colMap, similarly to what we did for the previous removal step
+            printParent('fillInVals')
+            printParent(fillInVals)
     for colIndex, column in enumerate(columnMatrix):
         if dataDescription[ colIndex ] == 'categorical':
             isCategorical = True
