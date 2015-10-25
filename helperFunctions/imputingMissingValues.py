@@ -125,6 +125,10 @@ def impute( columnMatrix, dataDescription, colMap ):
     # we have one column dedicated just to holding the count of the total number of missing values for this row
     countOfMissingValsColIndex = colMap[ 'countOfMissingValues' ]
 
+    # TODO TODO: reorder these functions
+        # calculate the fillInVals first, in it's own function
+        # then, for each value in fillInVals that is not None, create the missing columns in it's own function
+        # then, impute the missing values in it's own function
 
     # fillInVals will have keys for each column index, and values for what the filled in value should be
         # this way we only need to check continuous or categorical once
@@ -172,7 +176,7 @@ def impute( columnMatrix, dataDescription, colMap ):
     printParent('fillInVals')
     printParent(fillInVals)
 
-    # TODO:
+    # NOT TODO:
         # remove any imputedValues columns that might hold None values
             # this happens when the median or mode value for that column is None, i.e., when we are just missing TONS of data
         # 1. remove the imputedValuesCOLNAME and missingCOLNAME columns
