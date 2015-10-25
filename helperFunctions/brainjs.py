@@ -25,8 +25,16 @@ def format( X, y, idColumn, args ):
 
         # we might need to wrap output in a list if the output is a single number, like we have. 
         rowObj['output'] = []
-        # grab the output value from the y dataset saved earlier
-        yRow = y[ rowIndex ]
+
+        # if a y value exists for this rowIndex, grab it!
+        # otherwise, it's likely because the user did not pass in a column for y values for the output dataset, so we'll set it equal to the empty string instead
+        try:
+            # grab the output value from the y dataset saved earlier
+            yRow = y[ rowIndex ]
+        except:
+            yRow = ""
+
+        # designed to handle the possibility of multiple output columns
         if( isinstance( yRow, list )):
             rowObj['output'].extend( yRow )
         else:
