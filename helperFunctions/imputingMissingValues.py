@@ -5,7 +5,6 @@ from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
 
-imputer = preprocessing.Imputer(missing_values="NaN", strategy='median', verbose=10)
 emptyEquivalents = ["na","n/a","none",'',"","undefined","missing","blank","empty", None]
 
 # standardizes all missing values to None
@@ -16,21 +15,9 @@ def standardizeMissingValues(dataDescription, matrix ):
     cleanedColumnMatrix = []
     columnsWithMissingValues = {}
 
-    printParent('length of first row of input matrix for standardizeMissingValues')
-    printParent(len(matrix[890]))
-    printParent(len(matrix[892]))
-
-    printParent('length of entire matrix:')
-    printParent(len(matrix))
-
     # split data into columns
     columns = zip(*matrix)
-    # columns = np.array(matrix)
-    # printParent('columns.shape before transpose')
-    # printParent( columns.shape )
-    # columns = columns.transpose().tolist()
-    printParent('length of columns array after zip splatting the matrix from rows into columns:')
-    printParent(len(columns))
+
     # iterate through the columns. for each one:
     for idx, column in enumerate(columns):
         cleanColumn = []
@@ -44,7 +31,6 @@ def standardizeMissingValues(dataDescription, matrix ):
                     cleanColumn.append( float( num ) )
                 except:
                     # remove all non-numerical values
-                    # Note: passing in None breaks Imputer in the next step. Passing in np.nan works with Imputer
                     cleanColumn.append( None )
                     # and keep track of this column as having msising values
                     columnsWithMissingValues[idx] = True
@@ -60,20 +46,66 @@ def standardizeMissingValues(dataDescription, matrix ):
                 
                 else:
                     cleanColumn.append(value)
-        else:
-            printParent('***************************************************************************')
-            printParent('')
-            printParent('there appears to be a typo in one of the dataDescription values')
-            printParent('we expected a value of "continuous" or "categorical", and instead received:')
-            printParent(dataDescription[ idx ])
-            printParent('using a 0-indexed system, this unexpected value occurred at index position:')
-            printParent(idx)
-            printParent('')
-            printParent('***************************************************************************')
 
         cleanedColumnMatrix.append( cleanColumn )
 
     return [ cleanedColumnMatrix, columnsWithMissingValues ]
+
+
+# TODO TODO: reorder these functions
+    # calculate the fillInVals first, in it's own function
+    # then, for each value in fillInVals that is not None, create the missing columns in it's own function
+    # then, impute the missing values in it's own function
+def calculateReplacementValues( columnMatrix, columnsWithMissingValues, dataDescription ):
+
+    # fillInVals will have keys for each column index, and values for what the filled in value should be
+        # this way we only need to check continuous or categorical once
+    fillInVals = {}
+    # for colIndex, column in enumerate(columnMatrix):
+        # do this only for columns with missing values
+    for colIndex in columnsWithMissingValues:
+        try:
+            # we have a string in our columnsWithMissingValues obj (countOfMissingValues), so we need to try to convert it into an int to make sure we're actually on a numerical key representing a column number
+            colIndex = int( colIndex )
+            if dataDescription[ colIndex ] == 'continuous':
+            # Manually calculating the median value
+            # the numpy way of doing this assumes that None is a number and includes it when calculating the median value
+            # whereas we want the median of all the values other than None. 
+                # copy the list
+                copiedList = list( columnMatrix[ colIndex ])
+                # sort the list
+                copiedList.sort(reverse=True)
+                # find the index of None
+                for rowIndex, value in enumerate(copiedList):
+                    if value == None:
+                        noneIndex = rowIndex
+                        break
+                        # TODO: delete the copied list
+                # divide that number in half (make it an int)
+                medianIndex = int( noneIndex / 2 )
+                # access that position in the copied & sorted list
+                medianVal = copiedList[ medianIndex ]
+                # store that number into fillInVals
+                fillInVals[ colIndex ] = medianVal
+                # TODO: delete that sorted/copied list
+
+            elif dataDescription[ colIndex ] == 'categorical':
+                column = columnMatrix[ colIndex ]
+                # the mode value
+                fillInVals[ colIndex ] = max(set(column), key=column.count)
+        except: 
+            pass
+            printParent('we failed to create a fillInVals value for this key')
+            printParent(colIndex)
+
+    # remove all values of None from fillInVals
+    # this way we will only create imputed columns if we can replace missing values in that column with something useful
+    fillInVals = { k: v for k, v in fillInVals.items() if v is not None}
+
+    printParent('fillInVals')
+    printParent(fillInVals)
+    return fillInVals
+
 
 def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValues, headerRow ):
     # we want to keep track of the total number of imputed values for each row
@@ -119,54 +151,6 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
 def impute( columnMatrix, dataDescription, colMap ):
     # we have one column dedicated just to holding the count of the total number of missing values for this row
     countOfMissingValsColIndex = colMap[ 'countOfMissingValues' ]
-
-    # TODO TODO: reorder these functions
-        # calculate the fillInVals first, in it's own function
-        # then, for each value in fillInVals that is not None, create the missing columns in it's own function
-        # then, impute the missing values in it's own function
-
-    # fillInVals will have keys for each column index, and values for what the filled in value should be
-        # this way we only need to check continuous or categorical once
-    fillInVals = {}
-    # for colIndex, column in enumerate(columnMatrix):
-        # do this only for columns with missing values
-    for colIndex in colMap:
-        try:
-            # we have a string in our colMap obj (countOfMissingValues), so we need to try to convert it into an int to make sure we're actually on a numerical key representing a column number
-            colIndex = int( colIndex )
-            if dataDescription[ colIndex ] == 'continuous':
-            # Manually calculating the median value
-            # the numpy way of doing this assumes that None is a number and includes it when calculating the median value
-            # whereas we want the median of all the values other than None. 
-                # copy the list
-                copiedList = list( columnMatrix[ colIndex ])
-                # sort the list
-                copiedList.sort(reverse=True)
-                # find the index of None
-                for rowIndex, value in enumerate(copiedList):
-                    if value == None:
-                        noneIndex = rowIndex
-                        break
-                        # TODO: delete the copied list
-                # divide that number in half (make it an int)
-                medianIndex = int( noneIndex / 2 )
-                # access that position in the copied & sorted list
-                medianVal = copiedList[ medianIndex ]
-                # store that number into fillInVals
-                fillInVals[ colIndex ] = medianVal
-                # delete that sorted list
-
-            elif dataDescription[ colIndex ] == 'categorical':
-                column = columnMatrix[ colIndex ]
-                # the mode value
-                fillInVals[ colIndex ] = max(set(column), key=column.count)
-        except: 
-            pass
-            printParent('we failed to create a fillInVals value for this key')
-            printParent(colIndex)
-
-    printParent('fillInVals')
-    printParent(fillInVals)
 
     # NOT TODO:
         # remove any imputedValues columns that might hold None values
@@ -228,19 +212,30 @@ def impute( columnMatrix, dataDescription, colMap ):
 # cleanAll is the function that will be publicly invoked. 
 # cleanAll defers to the standardize and impute functions above
 def cleanAll(dataDescription, matrix, headerRow ):
+
+    # standardize missing values to all be None
     standardizedResults = standardizeMissingValues(dataDescription, matrix)
     cleanedColumnMatrix = standardizedResults[ 0 ]
     columnsWithMissingValues = standardizedResults[ 1 ]
 
+    # calculate the replacement values for columns that are missing values
+    fillInVals = calculateReplacementValues( cleanedColumnMatrix, columnsWithMissingValues, dataDescription )
+
+    # create the new columns for each column that has a missing value
     newColumnsResults = createImputedColumns( cleanedColumnMatrix, dataDescription, columnsWithMissingValues, headerRow )
 
+    # store results from creating the imputed columns
     cleanedColumnMatrix = newColumnsResults[ 0 ]
     dataDescription = newColumnsResults[ 1 ]
     columnsWithMissingValues = newColumnsResults[ 2 ]
     headerRow = newColumnsResults[ 3 ]
 
+    # impute the missing values and boolean flags for the newly copied columns
     cleanedColumnMatrix = impute( cleanedColumnMatrix, dataDescription, columnsWithMissingValues )
+
+    # turn back into a row matrix from a column matrix
     cleanedRowMatrix = zip(*cleanedColumnMatrix)
 
     # return all the new values (X, dataDescription, headerRow)
+        # since we are adding on new columns, we have modified the dataDescription and headerRow variables
     return [ cleanedRowMatrix, dataDescription, headerRow ]
