@@ -28,10 +28,9 @@ var attachListeners = function(pyShell) {
       for( var key in message.text ) {
         fileNames[key] = message.text[key];
       }
-    } else {
-      // this seems to help a lot with having node's garbage collection kick in quickly.
-      message.text = null;
-    }
+    } 
+    // this seems to help a lot with having node's garbage collection kick in quickly.
+    message.text = null;
   });
 };
 

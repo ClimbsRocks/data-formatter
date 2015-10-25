@@ -7,7 +7,7 @@ module.exports = function() {
   describe('brain.js formatting', function() {
 
     var results;
-    var expectedInputLength;
+    // var expectedInputLength;
 
     before(function(done) {
       console.time('brainjs time');
@@ -20,11 +20,7 @@ module.exports = function() {
           results = message.text;
           console.timeEnd('brainjs time');
           done();
-        } else if( message.type === 'featureSelecting.py' ){ 
-          expectedInputLength = message.text[0].length;
-        } else {
-          message.text = [];
-        }
+        } 
       });
     });
 
@@ -96,6 +92,9 @@ module.exports = function() {
 
     // attempt to delete results
     after(function() {
+      for( var i = 0; i < results.length; i++) {
+        results[i] = null;
+      }
       results = null;
     });
 
