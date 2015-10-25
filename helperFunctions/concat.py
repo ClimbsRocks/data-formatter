@@ -62,7 +62,7 @@ def inputFiles(trainingFile, testingFile):
             if testingRowCount == 0:
 
                 # check to see that we have the same number of columns in the testing set as the training set
-                colsValidated = validation.testingHeaderRow( row, expectedRowLength )
+                colsValidated = validation.testingHeaderRow( row, expectedRowLength, headerRow )
                 if colsValidated == False:
                     # if not, assume that the missing column is the output column, and store that index position
                     missingOutputIndex = dataDescription.index('output')
