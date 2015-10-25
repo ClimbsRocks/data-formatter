@@ -107,11 +107,14 @@ def calculateReplacementValues( columnMatrix, columnsWithMissingValues, dataDesc
     return fillInVals
 
 
-def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValues, headerRow ):
+def createImputedColumns( columnMatrix, dataDescription, fillInVals, headerRow ):
+    # colMap will hold information on where to find the imputed and boolean flag coluns for each column with missing values in the initial dataset
+    colMap = {}
+
     # we want to keep track of the total number of imputed values for each row
     # but it only makes sense to have a total column if we have more than 1 column with missing values
     # we can probably get rid of this with robust feature selection
-    if( len( columnsWithMissingValues.keys() ) > 1 ):
+    if( len( fillInVals.keys() ) > 1 ):
         # create a new empty list that is filled with blank values (None) that is the length of a standard column
         emptyList = [ 0 ] * len( columnMatrix[0] )
         columnMatrix.append( emptyList )
@@ -119,36 +122,33 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
         dataDescription.append( 'Continuous' )
         headerRow.append( 'countOfMissingValues' )
         # keep track of where this new column is
-        columnsWithMissingValues[ 'countOfMissingValues' ] = len(headerRow) - 1
+        colMap[ 'countOfMissingValues' ] = len(headerRow) - 1
     
-    for colIndex in columnsWithMissingValues:
-        try:
-            # we have countOfMissingValues as a key in columnsWithMissingValues, so we need to skip over that
-            colIndex = int(colIndex)
-            # create a copy of the existing column and append it to the end. this way we can modify one column, but leave the other untouched
-            newColumn = list( columnMatrix[ colIndex ])
-            columnMatrix.append( newColumn )
+    for colIndex in fillInVals:
+        colIndex = int(colIndex)
+        # create a copy of the existing column and append it to the end. this way we can modify one column, but leave the original column untouched
+        # this allows us many more options, and then choose among them empirically using the feature selection module
+        newColumn = list( columnMatrix[ colIndex ])
+        columnMatrix.append( newColumn )
 
-            # include prettyNames for dataDescription and header row
-            dataDescription.append( dataDescription[colIndex] ) 
-            headerRow.append( 'imputedValues' + headerRow[ colIndex ] )
+        # include prettyNames for dataDescription and header row
+        dataDescription.append( dataDescription[colIndex] ) 
+        headerRow.append( 'imputedValues' + headerRow[ colIndex ] )
 
-            # we now have a map between the original (untouched) column index, and the new cloned (with imputed values) column index
-            columnsWithMissingValues[ colIndex ] = len( headerRow ) -1
+        # we now have a map between the original (untouched) column index, and the new cloned (with imputed values) column index
+        colMap[ colIndex ] = len( headerRow ) -1
 
-            # create a new empty column to hold information on whether this row has an imputed value for the current column
-            emptyList = [ 0 ] * len( columnMatrix[0] )
-            columnMatrix.append( emptyList )
-            # keep track of this new column in our headerRow and our dataDescription row
-            dataDescription.append( 'Continuous' )
-            headerRow.append( 'missing' + headerRow[ colIndex ] )
-        except:
-            pass
+        # create a new empty column to hold information on whether this row has an imputed value for the current column
+        emptyList = [ 0 ] * len( columnMatrix[0] )
+        columnMatrix.append( emptyList )
+        # keep track of this new column in our headerRow and our dataDescription row
+        dataDescription.append( 'Continuous' )
+        headerRow.append( 'missing' + headerRow[ colIndex ] )
 
-    return [ columnMatrix, dataDescription, columnsWithMissingValues, headerRow ]
+    return [ columnMatrix, dataDescription, colMap, headerRow ]
 
 
-def impute( columnMatrix, dataDescription, colMap ):
+def impute( columnMatrix, dataDescription, colMap, fillInVals ):
     # we have one column dedicated just to holding the count of the total number of missing values for this row
     countOfMissingValsColIndex = colMap[ 'countOfMissingValues' ]
 
@@ -222,7 +222,7 @@ def cleanAll(dataDescription, matrix, headerRow ):
     fillInVals = calculateReplacementValues( cleanedColumnMatrix, columnsWithMissingValues, dataDescription )
 
     # create the new columns for each column that has a missing value
-    newColumnsResults = createImputedColumns( cleanedColumnMatrix, dataDescription, columnsWithMissingValues, headerRow )
+    newColumnsResults = createImputedColumns( cleanedColumnMatrix, dataDescription, fillInVals, headerRow )
 
     # store results from creating the imputed columns
     cleanedColumnMatrix = newColumnsResults[ 0 ]
@@ -231,7 +231,7 @@ def cleanAll(dataDescription, matrix, headerRow ):
     headerRow = newColumnsResults[ 3 ]
 
     # impute the missing values and boolean flags for the newly copied columns
-    cleanedColumnMatrix = impute( cleanedColumnMatrix, dataDescription, columnsWithMissingValues )
+    cleanedColumnMatrix = impute( cleanedColumnMatrix, dataDescription, columnsWithMissingValues, fillInVals )
 
     # turn back into a row matrix from a column matrix
     cleanedRowMatrix = zip(*cleanedColumnMatrix)
