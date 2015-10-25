@@ -20,6 +20,7 @@ npm install data-formatter
   - This library will min-max normalize all values for neural networks, to fit their expected API of having only values between -1 and 1 (or 0 and 1 for brain.js).
   - `data-formatter` will go through and replace missing values for you! Missing values in Continuous data columns will get replaced by the median value. Missing data points in Categorical data columns will get replaced by the mode of that column (most frequently occurring value). 
   - Even better, it will test all options: replacing missing values, keeping missing values, and creating a boolean flag noting that there are missing values for this row. We then allow ourselves to be empiricists and simply see which features actually end up being useful through feature selection. 
+  - `data-formatter` will remove all categorical values that are present for only one observation, which makes them useless for making predictions. This speeds up training time and fights against overfitting. 
 
 #### Novice?
 Does some of that make your head spin? Have no idea what one (or more) of those bullet points means? No worries, that's the entire point of letting a library do this work for you! 
