@@ -36,6 +36,13 @@ concattedResults = concat.inputFiles(trainingFile, testingFile)
 dataDescription = concattedResults[0]
 headerRow = concattedResults[1]
 
+# save the pretty name for the ID column
+idHeader = headerRow[ dataDescription.index('id') ]
+# save the pretty name for the output column
+outputHeader = headerRow[ dataDescription.index('output') ]
+args['idHeader'] = idHeader
+args['outputHeader'] = outputHeader
+
 # we have already saved id and output into separate columns, so we need to remove those from our headerRow and dataDescription
 del headerRow[ dataDescription.index('id') ]
 dataDescription.remove('id')

@@ -26,6 +26,10 @@ def writeMetadata(y, idColumn, args, headerRow ):
 
     with open( y_train, 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
+
+        # write the pretty name for the header row to the output file
+        csvOutputFile.writerow( [args[ 'outputHeader' ]] )
+
         # grab only the rows that were part of our training file from the combined dataset
         for rowIdx, row in enumerate(y):
             if( rowIdx < args['trainingLength'] ):
@@ -33,6 +37,10 @@ def writeMetadata(y, idColumn, args, headerRow ):
 
     with open( id_train, 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
+
+        # write the pretty name for the header row to the output file
+        csvOutputFile.writerow( [args[ 'idHeader' ]] )
+
         # grab only the rows that were part of our training file from the combined dataset
         for rowIdx, row in enumerate(idColumn):
             if( rowIdx < args['trainingLength'] ):
@@ -40,6 +48,10 @@ def writeMetadata(y, idColumn, args, headerRow ):
 
     with open( id_test, 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
+
+        # write the pretty name for the header row to the output file
+        csvOutputFile.writerow( [args[ 'idHeader' ]] )
+
         # grab only the rows that were part of our testing file from the combined dataset
         for rowIdx, row in enumerate(idColumn):
             if( rowIdx >= args['trainingLength'] ):
