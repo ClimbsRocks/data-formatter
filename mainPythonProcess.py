@@ -13,13 +13,14 @@ from helperFunctions.sendMessages import obviousPrint
 # here are all the individual files that do most of the work. 
 # mainPythonProcess.py mostly just coordinates and lays out the order
 from helperFunctions import concat
-from helperFunctions import minMax
+from helperFunctions import removeUniques
 from helperFunctions import imputingMissingValues
 from helperFunctions import listToDict
 from helperFunctions import dictVectorizing
 from helperFunctions import featureSelecting
-from helperFunctions import writeToFile
+from helperFunctions import minMax
 from helperFunctions import brainjs
+from helperFunctions import writeToFile
 
 # grab arguments
 args = json.loads( sys.argv[1] )
@@ -30,6 +31,7 @@ test = args['test']
 # 1. concatenate together the training and testing data sets
 # this ensures that whatever transitions we perform in data-formatter will be equally applied to both the training and testing data set
 concattedResults = concat.inputFiles(trainingFile, testingFile)
+printParent('back in mainPythonProcess after concat.inputFiles')
 
 # dataDescription identifies whether each column is "output","id","categorical", or "continuous"
 dataDescription = concattedResults[0]
@@ -52,7 +54,17 @@ outputColumn = concattedResults[5]
 # throughout this file, we will send messages back to the parent process if we are currently running the tests. 
 if(test):
     messageParent([dataDescription, headerRow, trainingLength, X], 'concat.py')
-    
+
+# 2. Remove unique categorical values from the dataset
+    # Unique categorical values are items like an individual person's name
+    # Clearly, they are not broadly useful for making predictions, and contribute to overfitting
+noUniquesResults = removeUniques.remove( X, dataDescription, headerRow )
+X = noUniquesResults[ 0 ]
+
+# some columns may contain only unique values. In that case, we will delete those columns, which will have an effect on dataDescription and headerRow
+dataDescription = noUniquesResults[ 1 ]
+headerRow = noUniquesResults[ 2 ]
+
 
 # 2. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
     # we are including args only so that we can write to files at the intermediate stages for debugging
@@ -119,7 +131,7 @@ brainX = brainjs.format( X.tolist(), outputColumn, idColumn, args )
 if( test ):
     messageParent( brainX, 'brainjs.py' )
 
-printParent('we have written your fully transformed data to a file at:')
+printParent('we have written your fully transformed data to a folder at:')
 printParent( args['outputFolder'] )
 
 messageParent( '', 'finishedFormatting' )

@@ -100,8 +100,6 @@ def calculateReplacementValues( columnMatrix, columnsWithMissingValues, dataDesc
     # this way we will only create imputed columns if we can replace missing values in that column with something useful
     fillInVals = { k: v for k, v in fillInVals.items() if v is not None}
 
-    printParent('fillInVals')
-    printParent(fillInVals)
     return fillInVals
 
 
