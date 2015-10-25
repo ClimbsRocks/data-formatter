@@ -66,12 +66,22 @@ module.exports = function() {
 
   
 
-  // should leave one copy of the original data untouched, with np.nan values for the missing values
+  // should leave one copy of the original data untouched
     it('should leave one copy of the original data untouched', function() {
-      var expectedSums = [1360220735, 186653];
+      var expectedSums = [1360220735];
       expect( columnSums ).to.contain(expectedSums[0]);
-      expect( columnSums ).to.contain(expectedSums[1]);
-      // TODO: sum up columns
+      // expect( columnSums ).to.contain(expectedSums[1]);
+    });
+
+  // should leave one copy of the original data untouched
+    it('should remove unique values from the dataset', function() {
+      // two entries had values of 43 and 13 for the Dependents column
+      // no other entries had these values
+      // if we sum up that column before removing these values we get 186,653
+      // if we remove these two unique values, we get 186597
+      var expectedSums = [186597];
+      expect( columnSums ).to.contain(expectedSums[0]);
+      // expect( columnSums ).to.contain(expectedSums[1]);
     });
 
   // should create two new columns for every column with missing values
