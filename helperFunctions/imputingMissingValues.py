@@ -112,19 +112,14 @@ def impute( columnMatrix, dataDescription, colMap ):
             # TODO: calculate median myself
                 # copy the list
                 copiedList = list( columnMatrix[ colIndex ])
-                printParent('made it into if statement for continuous')
                 # sort the list
                 copiedList.sort(reverse=True)
                 # find the index of None
-                # printParent(copiedList)
                 for rowIndex, value in enumerate(copiedList):
                     if value == None:
                         noneIndex = rowIndex
-                        printParent('noneIndex')
-                        printParent(noneIndex)
                         break
-                # noneIndex = copiedList.index(None)
-                    # might have to sort the list descending or ascending for the code to be obvious
+                        # TODO: delete the copied list
                 # divide that number in half (make it an int)
                 medianIndex = int( noneIndex / 2 )
                 # access that position in the copied & sorted list
@@ -146,8 +141,8 @@ def impute( columnMatrix, dataDescription, colMap ):
             # printParent('we failed to create a fillInVals value for this key')
             # printParent(colIndex)
 
-    printParent('fillInVals')
-    printParent(fillInVals)
+    # printParent('fillInVals')
+    # printParent(fillInVals)
 
     for colIndex, column in enumerate(columnMatrix):
         if dataDescription[ colIndex ] == 'categorical':
