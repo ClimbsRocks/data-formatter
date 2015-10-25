@@ -7,7 +7,7 @@ module.exports = function() {
   describe('neural network formatting', function() {
 
     var results;
-    var expectedInputLength;
+    // var expectedInputLength;
 
     before(function(done) {
       console.time('Neural Network time');
@@ -20,11 +20,7 @@ module.exports = function() {
           results = message.text;
           console.timeEnd('Neural Network time');
           done();
-        } else if( message.type === 'featureSelecting.py' ){ 
-          expectedInputLength = message.text[0].length;
-        } else {
-          message.text = [];
-        }
+        } 
       });
     });
 

@@ -22,7 +22,7 @@ module.exports = function() {
           results = message.text;
           console.timeEnd('file concatting time');
           done();
-        }
+        }  
       });
 
     });
@@ -53,7 +53,11 @@ module.exports = function() {
     });
 
     after(function() {
-      results = [];
+      results[0] = null;
+      results[1] = null;
+      results[2] = null;
+      results[3] = null;
+      results = null;
     });
 
 

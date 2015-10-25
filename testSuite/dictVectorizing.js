@@ -19,6 +19,7 @@ module.exports = function() {
           for (var i = 0; i < message.text.length; i++) {
             allData.push(message.text[i]);
           }
+          message.text = null;
 
           if (allData.length > 250000) {
             // killChildProcess(pyController.childProcess);
@@ -26,6 +27,7 @@ module.exports = function() {
             done();
           }
         }
+        // message.text = null;
       
       });
     });
@@ -68,6 +70,7 @@ module.exports = function() {
       // these are known sums of the combined dataset's continuous columns
       // expect(message.text[0].length).to.equal(158);
       expect(countOfBinaryColumns).to.equal(172);
+      binarySummary = null;
       done();
     });
 
@@ -106,6 +109,7 @@ module.exports = function() {
 
     after(function() {
       allData = [];
+      
     });
 
   });

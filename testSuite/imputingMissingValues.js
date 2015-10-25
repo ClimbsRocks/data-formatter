@@ -170,11 +170,19 @@ module.exports = function() {
       // previously computed values
       expect(sumOfIdColumn).to.equal(16401555256);
       expect(sumOfOutputColumn).to.equal(10026);
+
+      sumOfIdColumn = null;
+      sumOfOutputColumn = null;
+      allOutputValuesBlank = null;
       done();
     });
 
     after(function() {
-      results = [];
+      results[0] = null;
+      results[1] = null;
+      results[2] = null;
+      results = null;
+      columnSums = [];
     });
 
   });

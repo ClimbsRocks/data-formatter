@@ -17,17 +17,18 @@ module.exports = function() {
       pyController.on('message', function(message) {
 
         if(message.type === 'featureSelecting.py') {
+          // for our neural net check later on.
+          global.expectedInputLength = message.text[0].length;
           for (var i = 0; i < message.text.length; i++) {
             allData.push(message.text[i]);
           }
+          message.text = null;
           if (allData.length > 250000) {
             // killChildProcess(pyController.childProcess);
             console.timeEnd('feature selecting time');
             done();
           }
-        } else {
-          message.text = [];
-        }
+        } 
       });
     });
 
