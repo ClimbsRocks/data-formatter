@@ -12,6 +12,9 @@
   },
   "author": "Preston Parry <climbsbytes@gmail.com> (prestonparry.com)",
   "license": "MIT",
+  "bin": {
+    "data-formatter": "index.js"
+  },
   "bugs": {
     "url": "https://github.com/ClimbsRocks/data-formatter/issues"
   },
