@@ -24,11 +24,11 @@ def standardizeMissingValues(dataDescription, matrix ):
     printParent(len(matrix))
 
     # split data into columns
-    # columns = zip(*matrix)
-    columns = np.array(matrix)
-    printParent('columns.shape before transpose')
-    printParent( columns.shape )
-    columns = columns.transpose().tolist()
+    columns = zip(*matrix)
+    # columns = np.array(matrix)
+    # printParent('columns.shape before transpose')
+    # printParent( columns.shape )
+    # columns = columns.transpose().tolist()
     printParent('length of columns array after zip splatting the matrix from rows into columns:')
     printParent(len(columns))
     # iterate through the columns. for each one:
@@ -73,10 +73,6 @@ def standardizeMissingValues(dataDescription, matrix ):
 
         cleanedColumnMatrix.append( cleanColumn )
 
-    printParent('len(cleanedColumnMatrix)')
-    printParent( len(cleanedColumnMatrix) )
-    printParent( 'columnsWithMissingValues' )    
-    printParent( columnsWithMissingValues )    
     return [ cleanedColumnMatrix, columnsWithMissingValues ]
 
 def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValues, headerRow ):
@@ -119,8 +115,7 @@ def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValue
 
     return [ columnMatrix, dataDescription, columnsWithMissingValues, headerRow ]
 
-# TODO:
-    # redefine impute
+
 def impute( columnMatrix, dataDescription, colMap ):
     # we have one column dedicated just to holding the count of the total number of missing values for this row
     countOfMissingValsColIndex = colMap[ 'countOfMissingValues' ]
@@ -139,9 +134,10 @@ def impute( columnMatrix, dataDescription, colMap ):
         try:
             # we have a string in our colMap obj (countOfMissingValues), so we need to try to convert it into an int to make sure we're actually on a numerical key representing a column number
             colIndex = int( colIndex )
-            # FUTURE: we can calculate this for only columns that are actually missing data
             if dataDescription[ colIndex ] == 'continuous':
-            # TODO: calculate median myself
+            # Manually calculating the median value
+            # the numpy way of doing this assumes that None is a number and includes it when calculating the median value
+            # whereas we want the median of all the values other than None. 
                 # copy the list
                 copiedList = list( columnMatrix[ colIndex ])
                 # sort the list
@@ -160,18 +156,14 @@ def impute( columnMatrix, dataDescription, colMap ):
                 fillInVals[ colIndex ] = medianVal
                 # delete that sorted list
 
-                # the np way of doing this assumes that None is a value, and includes it when calculating the median. 
-                # what we really want is the median value excluding the missing values
-                # the median value
-                # fillInVals[ colIndex ] = np.median(np.array(column))
             elif dataDescription[ colIndex ] == 'categorical':
                 column = columnMatrix[ colIndex ]
                 # the mode value
                 fillInVals[ colIndex ] = max(set(column), key=column.count)
         except: 
             pass
-            # printParent('we failed to create a fillInVals value for this key')
-            # printParent(colIndex)
+            printParent('we failed to create a fillInVals value for this key')
+            printParent(colIndex)
 
     printParent('fillInVals')
     printParent(fillInVals)
@@ -233,63 +225,11 @@ def impute( columnMatrix, dataDescription, colMap ):
     return columnMatrix
 
 
-
-# This function is in the process of being deprecated. 
-# # This function is just a slightly tweaked version from:
-# # http://stackoverflow.com/a/25562948
-# def stackOverflowImpute(dataDescription, columnMatrix):
-#     rowMatrix = zip(*columnMatrix)
-
-#     import pandas as pd
-#     import numpy as np
-
-#     from sklearn.base import TransformerMixin
-
-#     class DataFrameImputer(TransformerMixin):
-
-#         def __init__(self):
-#             """Impute missing values.
-
-#             Columns of dtype object are imputed with the most frequent value 
-#             in column.
-
-#             Columns of other types are imputed with mean of column.
-
-#             """
-#         def fit(self, X, y=None):
-
-#             self.fill = pd.Series(
-#                 # for categorical columns, use the most frequently occurring value for that column
-#                 [ X[c].value_counts().index[0]
-#                 # for continuous columns, use the median value for that column
-#                 if X[c].dtype == np.dtype('O') else X[c].median() for c in X ],
-#                 index=X.columns
-#             )
-
-#             return self
-
-#         def transform(self, X, y=None):
-#             return X.fillna(self.fill)
-
-#     # our imputer assumes a format of pandas DataFrames
-#     X = pd.DataFrame(rowMatrix)
-#     X = DataFrameImputer().fit_transform(X)
-
-#     # convert from pandas DataFrame back to a standard python list
-#     X = X.values.tolist()
-
-#     return X
-
-
 # cleanAll is the function that will be publicly invoked. 
 # cleanAll defers to the standardize and impute functions above
 def cleanAll(dataDescription, matrix, headerRow ):
-    printParent('length of first row of matrix inside imputingMissingValues')
-    printParent(len(matrix[0]))
     standardizedResults = standardizeMissingValues(dataDescription, matrix)
     cleanedColumnMatrix = standardizedResults[ 0 ]
-    printParent('number of columns in cleanedColumnMatrix after standardizing missing values:')
-    printParent( len( cleanedColumnMatrix ) )
     columnsWithMissingValues = standardizedResults[ 1 ]
 
     newColumnsResults = createImputedColumns( cleanedColumnMatrix, dataDescription, columnsWithMissingValues, headerRow )
@@ -304,5 +244,3 @@ def cleanAll(dataDescription, matrix, headerRow ):
 
     # return all the new values (X, dataDescription, headerRow)
     return [ cleanedRowMatrix, dataDescription, headerRow ]
-    # results = stackOverflowImpute(dataDescription, cleanedColumnMatrix)
-    # return results
