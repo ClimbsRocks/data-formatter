@@ -31,7 +31,6 @@ test = args['test']
 # 1. concatenate together the training and testing data sets
 # this ensures that whatever transitions we perform in data-formatter will be equally applied to both the training and testing data set
 concattedResults = concat.inputFiles(trainingFile, testingFile)
-printParent('back in mainPythonProcess after concat.inputFiles')
 
 # dataDescription identifies whether each column is "output","id","categorical", or "continuous"
 dataDescription = concattedResults[0]
