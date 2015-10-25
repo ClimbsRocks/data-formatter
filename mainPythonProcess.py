@@ -52,9 +52,12 @@ outputColumn = concattedResults[5]
 # throughout this file, we will send messages back to the parent process if we are currently running the tests. 
 if(test):
     messageParent([dataDescription, headerRow, trainingLength, X], 'concat.py')
+    
 
 # 2. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
-imputedValuesResults = imputingMissingValues.cleanAll(dataDescription, X, headerRow )
+    # we are including args only so that we can write to files at the intermediate stages for debugging
+    # TODO: remove args from this arguments list once debugging is finished. 
+imputedValuesResults = imputingMissingValues.cleanAll(dataDescription, X, headerRow, args )
 X = imputedValuesResults[ 0 ]
 dataDescription = imputedValuesResults[ 1 ]
 headerRow = imputedValuesResults[ 2 ]
@@ -63,6 +66,7 @@ headerRow = imputedValuesResults[ 2 ]
 # might have to tweak a test or two further down the line for this new number of columns. 
 # writeToFile.writeData(imputedValuesResults, args, headerRow, False )
 
+# writeToFile.writeData(X, args, headerRow, False )
 
 if(test):
     messageParent([X, idColumn, outputColumn], 'imputingMissingValues.py')
@@ -80,6 +84,8 @@ if(test):
     messageParent( X[0:150000], 'dictVectorizing.py' )
     messageParent( X[150000:], 'dictVectorizing.py' )
 
+
+
 # 4. Feature Selection means picking only those features that are actually predictive and useful
     # say a column of names is passed in. This will then be turned into categorical data ("Suzy=True","Preston=True"), one for each name
     # clearly, this data is not going to be useful, unless we way overfit the training set. 
@@ -90,6 +96,8 @@ if(test):
 featureSelectingResults = featureSelecting.select(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
 X = featureSelectingResults[0]
 filteredHeaderRow = featureSelectingResults[1]
+
+
 
 # 5. write results to file
 # this is the data we need for most scikit-learn algorithms!

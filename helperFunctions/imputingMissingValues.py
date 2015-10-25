@@ -5,9 +5,11 @@ from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
 
+import writeToFile
+
 emptyEquivalents = ["na","n/a","none",'',"","undefined","missing","blank","empty", None]
 
-# standardizes all missing values to None
+# standardizes all missing values to ""
 # removes all strings (values that can't be converted to a float) from "Numerical" columns
 # removes all values in the emptyEquivalents array from categorical columns
 # doesn't touch ID or Output columns
@@ -31,7 +33,7 @@ def standardizeMissingValues(dataDescription, matrix ):
                     cleanColumn.append( float( num ) )
                 except:
                     # remove all non-numerical values
-                    cleanColumn.append( None )
+                    cleanColumn.append( "" )
                     # and keep track of this column as having msising values
                     columnsWithMissingValues[idx] = True
 
@@ -40,7 +42,7 @@ def standardizeMissingValues(dataDescription, matrix ):
             for value in column:
                 if str(value).lower() in emptyEquivalents:
                     # replace all values we have defined above as being equivalent to a missing value with the standardized version the inputer will recognize next: np.nan
-                    cleanColumn.append( None )
+                    cleanColumn.append( "" )
                     # and keep track of this column as having msising values
                     columnsWithMissingValues[idx] = True
                 
@@ -52,10 +54,6 @@ def standardizeMissingValues(dataDescription, matrix ):
     return [ cleanedColumnMatrix, columnsWithMissingValues ]
 
 
-# TODO TODO: reorder these functions
-    # calculate the fillInVals first, in it's own function
-    # then, for each value in fillInVals that is not None, create the missing columns in it's own function
-    # then, impute the missing values in it's own function
 def calculateReplacementValues( columnMatrix, columnsWithMissingValues, dataDescription ):
 
     # fillInVals will have keys for each column index, and values for what the filled in value should be
@@ -74,10 +72,10 @@ def calculateReplacementValues( columnMatrix, columnsWithMissingValues, dataDesc
                 # copy the list
                 copiedList = list( columnMatrix[ colIndex ])
                 # sort the list
-                copiedList.sort(reverse=True)
+                copiedList.sort()
                 # find the index of None
                 for rowIndex, value in enumerate(copiedList):
-                    if value == None:
+                    if value == "":
                         noneIndex = rowIndex
                         break
                         # TODO: delete the copied list
@@ -152,19 +150,6 @@ def impute( columnMatrix, dataDescription, colMap, fillInVals ):
     # we have one column dedicated just to holding the count of the total number of missing values for this row
     countOfMissingValsColIndex = colMap[ 'countOfMissingValues' ]
 
-    # NOT TODO:
-        # remove any imputedValues columns that might hold None values
-            # this happens when the median or mode value for that column is None, i.e., when we are just missing TONS of data
-        # 1. remove the imputedValuesCOLNAME and missingCOLNAME columns
-        # 2. adjust indices in colMap
-            # iterate through the keys of colMap. for each one:
-                # if the value is greater than the index of the column we are deleting
-                    # reduce that value by 2 (one for the imputedValuesCOLNAME column and one for the missingCOLNAME column)
-        # 3. see if we still need countOfMissingValues column
-            # if not
-                # delete that column
-                # reduce indices of all relevant values in colMap, similarly to what we did for the previous removal step
-
     for colIndex, column in enumerate(columnMatrix):
         if dataDescription[ colIndex ] == 'categorical':
             isCategorical = True
@@ -181,7 +166,7 @@ def impute( columnMatrix, dataDescription, colMap, fillInVals ):
                 # iterate through list, with rowIndex
                 # for each item:
                 # check for missing values. if they exist:
-                if value == None:
+                if value == "":
 
                     # there are several components we must balance here:
                         # np.median does not like columns with mixed values (numbers and strings)
@@ -210,13 +195,16 @@ def impute( columnMatrix, dataDescription, colMap, fillInVals ):
 
 
 # cleanAll is the function that will be publicly invoked. 
-# cleanAll defers to the standardize and impute functions above
-def cleanAll(dataDescription, matrix, headerRow ):
+# cleanAll simply plays controller for the functions defined above
+def cleanAll(dataDescription, matrix, headerRow, args ):
 
     # standardize missing values to all be None
     standardizedResults = standardizeMissingValues(dataDescription, matrix)
     cleanedColumnMatrix = standardizedResults[ 0 ]
     columnsWithMissingValues = standardizedResults[ 1 ]
+
+    # writeToFile.writeData( zip(*cleanedColumnMatrix), args, headerRow, False )
+
 
     # calculate the replacement values for columns that are missing values
     fillInVals = calculateReplacementValues( cleanedColumnMatrix, columnsWithMissingValues, dataDescription )
