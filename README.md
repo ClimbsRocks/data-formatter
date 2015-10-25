@@ -1,5 +1,5 @@
 # data-formatter
-> take in a .csv file and format it to be ready for machine learning in scikit-learn, or a neural network like brain.js
+> Takes in a .csv file and formats it to be ready for machine learning using scikit-learn, or a neural network like brain.js or pyLearn2
 
 This library is designed to work with ppComplete, but is so broadly useful that I wanted to make it easily available.
 
@@ -19,6 +19,7 @@ npm install data-formatter
   - The library will automatically handle categorical data, so you can pass in a column that holds city names, and it will encode these in a way the machine learning algorithms will understand. 
   - This library will min-max normalize all values for neural networks, to fit their expected API of having only values between -1 and 1 (or 0 and 1 for brain.js).
   - `data-formatter` will go through and replace missing values for you! Missing values in Continuous data columns will get replaced by the median value. Missing data points in Categorical data columns will get replaced by the mode of that column (most frequently occurring value). 
+  - Even better, it will test all options: replacing missing values, keeping missing values, and creating a boolean flag noting that there are missing values for this row. We then allow ourselves to be empiricists and simply see which features actually end up being useful through feature selection. 
 
 #### Novice?
 Does some of that make your head spin? Have no idea what one (or more) of those bullet points means? No worries, that's the entire point of letting a library do this work for you! 
@@ -81,6 +82,22 @@ The formatted data will be broken out into a number of different files, to be co
 - `X_train_nn_`: All of the X features in the training data set, min-max normalized to have only values between -1 and 1.
 - `X_test_nn_`: All of the X features in the testing data set, min-max normalized to have only values between -1 and 1. 
 
+## Using from the command line
+
+As of the 1.2 release, `data-formatter` can be invoked right from the command line. 
+
+### Installation
+```
+npm install -g data-formatter
+```
+Note the "-g" flag directing npm to install the module globally. This makes it available from the command line throughout your entire file directory. 
+
+### Invoking from the command line
+```
+data-formatter path/to/training/data.csv path/to/testing/data.csv
+```
+The formatted data files will be written into whichever directory you invoke `data-formatter` from. 
+
 
 ### Other Random Info
 
@@ -93,5 +110,3 @@ There are few things that make me as happy as reading through Pull Requests over
 #### Starring- yes please!
 I've had a great time building this out so far. If you find it useful too, let me know by starring it!
 
-#### More information on Categorical data:
-All columns holding strings are categorical. Similarly, if you have saved someone's occupation as a number (1 for engineer, 2 for carpenter, 3 for processional cyclist, etc.), that column must be labeled "Categorical". Otherwise, the algorithm won't know any better and will simply think the data says the rows with 3 have 3x the occupation as the rows with 1, rather than simply encoding which category that row belongs in. All non-continuous numbers generally count as categorical data. The easy way to check this is that they will frequently be described as "number of", as in "number of children", "number of trophies", "number of kaggle competitions entered". These are ordinal categories (meaning that having entered 3 kaggle competitions has a relative relationship to having entered 2 kaggle competitions), but they are still categorical data. 
