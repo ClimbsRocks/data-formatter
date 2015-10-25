@@ -12,13 +12,13 @@ module.exports = function() {
 
     before(function(done) {
       console.time('file concatting time');
-      var pyController = startPyTest();
+      // var pyController = startPyTest();
 
       pyController.on('message', function(message) {
         // message is the message object coming to us from the Python process
         // we are expecting to get back an array of the concatted results
         if(message.type === 'concat.py') {
-          killChildProcess(pyController.childProcess);
+          // killChildProcess(pyController.childProcess);
           results = message.text;
           console.timeEnd('file concatting time');
           done();

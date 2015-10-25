@@ -11,7 +11,7 @@ module.exports = function() {
 
     before(function(done) {
       console.time('dict vectorizing time');
-      var pyController = startPyTest();
+      // var pyController = startPyTest();
 
       pyController.on('message', function(message) {
 
@@ -21,7 +21,7 @@ module.exports = function() {
           }
 
           if (allData.length > 250000) {
-            killChildProcess(pyController.childProcess);
+            // killChildProcess(pyController.childProcess);
             console.timeEnd('dict vectorizing time');
             done();
           }

@@ -11,11 +11,13 @@ var neuralNetwork = require('./neuralNetwork');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('data-formatter', function() {
+
+  global.pyController = startPyTest();
+
+
   // this timeout should be long enough to handle tests on a variety of machines
   this.timeout(360000);
 
-  fileNames();
-    
   fileConcatting();
 
   imputingMissingValues();
@@ -28,6 +30,7 @@ describe('data-formatter', function() {
   
   brainjsTest();
 
+  fileNames();
   // make it work from the command line and from module.exports
 
 });

@@ -11,12 +11,12 @@ module.exports = function() {
 
     before(function(done) {
       console.time('brainjs time');
-      var pyController = startPyTest();
+      // var pyController = startPyTest();
 
 
       pyController.on('message', function(message) {
         if(message.type === 'brainjs.py') {
-          killChildProcess(pyController.childProcess);
+          // killChildProcess(pyController.childProcess);
           results = message.text;
           console.timeEnd('brainjs time');
           done();

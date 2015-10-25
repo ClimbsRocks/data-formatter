@@ -12,7 +12,7 @@ module.exports = function() {
 
     before(function(done) {
       console.time('feature selecting time');
-      var pyController = startPyTest();
+      // var pyController = startPyTest();
 
       pyController.on('message', function(message) {
 
@@ -21,7 +21,7 @@ module.exports = function() {
             allData.push(message.text[i]);
           }
           if (allData.length > 250000) {
-            killChildProcess(pyController.childProcess);
+            // killChildProcess(pyController.childProcess);
             console.timeEnd('feature selecting time');
             done();
           }

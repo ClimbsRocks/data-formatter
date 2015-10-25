@@ -34,12 +34,12 @@ module.exports = function() {
 
     before(function(done) {
       console.time('imputing missing values time');
-      var pyController = startPyTest();
+      // var pyController = startPyTest();
 
 
       pyController.on('message', function(message) {
         if(message.type === 'imputingMissingValues.py') {
-          killChildProcess(pyController.childProcess);
+          // killChildProcess(pyController.childProcess);
           results = message.text;
           sumColumns( results[0] );
           console.timeEnd('imputing missing values time');

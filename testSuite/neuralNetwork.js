@@ -11,12 +11,12 @@ module.exports = function() {
 
     before(function(done) {
       console.time('Neural Network time');
-      var pyController = startPyTest();
+      // var pyController = startPyTest();
 
 
       pyController.on('message', function(message) {
         if(message.type === 'minMax.py') {
-          killChildProcess(pyController.childProcess);
+          // killChildProcess(pyController.childProcess);
           results = message.text;
           console.timeEnd('Neural Network time');
           done();
