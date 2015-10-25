@@ -6,7 +6,7 @@ from sendMessages import messageParent
 from sendMessages import obviousPrint
 
 imputer = preprocessing.Imputer(missing_values="NaN", strategy='median', verbose=10)
-emptyEquivalents = ["na","n/a","none",'',"undefined","missing","blank","empty", None]
+emptyEquivalents = ["na","n/a","none",'',"","undefined","missing","blank","empty", None]
 
 # standardizes all missing values to None
 # removes all strings (values that can't be converted to a float) from "Numerical" columns
@@ -16,8 +16,21 @@ def standardizeMissingValues(dataDescription, matrix ):
     cleanedColumnMatrix = []
     columnsWithMissingValues = {}
 
+    printParent('length of first row of input matrix for standardizeMissingValues')
+    printParent(len(matrix[890]))
+    printParent(len(matrix[892]))
+
+    printParent('length of entire matrix:')
+    printParent(len(matrix))
+
     # split data into columns
-    columns = zip(*matrix)
+    # columns = zip(*matrix)
+    columns = np.array(matrix)
+    printParent('columns.shape before transpose')
+    printParent( columns.shape )
+    columns = columns.transpose().tolist()
+    printParent('length of columns array after zip splatting the matrix from rows into columns:')
+    printParent(len(columns))
     # iterate through the columns. for each one:
     for idx, column in enumerate(columns):
         cleanColumn = []
@@ -47,8 +60,23 @@ def standardizeMissingValues(dataDescription, matrix ):
                 
                 else:
                     cleanColumn.append(value)
+        else:
+            printParent('***************************************************************************')
+            printParent('')
+            printParent('there appears to be a typo in one of the dataDescription values')
+            printParent('we expected a value of "continuous" or "categorical", and instead received:')
+            printParent(dataDescription[ idx ])
+            printParent('using a 0-indexed system, this unexpected value occurred at index position:')
+            printParent(idx)
+            printParent('')
+            printParent('***************************************************************************')
 
         cleanedColumnMatrix.append( cleanColumn )
+
+    printParent('len(cleanedColumnMatrix)')
+    printParent( len(cleanedColumnMatrix) )
+    printParent( 'columnsWithMissingValues' )    
+    printParent( columnsWithMissingValues )    
     return [ cleanedColumnMatrix, columnsWithMissingValues ]
 
 def createImputedColumns( columnMatrix, dataDescription, columnsWithMissingValues, headerRow ):
@@ -141,8 +169,21 @@ def impute( columnMatrix, dataDescription, colMap ):
             # printParent('we failed to create a fillInVals value for this key')
             # printParent(colIndex)
 
-    # printParent('fillInVals')
-    # printParent(fillInVals)
+    printParent('fillInVals')
+    printParent(fillInVals)
+
+    # TODO:
+        # remove any imputedValues columns that might hold None values
+            # this happens when the median or mode value for that column is None, i.e., when we are just missing TONS of data
+        # 1. remove the imputedValuesCOLNAME and missingCOLNAME columns
+        # 2. adjust indices in colMap
+            # iterate through the keys of colMap. for each one:
+                # if the value is greater than the index of the column we are deleting
+                    # reduce that value by 2 (one for the imputedValuesCOLNAME column and one for the missingCOLNAME column)
+        # 3. see if we still need countOfMissingValues column
+            # if not
+                # delete that column
+                # reduce indices of all relevant values in colMap, similarly to what we did for the previous removal step
 
     for colIndex, column in enumerate(columnMatrix):
         if dataDescription[ colIndex ] == 'categorical':
@@ -239,8 +280,12 @@ def impute( columnMatrix, dataDescription, colMap ):
 # cleanAll is the function that will be publicly invoked. 
 # cleanAll defers to the standardize and impute functions above
 def cleanAll(dataDescription, matrix, headerRow ):
+    printParent('length of first row of matrix inside imputingMissingValues')
+    printParent(len(matrix[0]))
     standardizedResults = standardizeMissingValues(dataDescription, matrix)
     cleanedColumnMatrix = standardizedResults[ 0 ]
+    printParent('number of columns in cleanedColumnMatrix after standardizing missing values:')
+    printParent( len( cleanedColumnMatrix ) )
     columnsWithMissingValues = standardizedResults[ 1 ]
 
     newColumnsResults = createImputedColumns( cleanedColumnMatrix, dataDescription, columnsWithMissingValues, headerRow )
