@@ -17,17 +17,19 @@ def inputFiles(trainingFile, testingFile):
         trainingInput.seek(0)
         trainingRows = csv.reader(trainingInput, dialect)
 
-        firstRow = 0
+        rowCount = 0
         for row in trainingRows:
-            if firstRow < 2:
+            if rowCount < 2:
                 # grab the dataDescription row and the header row, and make them both lowercase
-                if firstRow == 0:
+                if rowCount == 0:
+                    expectedRowLength = len( row )
                     dataDescription = [x.lower() for x in row]
                     validation.dataDescription( dataDescription )
                 else: 
+                    validation.rowLength( row, expectedRowLength, rowCount )
                     headerRow = [x.lower() for x in row]
-                firstRow = firstRow + 1
             else:
+                validation.rowLength( row, expectedRowLength, rowCount )
                 trimmedRow = []
                 for idx, val in enumerate(row):
                     if dataDescription[idx] == 'id':
@@ -38,6 +40,11 @@ def inputFiles(trainingFile, testingFile):
                         trimmedRow.append(val)
 
                 outputData.append(trimmedRow)
+
+            # keep track of which row we are on for error logging purposes
+            rowCount = rowCount + 1
+
+        # keep track of how long our training data set is so we can split back out again later
         trainingLength = len(outputData)
 
     with open(testingFile, 'rU') as testingInput:
@@ -46,22 +53,23 @@ def inputFiles(trainingFile, testingFile):
         testingInput.seek(0)
 
         testingRows = csv.reader(testingInput, dialect)
-        firstRow = True
+        testingRowCount = 0
 
         # set missingOutputIndex equal to infinity to start with
         missingOutputIndex = float('inf')
 
         for row in testingRows:
-            if firstRow:
+            if testingRowCount == 0:
+
                 # check to see that we have the same number of columns in the testing set as the training set
-                if len( row ) != len( outputData[ 0 ] ):
-                    printParent('we noticed that the testing and training datasets have different numbers of columns')
-                    printParent('we are going to assume that the "Output" column(s) is(are) simply not included for the testing dataset.')
+                colsValidated = validation.testingHeaderRow( row, expectedRowLength )
+                if colsValidated == False:
                     # if not, assume that the missing column is the output column, and store that index position
                     missingOutputIndex = dataDescription.index('output')
                 # skip the first row
-                firstRow = False
+                expectedTestingRowLength = len( row )
             else:
+                validation.testingRowLength( row, expectedTestingRowLength, testingRowCount )
                 trimmedRow = []
                 for idx, val in enumerate(row):
                     # if this is the missing column that was supposed to be the output column, move the idx variable up by one to account for skipping over that column
@@ -78,5 +86,6 @@ def inputFiles(trainingFile, testingFile):
                 # this ensures we will be processing them consistently
                     # if we treated them separately, it could cause an issue if we have a feature present in the testing data but not the training data, for example
                 outputData.append(trimmedRow)
+            testingRowCount += 1
 
     return [dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn]
