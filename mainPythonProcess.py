@@ -137,6 +137,10 @@ brainX = brainjs.format( X.tolist(), outputColumn, idColumn, args )
 if( test ):
     messageParent( brainX, 'brainjs.py' )
 
+messageParent({
+    trainingDataLength: trainingLength
+}, 'fileNames')
+
 printParent('we have written your fully transformed data to a folder at:')
 printParent( args['outputFolder'] )
 
