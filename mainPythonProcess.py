@@ -138,7 +138,7 @@ if( test ):
     messageParent( brainX, 'brainjs.py' )
 
 messageParent({
-    trainingDataLength: trainingLength
+    'trainingDataLength': trainingLength
 }, 'fileNames')
 
 printParent('we have written your fully transformed data to a folder at:')
