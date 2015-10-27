@@ -79,10 +79,10 @@ imputedValuesResults = imputingMissingValues.cleanAll(dataDescription, X, header
 X = imputedValuesResults[ 0 ]
 dataDescription = imputedValuesResults[ 1 ]
 headerRow = imputedValuesResults[ 2 ]
+# writeToFile.writeData(X, args, headerRow, False )
 
 # handle all these new return values in mainPythonProcess
 # might have to tweak a test or two further down the line for this new number of columns. 
-# writeToFile.writeData(imputedValuesResults, args, headerRow, False )
 
 # writeToFile.writeData(X, args, headerRow, False )
 

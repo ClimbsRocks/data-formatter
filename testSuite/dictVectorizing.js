@@ -68,7 +68,7 @@ module.exports = function() {
         }
       }
       // these are known sums of the combined dataset's continuous columns
-      expect(countOfBinaryColumns).to.equal(164);
+      expect(countOfBinaryColumns).to.equal(144);
       binarySummary = null;
       done();
     });

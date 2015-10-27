@@ -26,7 +26,7 @@ def remove( rowMatrix, dataDescription, headerRow ):
             keepColumn = False
             # now go through and remove values that appear only once
             for rowIndex, rowValue in enumerate( column ):
-                if columnCounts[ rowValue ] == 1:
+                if columnCounts[ rowValue ] <= 3:
                     column[ rowIndex ] = "UniqValRemoved"
 
                 # make sure that this column has any useful values (i.e., has duplicated values that are not in emptyEquivalents)

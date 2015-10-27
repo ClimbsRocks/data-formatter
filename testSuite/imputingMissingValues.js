@@ -79,7 +79,9 @@ module.exports = function() {
       // no other entries had these values
       // if we sum up that column before removing these values we get 186,653
       // if we remove these two unique values, we get 186597
-      var expectedSums = [186597];
+      var expectedSums = [186557];
+      console.log(expectedSums);
+      console.log(columnSums);
       expect( columnSums ).to.contain(expectedSums[0]);
       // expect( columnSums ).to.contain(expectedSums[1]);
     });
