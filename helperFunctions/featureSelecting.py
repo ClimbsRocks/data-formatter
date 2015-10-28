@@ -38,6 +38,13 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test ):
 
     return [ X, filteredHeaderRow ]
 
+def rfecvSelection( X, y, trainingLength, featureImportanceThreshold, headerRow, test ):
+    lr = LogisticRegression()
+    rfecv = RFECV(estimator = lr, step=3)
+    rfecv.fit(X, y)
+    X = rfecv.transform(X)
+    return X
+
 
     # post MVP ideas:
         # re-implement recursive feature selection
