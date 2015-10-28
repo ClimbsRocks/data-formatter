@@ -111,6 +111,7 @@ if(test):
     # this helps models train faster, and is actually more predictive in the end since there's less noise to distract from the valuable features. 
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
 
+# featureSelectingResults = featureSelecting.rfecvSelection(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
 featureSelectingResults = featureSelecting.select(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
 X = featureSelectingResults[0]
 filteredHeaderRow = featureSelectingResults[1]
@@ -121,6 +122,8 @@ filteredHeaderRow = featureSelectingResults[1]
 # this is the data we need for most scikit-learn algorithms!
 writeToFile.writeMetadata( outputColumn, idColumn, args, filteredHeaderRow )
 writeToFile.writeData(X, args, filteredHeaderRow, False )
+# writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow )
+# writeToFile.writeData(X, args, headerRow, False )
 
 if(test):
     messageParent(X.tolist(), 'featureSelecting.py')
