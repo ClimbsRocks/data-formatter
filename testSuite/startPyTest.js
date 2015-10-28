@@ -31,6 +31,8 @@ module.exports = function() {
     outputFolder: path.join(testFolder, 'formattedResults'),
     trainingData: path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv'),
     testingData: path.join(testFolder, 'testKaggleGiveMeSomeCredit.csv'),
+    trainingPrettyName: 'giveCredittrain',
+    testingPrettyName: 'giveCredittest',
     test: true
   };
   var pyOptions = makePyOptions( JSON.stringify( args ) );

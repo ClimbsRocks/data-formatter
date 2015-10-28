@@ -26,6 +26,16 @@
       args.outputFolder = path.join( invokingFolder, 'data-formatterResults' );
     }
 
+    // TODO TODO: generalize this so it will work even on long paths that the user sends in
+    if( args.trainingPrettyName === undefined ) {
+      args.trainingPrettyName = path.basename( args.trainignData ).slice(0,-4);
+    }
+
+    // TODO TODO: generalize this so it will work even on long paths that the user sends in
+    if( args.testingPrettyName === undefined ) {
+      args.testingPrettyName = path.basename( args.testingData ).slice(0,-4);
+    }
+
     // make sure the output folder exists. if not, create it.
     mkdirp( args.outputFolder, function(err) {
       if(err) {
