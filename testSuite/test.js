@@ -14,7 +14,6 @@ describe('data-formatter', function() {
 
   global.pyController = startPyTest();
 
-
   // this timeout should be long enough to handle tests on a variety of machines
   this.timeout(360000);
 
@@ -31,6 +30,5 @@ describe('data-formatter', function() {
   brainjsTest();
 
   fileNames();
-  // make it work from the command line and from module.exports
 
 });

@@ -39,6 +39,7 @@ module.exports = function( argsObject, callback ) {
   var pyOptions = makePyOptions( JSON.stringify( argsObject ) );
 
   var pyController = PythonShell.run('../mainPythonProcess.py', pyOptions, function(err) {
+    console.log('finished training, but have not yet emitted finishedFormatting')
     if(err) {
       // exit code null means we killed the python child process intentionally
       if(err.exitCode !== null) {
@@ -46,8 +47,8 @@ module.exports = function( argsObject, callback ) {
         console.error(err);
       }
     } else {
+      process.emit('finishedFormatting');
       if (typeof callback === 'function' ) {
-        process.emit('finishedFormatting');
         callback(fileNames);
       }
     }
