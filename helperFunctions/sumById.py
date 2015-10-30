@@ -1,39 +1,35 @@
 import listToDict
 
-def sum( dataDescription, X, headerRow, args):
-    if checkForDupes(X):
+def sum( dataDescription, X, headerRow, idColumn):
+    if checkForDupes(idColumn):
         # TODO: we now have two different return formats: dictionaries, and lists
         # probably easiest to convert X to dictionaries here regardless of whether it has dupes or not
         # hmmm, imputing missing values would likely be less useful for these cases
             # it's more likely that we would have a separate file entirely for the metadata associated with each row (name, age, gender if our repeated ID is a customerID)
             # let's ignore this for now (MVP!), and then think later about imputing missing values on only the non-joined data, then joining in that data later. that would likely be much more space efficient than joining in that data up front
-        return groupByID(dataDescription, X, headerRow, args)
+        return groupByID(dataDescription, X, headerRow, idColumn)
 
     else:
         return listToDict.all( X )
 
 # check to see if we have duplicate IDs in this data set
-def checkForDupes( dataDescription, X):
-    idIndex = dataDescription.index('id')
+def checkForDupes( idColumn ):
     idCounts = {}
-    for row in X:
-        rowID = row[idIndex]
+    for ID in idColumn:
         try: 
-            if idCounts[rowID] == 1:
+            if idCounts[ID] == 1:
                 # if we can access this property in idCounts, that means we already have a value there, and can return true!
                 return True
         except:
-            idCounts[rowID] = 1
-            pass
+            idCounts[ID] = 1
     return False
 
-def groupByID(dataDescription, X, headerRow, args):
+def groupByID(dataDescription, X, headerRow, idColumn):
     # FUTURE: handle data where the IDs are not sorted
         # We could easily just save this into a giant dictionary, instead of a results list
         # The key would be the ID, and the value would be this rowObj
         # Then we could just create it if it doesn't exist, and add to it if it does exist
 
-    idIndex = dataDescription.index('id')
 
     # FUTURE: support multiple continuous values for each row (number of items purchased, and total $ sales, for example)
     valueIndex = dataDescription.index('continuous')
@@ -42,8 +38,8 @@ def groupByID(dataDescription, X, headerRow, args):
     results = {}
     ### TODO:
     # iterate through list
-    for row in X:
-        rowID = row[idIndex]
+    for rowIndex, row in enumerate(X):
+        rowID = idColumn[rowIndex]
 
         # create a rowObj for each rowID, if we don't have one for this rowID already saved in our results dictionary
         try:
@@ -95,4 +91,5 @@ def groupByID(dataDescription, X, headerRow, args):
         # modify our header row
             # This should be relatively easy, since we don't have any ID or output columns to worry about here, and we're summing up all the continuous columns
             # our column headers now should just be all the keys of our row dictionaries, which will be turned into lists with dictVectorizer
-    return results
+
+    return results.values()
