@@ -1,6 +1,6 @@
 def sum( dataDescription, X, headerRow, args):
     if checkForDupes(X):
-        groupByID()
+        groupByID(dataDescription, X, headerRow, args)
     else:
         return [dataDescription, X, headerRow, args]
 
@@ -18,3 +18,23 @@ def checkForDupes( dataDescription, X):
             idCounts[rowID] = 1
             pass
     return False
+
+def groupByID(dataDescription, X, headerRow, args):
+    ### TODO:
+    iterate through list
+        create a rowObj for each rowID 
+        iterate through row
+            for each column that is categorical, add a property to the rowObj, if it does not exist already 
+                headerRowName + value name
+                add the continuous value for that row to the value for this property 
+                # FUTURE: support having multiple continuous values added for each ID (count and price, for example)
+                # create counts of all these variables
+                    # number of rows
+                    # number of rows for each categorical value (dairy, for example)
+        check the next row, to see if the id is the same
+            if it is, repeat the process with all the columns in that row, in the same rowObj
+            if it is not, push the existing rowObj into our results array, and create a new rowObj, starting the process all over again
+
+
+
+    ###
