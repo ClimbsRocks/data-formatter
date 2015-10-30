@@ -10,7 +10,7 @@ def sum( dataDescription, X, headerRow, idColumn):
         return groupByID(dataDescription, X, headerRow, idColumn)
 
     else:
-        return listToDict.all( X )
+        return [listToDict.all( X ), idColumn]
 
 # check to see if we have duplicate IDs in this data set
 def checkForDupes( idColumn ):
@@ -52,6 +52,9 @@ def groupByID(dataDescription, X, headerRow, idColumn):
             rowObj['rowCount'] = 1
             # the number of different categories this row will hold overall
             rowObj['categoryCount'] = 0
+            # this ensures we will always have the ID value attached to the summarized results for this row, even after we turn the results dictionary into a list
+            # we take this column back out again after dictVectorizer
+            rowObj['id'] = rowID
 
         # There is going to be one value for each row (e.g. number of items sold)
         rowValue = row[ valueIndex ]
@@ -92,4 +95,8 @@ def groupByID(dataDescription, X, headerRow, idColumn):
             # This should be relatively easy, since we don't have any ID or output columns to worry about here, and we're summing up all the continuous columns
             # our column headers now should just be all the keys of our row dictionaries, which will be turned into lists with dictVectorizer
 
-    return results.values()
+    listResults = results.values()
+    idColumn = []
+    for rowDict in listResults:
+        idColumn.append( rowDict.pop('ID', None) )
+    return [listResults, idColumn]
