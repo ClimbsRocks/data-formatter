@@ -13,6 +13,7 @@ from helperFunctions.sendMessages import obviousPrint
 # here are all the individual files that do most of the work. 
 # mainPythonProcess.py mostly just coordinates and lays out the order
 from helperFunctions import concat
+from helperFunctions import sumByID
 from helperFunctions import removeUniques
 from helperFunctions import imputingMissingValues
 from helperFunctions import listToDict
@@ -61,6 +62,7 @@ outputColumn = concattedResults[5]
 if(test):
     messageParent([dataDescription, headerRow, trainingLength, X], 'concat.py')
 
+
 # 2. Remove unique categorical values from the dataset
     # Unique categorical values are items like an individual person's name
     # Clearly, they are not broadly useful for making predictions, and contribute to overfitting
@@ -72,7 +74,7 @@ dataDescription = noUniquesResults[ 1 ]
 headerRow = noUniquesResults[ 2 ]
 
 
-# 2. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
+# 3. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
     # we are including args only so that we can write to files at the intermediate stages for debugging
     # TODO: remove args from this arguments list once debugging is finished. 
 imputedValuesResults = imputingMissingValues.cleanAll(dataDescription, X, headerRow, args )
@@ -81,18 +83,24 @@ dataDescription = imputedValuesResults[ 1 ]
 headerRow = imputedValuesResults[ 2 ]
 # writeToFile.writeData(X, args, headerRow, False )
 
-# handle all these new return values in mainPythonProcess
-# might have to tweak a test or two further down the line for this new number of columns. 
+if(test):
+    messageParent([X, idColumn, outputColumn], 'imputingMissingValues.py')
+
+
+# 4. if we have a single ID spread across multiple rows, sum by ID so that each ID ends up being only a single row with the aggregated results of all the relevant rows
+groupedRows = sumByID.sum(dataDescription, X, headerRow, idColumn)
+X = groupedRows[0]
+idColumn = groupedRows[1]
+
+
 
 # writeToFile.writeData(X, args, headerRow, False )
 
-if(test):
-    messageParent([X, idColumn, outputColumn], 'imputingMissingValues.py')
 
 # 3. convert entire dataset to have categorical data encoded properly. 
 # This turns information like a single column holding city names of 'SF' and 'Akron' into two separate columns, one for 'Akron=True' and one for 'SF=True'.
 # This is called one-hot encoding, and is a standard way of handling categorical data. 
-listOfDicts = listToDict.all(X, headerRow)
+# listOfDicts = listToDict.all(X, headerRow)
 vectorizedInfo = dictVectorizing.vectorize(listOfDicts)
 X = vectorizedInfo[0].tolist()
 vectorizedHeaderRow = vectorizedInfo[1]
