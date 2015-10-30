@@ -1,23 +1,32 @@
 import listToDict
+import json
 
-def sum( dataDescription, X, headerRow, idColumn):
+# some functions to help with logging
+from helperFunctions.sendMessages import printParent
+from helperFunctions.sendMessages import messageParent
+from helperFunctions.sendMessages import obviousPrint
+
+
+def sum( dataDescription, X, headerRow, idColumn, trainingLength):
     if checkForDupes(idColumn):
         # TODO: we now have two different return formats: dictionaries, and lists
         # probably easiest to convert X to dictionaries here regardless of whether it has dupes or not
         # hmmm, imputing missing values would likely be less useful for these cases
             # it's more likely that we would have a separate file entirely for the metadata associated with each row (name, age, gender if our repeated ID is a customerID)
             # let's ignore this for now (MVP!), and then think later about imputing missing values on only the non-joined data, then joining in that data later. that would likely be much more space efficient than joining in that data up front
-        return groupByID(dataDescription, X, headerRow, idColumn)
+        # return groupByID(dataDescription, X, headerRow, idColumn)
+        return [listToDict.all( X, headerRow ), idColumn]
+        
 
     else:
-        return [listToDict.all( X ), idColumn]
+        return [listToDict.all( X, headerRow ), idColumn]
 
 # check to see if we have duplicate IDs in this data set
 def checkForDupes( idColumn ):
     idCounts = {}
-    for ID in idColumn:
+    for rowIndex, ID in enumerate(idColumn):
         try: 
-            if idCounts[ID] == 1:
+            if idCounts[ID] == 1 and rowIndex < trainingLength:
                 # if we can access this property in idCounts, that means we already have a value there, and can return true!
                 return True
         except:
@@ -58,7 +67,7 @@ def groupByID(dataDescription, X, headerRow, idColumn):
 
         # There is going to be one value for each row (e.g. number of items sold)
         rowValue = row[ valueIndex ]
-        for columnIndex in row:
+        for columnIndex, value in enumerate(row):
             # Then, for each categorical value (department, sub-department, etc.), sum up that rowValue
             # Thus, if we make multiple purchases in the biking section, we will have all of that summed up for this ID (either customer or trip or anything else we are given as an ID)
             if dataDescription[columnIndex] == 'categorical':
