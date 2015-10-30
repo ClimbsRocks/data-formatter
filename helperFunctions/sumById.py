@@ -1,8 +1,16 @@
+import listToDict
+
 def sum( dataDescription, X, headerRow, args):
     if checkForDupes(X):
-        groupByID(dataDescription, X, headerRow, args)
+        # TODO: we now have two different return formats: dictionaries, and lists
+        # probably easiest to convert X to dictionaries here regardless of whether it has dupes or not
+        # hmmm, imputing missing values would likely be less useful for these cases
+            # it's more likely that we would have a separate file entirely for the metadata associated with each row (name, age, gender if our repeated ID is a customerID)
+            # let's ignore this for now (MVP!), and then think later about imputing missing values on only the non-joined data, then joining in that data later. that would likely be much more space efficient than joining in that data up front
+        return groupByID(dataDescription, X, headerRow, args)
+
     else:
-        return [dataDescription, X, headerRow, args]
+        return listToDict.all( X )
 
 # check to see if we have duplicate IDs in this data set
 def checkForDupes( dataDescription, X):
@@ -44,7 +52,10 @@ def groupByID(dataDescription, X, headerRow, args):
         except:
             results[rowID] = {}
             rowObj = results[rowID]
+            # the number of rows this ID will appear in
             rowObj['rowCount'] = 1
+            # the number of different categories this row will hold overall
+            rowObj['categoryCount'] = 0
 
         # There is going to be one value for each row (e.g. number of items sold)
         rowValue = row[ valueIndex ]
@@ -55,19 +66,30 @@ def groupByID(dataDescription, X, headerRow, args):
                 columnHeader = headerRow[ columnIndex ]
                 try:
                     rowObj[ columnHeader + valueHeader ] += rowValue
+                    # how many different times this ID has had this value for this column
+                        # e.g., how many times the sub-department "Road Bikes" has popped up for this ID
                     rowObj[ columnHeader + valueHeader + 'count' ] += rowValue
                 except:
                     # for each column that is categorical, add a property to the rowObj, if it does not exist already 
                     # add the continuous value for that row to the value for this property 
                     rowObj[ columnHeader + valueHeader ] = rowValue
                     rowObj[ columnHeader + valueHeader + 'count' ] = rowValue
+                    # total categories this ID will eventually hold
+                    rowObj['categoryCount'] += 1
+                    # total categories- for this column- this ID will eventually hold
+                        # e.g., how many different sub-departments (Road Bikes, Mountain Bikes, and Rock Climbing) this ID will hold
+                    try:
+                        rowObj[columnHeader + 'count'] += 1
+                    except:
+                        rowObj[columnHeader + 'count'] = 1
+
 
 
                 # FUTURE: support having multiple continuous values added for each ID (count and price, for example)
                 # create counts of all these variables
                     # number of rows
                     # number of rows for each categorical value (dairy, for example)
-                    
+
     # TODO TODO: figure out the format of what we need to return
         # Figure out if we can/should do this after removeUniques
         # modify our header row
