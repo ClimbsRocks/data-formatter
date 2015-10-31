@@ -8,21 +8,25 @@ from helperFunctions.sendMessages import obviousPrint
 
 
 def sum( dataDescription, X, headerRow, idColumn, trainingLength):
-    if checkForDupes(idColumn):
+    printParent('inside sumByID.sum')
+    if checkForDupes(idColumn, trainingLength):
+        printParent('found duplicate IDs')
         # TODO: we now have two different return formats: dictionaries, and lists
         # probably easiest to convert X to dictionaries here regardless of whether it has dupes or not
         # hmmm, imputing missing values would likely be less useful for these cases
             # it's more likely that we would have a separate file entirely for the metadata associated with each row (name, age, gender if our repeated ID is a customerID)
             # let's ignore this for now (MVP!), and then think later about imputing missing values on only the non-joined data, then joining in that data later. that would likely be much more space efficient than joining in that data up front
-        # return groupByID(dataDescription, X, headerRow, idColumn)
-        return [listToDict.all( X, headerRow ), idColumn]
+        return groupByID(dataDescription, X, headerRow, idColumn)
+        # return [listToDict.all( X, headerRow ), idColumn]
         
 
     else:
         return [listToDict.all( X, headerRow ), idColumn]
 
 # check to see if we have duplicate IDs in this data set
-def checkForDupes( idColumn ):
+def checkForDupes( idColumn, trainingLength ):
+    # printParent('idColumn inside checkForDupes')
+    # printParent(idColumn)
     idCounts = {}
     for rowIndex, ID in enumerate(idColumn):
         try: 
@@ -31,6 +35,7 @@ def checkForDupes( idColumn ):
                 return True
         except:
             idCounts[ID] = 1
+
     return False
 
 def groupByID(dataDescription, X, headerRow, idColumn):
@@ -45,7 +50,6 @@ def groupByID(dataDescription, X, headerRow, idColumn):
     valueHeader = headerRow[ valueIndex ]
 
     results = {}
-    ### TODO:
     # iterate through list
     for rowIndex, row in enumerate(X):
         rowID = idColumn[rowIndex]
@@ -103,9 +107,12 @@ def groupByID(dataDescription, X, headerRow, idColumn):
         # modify our header row
             # This should be relatively easy, since we don't have any ID or output columns to worry about here, and we're summing up all the continuous columns
             # our column headers now should just be all the keys of our row dictionaries, which will be turned into lists with dictVectorizer
-
     listResults = results.values()
+    printParent('results length after turning from dictionary into values')
+    printParent(len(results))
     idColumn = []
     for rowDict in listResults:
         idColumn.append( rowDict.pop('ID', None) )
+    printParent('idColumn')
+    printParent(idColumn)
     return [listResults, idColumn]
