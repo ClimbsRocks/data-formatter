@@ -36,6 +36,10 @@
       args.testingPrettyName = path.basename( args.testingData ).slice(0,-4);
     }
 
+    if( args.verbose === undefined ) {
+      args.verbose = 1;
+    }
+
     // make sure the output folder exists. if not, create it.
     mkdirp( args.outputFolder, function(err) {
       if(err) {
@@ -54,6 +58,7 @@
     argsObj.outputFolder = path.join( cwd, 'data-formatterResults');
     argsObj.trainingData = process.argv[2];
     argsObj.testingData = process.argv[3];
+    argsObj.verbose = process.argv[4];
 
 
     module.exports( argsObj );
