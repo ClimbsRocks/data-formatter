@@ -13,7 +13,7 @@ from helperFunctions.sendMessages import obviousPrint
 # here are all the individual files that do most of the work. 
 # mainPythonProcess.py mostly just coordinates and lays out the order
 from helperFunctions import concat
-from helperFunctions import sumByID
+from helperFunctions import sumById
 from helperFunctions import removeUniques
 from helperFunctions import imputingMissingValues
 from helperFunctions import listToDict
@@ -32,6 +32,8 @@ test = args['test']
 # 1. concatenate together the training and testing data sets
 # this ensures that whatever transitions we perform in data-formatter will be equally applied to both the training and testing data set
 concattedResults = concat.inputFiles(trainingFile, testingFile)
+if args['verbose'] != 0:
+    printParent('finished concatting the training and testing files together')
 
 # dataDescription identifies whether each column is "output","id","categorical", or "continuous"
 dataDescription = concattedResults[0]
@@ -73,6 +75,8 @@ X = noUniquesResults[ 0 ]
 dataDescription = noUniquesResults[ 1 ]
 headerRow = noUniquesResults[ 2 ]
 
+if args['verbose'] != 0:
+    printParent('finished removing non-unique categorical values')
 
 # 3. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
     # we are including args only so that we can write to files at the intermediate stages for debugging
@@ -86,22 +90,26 @@ headerRow = imputedValuesResults[ 2 ]
 if(test):
     messageParent([X, idColumn, outputColumn], 'imputingMissingValues.py')
 
+if args['verbose'] != 0:
+    printParent('finished imputing missing values')
 
 # 4. if we have a single ID spread across multiple rows, sum by ID so that each ID ends up being only a single row with the aggregated results of all the relevant rows
-groupedRows = sumByID.sum(dataDescription, X, headerRow, idColumn)
+groupedRows = sumById.sum(dataDescription, X, headerRow, idColumn, trainingLength)
 X = groupedRows[0]
 idColumn = groupedRows[1]
 
+if args['verbose'] != 0:
+    printParent('finished grouping by ID if relevant')
 
 
-# writeToFile.writeData(X, args, headerRow, False )
+writeToFile.writeData(X, args, headerRow, False )
 
 
 # 3. convert entire dataset to have categorical data encoded properly. 
 # This turns information like a single column holding city names of 'SF' and 'Akron' into two separate columns, one for 'Akron=True' and one for 'SF=True'.
 # This is called one-hot encoding, and is a standard way of handling categorical data. 
 # listOfDicts = listToDict.all(X, headerRow)
-vectorizedInfo = dictVectorizing.vectorize(listOfDicts)
+vectorizedInfo = dictVectorizing.vectorize(X)
 X = vectorizedInfo[0].tolist()
 vectorizedHeaderRow = vectorizedInfo[1]
 
@@ -110,6 +118,8 @@ if(test):
     messageParent( X[0:150000], 'dictVectorizing.py' )
     messageParent( X[150000:], 'dictVectorizing.py' )
 
+if args['verbose'] != 0:
+    printParent('finished vectorizing the categorical values')
 
 
 # 4. Feature Selection means picking only those features that are actually predictive and useful
@@ -124,6 +134,8 @@ featureSelectingResults = featureSelecting.select(X, outputColumn, trainingLengt
 X = featureSelectingResults[0]
 filteredHeaderRow = featureSelectingResults[1]
 
+if args['verbose'] != 0:
+    printParent('finished running feature selecting')
 
 
 # 5. write results to file
