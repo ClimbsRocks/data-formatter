@@ -16,12 +16,12 @@ def sum( dataDescription, X, headerRow, idColumn, trainingLength):
         # hmmm, imputing missing values would likely be less useful for these cases
             # it's more likely that we would have a separate file entirely for the metadata associated with each row (name, age, gender if our repeated ID is a customerID)
             # let's ignore this for now (MVP!), and then think later about imputing missing values on only the non-joined data, then joining in that data later. that would likely be much more space efficient than joining in that data up front
-        return groupByID(dataDescription, X, headerRow, idColumn)
+        return groupByID(dataDescription, X, headerRow, idColumn, trainingLength)
         # return [listToDict.all( X, headerRow ), idColumn]
         
 
     else:
-        return [listToDict.all( X, headerRow ), idColumn]
+        return [listToDict.all( X, headerRow ), idColumn, trainingLength]
 
 # check to see if we have duplicate IDs in this data set
 def checkForDupes( idColumn, trainingLength ):
@@ -38,7 +38,7 @@ def checkForDupes( idColumn, trainingLength ):
 
     return False
 
-def groupByID(dataDescription, X, headerRow, idColumn):
+def groupByID(dataDescription, X, headerRow, idColumn, trainingLength):
     # FUTURE: handle data where the IDs are not sorted
         # We could easily just save this into a giant dictionary, instead of a results list
         # The key would be the ID, and the value would be this rowObj
@@ -50,6 +50,7 @@ def groupByID(dataDescription, X, headerRow, idColumn):
     valueHeader = headerRow[ valueIndex ]
 
     results = {}
+    newTrainingLength = 0
     # iterate through list
     for rowIndex, row in enumerate(X):
         rowID = idColumn[rowIndex]
@@ -59,6 +60,10 @@ def groupByID(dataDescription, X, headerRow, idColumn):
             rowObj = results[rowID]
             rowObj['rowCount'] += 1
         except:
+            # if we have to create a new rowObj, that means that we have not encountered this ID before. 
+            # not encountering this ID before, and being in a position within our X dataset that is less than the training length, means that this is a new, unique row summary that belongs to our trainingLength
+            if rowIndex < trainingLength:
+                newTrainingLength += 1
             results[rowID] = {}
             rowObj = results[rowID]
             # the number of rows this ID will appear in
