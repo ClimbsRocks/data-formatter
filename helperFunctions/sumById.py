@@ -77,19 +77,20 @@ def groupByID(dataDescription, X, headerRow, idColumn):
             if dataDescription[columnIndex] == 'categorical':
                 columnHeader = headerRow[ columnIndex ]
                 try:
-                    rowObj[ columnHeader + valueHeader ] += rowValue
+                    rowObj[ columnHeader + value + valueHeader ] += rowValue
                     # how many different times this ID has had this value for this column
                         # e.g., how many times the sub-department "Road Bikes" has popped up for this ID
-                    rowObj[ columnHeader + valueHeader + 'count' ] += rowValue
+                    rowObj[ columnHeader + value + valueHeader + 'count' ] += rowValue
                 except:
                     # for each column that is categorical, add a property to the rowObj, if it does not exist already 
                     # add the continuous value for that row to the value for this property 
-                    rowObj[ columnHeader + valueHeader ] = rowValue
-                    rowObj[ columnHeader + valueHeader + 'count' ] = rowValue
+                    rowObj[ columnHeader + value + valueHeader ] = rowValue
+                    rowObj[ columnHeader + value + valueHeader + 'count' ] = rowValue
                     # total categories this ID will eventually hold
                     rowObj['categoryCount'] += 1
+
                     # total categories- for this column- this ID will eventually hold
-                        # e.g., how many different sub-departments (Road Bikes, Mountain Bikes, and Rock Climbing) this ID will hold
+                        # e.g., if we have a column dedicated to the sub-departments of that store, how many different sub-departments (Road Bikes, Mountain Bikes, and Rock Climbing) this ID will hold
                     try:
                         rowObj[columnHeader + 'count'] += 1
                     except:
@@ -112,7 +113,9 @@ def groupByID(dataDescription, X, headerRow, idColumn):
     printParent(len(results))
     idColumn = []
     for rowDict in listResults:
-        idColumn.append( rowDict.pop('ID', None) )
-    printParent('idColumn')
-    printParent(idColumn)
+        # printParent(rowDict)
+        idColumn.append( rowDict.pop('id', None) )
+    printParent(listResults)
+    # TODO: our trainingLength variable has changed now! 
+        # go through and grab a count of the unique IDs in the training set, and return that as our new trainingLength
     return [listResults, idColumn]
