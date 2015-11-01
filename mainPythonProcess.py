@@ -52,6 +52,12 @@ dataDescription.remove('id')
 del headerRow[ dataDescription.index('output') ]
 dataDescription.remove('output')
 
+# we have ignored the data in the "IGNORE" columns, but now we need to remove those identifiers from headerRow and dataDescription
+ignoredIndices = [idx for idx, x in enumerate(dataDescription) if x == 'ignore']
+for index in reversed(ignoredIndices):
+    del headerRow[index]
+    del dataDescription[index]
+
 # trainingLength is the length of the training data set, so we can separate training and testing at the end
 trainingLength = concattedResults[2]
 args['trainingLength'] = trainingLength
