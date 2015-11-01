@@ -83,6 +83,8 @@ def inputFiles(trainingFile, testingFile):
                         idColumn.append(val)
                     elif dataDescription[idx] == 'output':
                         outputColumn.append(val)
+                    elif dataDescription[idx] == 'ignore':
+                        pass
                     else:
                         trimmedRow.append(val)
                 # NOTE: we are appending both the training and the testing data into one dataset
