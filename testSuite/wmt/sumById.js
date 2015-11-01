@@ -112,21 +112,20 @@ module.exports = function() {
       var testingIDs = [1,2,3,4,6,13,14,16,18,21,22,24,27,34,35,36,37,38,39,44,46,48,52,58,59,60,62,64,65,66,67,70,71,73,75,77,78,80,82,88,89,90,94,96,101,104,108,109,111,112,113,114,115,116,118,119,120,122,126,127,128,129,131,135,136,141,142,143,144,147,148,149,150,151,156,157,158,159,160,161,163,165,166,167,168,169,170,171,172,173,174,175,176,178,180,183,184,186,187,191,192,193,196,197,198,200,201,202,204,206,208,212,213,215,222,226,227,230,231,233,234,237,240,242,243,244,246,247,249,250,254,258,260,262,264,266,268,269,270,271,272,273,276,280,282,293,294,296,297,299,300,301,303,304,305,306,307,311,318,319,320,321,327,329,331,332,336,337,338,339,340,342,345,352,353,354,355,356,364,365,366,368,370,374,376,380,381,391,392,395,401,404,405,406,410,411,414,415,416,417,422,423,424,426,428,429,432,434,435,438,439,440,441,442,443,444,445,450,451,454,455,459,463,464,467];
       function checkIDs(idColumn, trainingLength) {
         for( var i = 0; i < trainingLength; i++) {
-          if( trainingIDs.indexOf( idColumn[i] ) === -1) {
+          if( trainingIDs.indexOf( parseInt(idColumn[i], 10) ) === -1) {
+            console.log('the id that is incorrectly sorted as a training ID is:',idColumn[i]);
             return idColumn[i];
           }
         }
         for (var i = trainingLength; i < idColumn.length; i++) {
-          if( testingIDs.indexOf( idColumn[i] ) === -1) {
+          if( testingIDs.indexOf( parseInt(idColumn[i], 10) ) === -1) {
+            console.log('the id that is incorrectly sorted as a testing ID is:',idColumn[i]);
             return idColumn[i];
           }
         }
         return true;
       }
-      console.log('training length:',trainingIDs.length);
-      console.log('testing length:',testingIDs.length);
       expect( checkIDs(idColumn, trainingLength) ).to.be.true;
-      // have a list of known IDs for each and check against them
 
     });
 
