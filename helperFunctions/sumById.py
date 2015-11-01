@@ -27,8 +27,6 @@ def sum( dataDescription, X, headerRow, idColumn, trainingLength, outputColumn):
 
 # check to see if we have duplicate IDs in this data set
 def checkForDupes( idColumn, trainingLength ):
-    # printParent('idColumn inside checkForDupes')
-    # printParent(idColumn)
     idCounts = {}
     for rowIndex, ID in enumerate(idColumn):
         try: 
@@ -79,7 +77,7 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
 
             if rowIndex < trainingLength:
                 newTrainingLength += 1
-                trainingIDs[rowIndex] = True
+                trainingIDs[rowID] = True
                 rowObj['output'] = outputColumn[rowIndex]
         # There is going to be one value for each row (e.g. number of items sold)
         rowValue = row[ valueIndex ]
@@ -131,10 +129,11 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
     testingData = []
     testingIDColumn = []
     outputColumn = []
+
     for rowDict in listResults:
         rowID = rowDict.pop('id', None)
         try:
-            if trainingIDs[rowID] == True:
+            if trainingIDs[str(rowID)] == True:
                 trainingData.append(rowDict)
                 trainingIDColumn.append( rowID )
                 outputColumn.append( rowDict.pop('output', None) )
@@ -146,8 +145,6 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
             testingIDColumn.append( rowID )
             
 
-        # printParent(rowDict)
     listResults = trainingData + testingData
     idColumn = trainingIDColumn + testingIDColumn
-    # printParent(listResults)
     return [listResults, idColumn, newTrainingLength, outputColumn]
