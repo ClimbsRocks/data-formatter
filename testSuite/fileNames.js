@@ -40,13 +40,13 @@ module.exports = function() {
         outputFolder: path.join( testFolder, 'formattedResults'),
         trainingData: path.join( testFolder, 'trainKaggleGiveMeSomeCredit.csv'),
         testingData: path.join( testFolder, 'testKaggleGiveMeSomeCredit.csv'),
+        verbose: 0,
         test: true
       };
 
       df( dfArgs, spy );
 
       process.on('finishedFormatting', function() {
-        console.log('heard a finishedFormatting event');
         done();
       });
     });

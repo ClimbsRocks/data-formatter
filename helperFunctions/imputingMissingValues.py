@@ -145,8 +145,6 @@ def createImputedColumns( columnMatrix, dataDescription, fillInVals, headerRow )
 
 
 def impute( columnMatrix, dataDescription, colMap, fillInVals ):
-    printParent('colMap:')
-    printParent(colMap)
     # we have one column dedicated just to holding the count of the total number of missing values for this row
     # however, if we only have one column with missing values, we will not have this countOfMissingValues column
     try:

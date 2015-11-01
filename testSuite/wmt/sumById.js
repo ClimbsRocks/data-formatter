@@ -81,7 +81,6 @@ module.exports = function() {
 
     it('should have columns for each category', function() {
 
-      // should have 290 columns
       function countColumns(results) {
         var count = 0;
         var columnSummary = {};
@@ -95,10 +94,7 @@ module.exports = function() {
         }
         return count;
       }
-      expect( countColumns(X) ).to.equal(290);
-      // TODO: simply get the total number of expected columns
-        // number of unique categories within each column, summed together
-      // this test might be redundant with dictVectorizer, so we might not write it out
+      expect( countColumns(X) ).to.equal(660);
     });
 
     // it('should sum up results by id for each category', function() {
