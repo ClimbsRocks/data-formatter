@@ -36,6 +36,9 @@ def inputFiles(trainingFile, testingFile):
                         idColumn.append(val)
                     elif dataDescription[idx] == 'output':
                         outputColumn.append(val)
+                    elif dataDescription[idx] == 'ignore':
+                        # some columns contain data we do not want to use. It seems trivial to remove these from our dataset here, rather than forcing them to try to open the dataset up in some other program to attempt to delete the column. 
+                        pass
                     else:
                         trimmedRow.append(val)
 
