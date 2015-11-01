@@ -39,6 +39,7 @@ def checkForDupes( idColumn, trainingLength ):
     return False
 
 def groupByID(dataDescription, X, headerRow, idColumn, trainingLength):
+    # TODO: take in the output column as well, add it to each rowObj, and then split back out again following the exact same process we are for the idColumn
     # FUTURE: handle data where the IDs are not sorted
         # We could easily just save this into a giant dictionary, instead of a results list
         # The key would be the ID, and the value would be this rowObj
@@ -50,6 +51,7 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength):
     valueHeader = headerRow[ valueIndex ]
 
     results = {}
+    trainingIDs = {}
     newTrainingLength = 0
     # iterate through list
     for rowIndex, row in enumerate(X):
@@ -64,6 +66,7 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength):
             # not encountering this ID before, and being in a position within our X dataset that is less than the training length, means that this is a new, unique row summary that belongs to our trainingLength
             if rowIndex < trainingLength:
                 newTrainingLength += 1
+                trainingIDs[rowIndex] = True
             results[rowID] = {}
             rowObj = results[rowID]
             # the number of rows this ID will appear in
@@ -108,19 +111,39 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength):
                     # number of rows
                     # number of rows for each categorical value (dairy, for example)
 
-    # TODO TODO: figure out the format of what we need to return
-        # Figure out if we can/should do this after removeUniques
-        # modify our header row
-            # This should be relatively easy, since we don't have any ID or output columns to worry about here, and we're summing up all the continuous columns
-            # our column headers now should just be all the keys of our row dictionaries, which will be turned into lists with dictVectorizer
     listResults = results.values()
     printParent('results length after turning from dictionary into values')
     printParent(len(results))
     idColumn = []
+    # TODO: 
+        # create a list of IDs that are in the training set
+        # once we have turned back into a list again, iterate through each object
+        # based on it's ID, put it into either a training or testing dataset
+        # then at the end, concat the training and testing datasets together again. 
+        # 
+
+    # since we have no idea what order the rowDicts will be in once we've put them into listResults, we must go through and carefully separate out the training and testing datasets
+    # part of that separation includes creating a new idColumn, since we now have fewer rows, and a new outputColumn, for the same reason.
+    trainingData = []
+    trainingIDColumn = []
+    testingData = []
+    testingIDColumn = []
     for rowDict in listResults:
+        rowID = rowDict.pop('id', None)
+        try:
+            if trainingIDs[rowID] == True:
+                trainingData.append(rowDict)
+                trainingIDcolumn.append( rowID )
+            else:
+                testingData.append( rowDict )
+                testingIDColumn.append( rowID )
+        except: 
+            testingData.append( rowDict )
+            testingIDColumn.append( rowID )
+            
+
         # printParent(rowDict)
-        idColumn.append( rowDict.pop('id', None) )
+    listResults = trainingData + testingData
+    idColumn = trainingIDcolumn + testingIDColumn
     printParent(listResults)
-    # TODO: our trainingLength variable has changed now! 
-        # go through and grab a count of the unique IDs in the training set, and return that as our new trainingLength
-    return [listResults, idColumn]
+    return [listResults, idColumn, trainingLength]
