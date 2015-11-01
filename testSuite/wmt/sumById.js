@@ -6,24 +6,25 @@ var killChildProcess = require('./killChildProcess');
 module.exports = function() {
 
   describe('sumByID', function() {
+    
+    var idColumn;
+    var outputColumn;
+    var X;
+    var trainingLength;
+
     before(function(done) {
       console.time('sumByID time');
-      // var pyController = startPyTest();
-
-
       pyController.on('message', function(message) {
         if(message.type === 'sumById.py') {
-          // killChildProcess(pyController.childProcess);
-          results = message.text;
-          sumColumns( results[0] );
+          idColumn = message.text[1];
+          trainingLength = message.text[2];
+          outputColumn = message.text[3];
+          X = message.text[0];
+
           console.timeEnd('sumByID time');
           done();
         }
       });
-    });
-
-    it('should not change datasets where IDs are only present in one row', function() {
-
     });
 
     it('should turn each ID into a single row of data', function() {
@@ -41,6 +42,12 @@ module.exports = function() {
         }
         return true;
       }
+
+      expect( summarizeIDColumn(idColumn) ).to.be.true;
+
+    });
+
+    it('should not had id or output column in the rowObj itself, only in their own separate columns', function() {
 
     });
 
