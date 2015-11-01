@@ -3,6 +3,7 @@ var mocha = require('mocha');
 var startPyTest = require('./startPyTest');
 var fileConcatting = require('./fileConcatting');
 var imputingMissingValues = require('./imputingMissingValues');
+var sumById = require('./sumById');
 var dictVectorizing = require('./dictVectorizing');
 var featureSelecting = require('./featureSelecting');
 var brainjsTest = require('./brainjsTest');
@@ -15,11 +16,13 @@ describe('data-formatter', function() {
   global.pyController = startPyTest('giveCredit');
 
   // this timeout should be long enough to handle tests on a variety of machines
-  this.timeout(360000);
+  this.timeout(600000);
 
   fileConcatting();
 
   imputingMissingValues();
+
+  sumById();
 
   dictVectorizing();
 
