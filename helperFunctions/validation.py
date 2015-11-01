@@ -7,7 +7,7 @@ def dataDescription(arr):
         'id': False,
         'output': False
     }
-    allowableValues = ['id','output','continuous','categorical']
+    allowableValues = ['id','output','continuous','categorical','ignore']
 
     for name in arr:
         try:
