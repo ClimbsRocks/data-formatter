@@ -7,7 +7,7 @@ from helperFunctions.sendMessages import messageParent
 from helperFunctions.sendMessages import obviousPrint
 
 
-def sum( dataDescription, X, headerRow, idColumn, trainingLength):
+def sum( dataDescription, X, headerRow, idColumn, trainingLength, outputColumn):
     printParent('inside sumByID.sum')
     if checkForDupes(idColumn, trainingLength):
         printParent('found duplicate IDs')
@@ -16,12 +16,12 @@ def sum( dataDescription, X, headerRow, idColumn, trainingLength):
         # hmmm, imputing missing values would likely be less useful for these cases
             # it's more likely that we would have a separate file entirely for the metadata associated with each row (name, age, gender if our repeated ID is a customerID)
             # let's ignore this for now (MVP!), and then think later about imputing missing values on only the non-joined data, then joining in that data later. that would likely be much more space efficient than joining in that data up front
-        return groupByID(dataDescription, X, headerRow, idColumn, trainingLength)
+        return groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputColumn)
         # return [listToDict.all( X, headerRow ), idColumn]
         
 
     else:
-        return [listToDict.all( X, headerRow ), idColumn, trainingLength]
+        return [listToDict.all( X, headerRow ), idColumn, trainingLength, outputColumn]
 
 # check to see if we have duplicate IDs in this data set
 def checkForDupes( idColumn, trainingLength ):
@@ -38,7 +38,7 @@ def checkForDupes( idColumn, trainingLength ):
 
     return False
 
-def groupByID(dataDescription, X, headerRow, idColumn, trainingLength):
+def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputColumn):
     # TODO: take in the output column as well, add it to each rowObj, and then split back out again following the exact same process we are for the idColumn
     # FUTURE: handle data where the IDs are not sorted
         # We could easily just save this into a giant dictionary, instead of a results list
@@ -62,11 +62,6 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength):
             rowObj = results[rowID]
             rowObj['rowCount'] += 1
         except:
-            # if we have to create a new rowObj, that means that we have not encountered this ID before. 
-            # not encountering this ID before, and being in a position within our X dataset that is less than the training length, means that this is a new, unique row summary that belongs to our trainingLength
-            if rowIndex < trainingLength:
-                newTrainingLength += 1
-                trainingIDs[rowIndex] = True
             results[rowID] = {}
             rowObj = results[rowID]
             # the number of rows this ID will appear in
@@ -76,6 +71,13 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength):
             # this ensures we will always have the ID value attached to the summarized results for this row, even after we turn the results dictionary into a list
             # we take this column back out again after dictVectorizer
             rowObj['id'] = rowID
+
+            # if we have to create a new rowObj, that means that we have not encountered this ID before. 
+            # not encountering this ID before, and being in a position within our X dataset that is less than the training length, means that this is a new, unique row summary that belongs to our trainingLength
+            if rowIndex < trainingLength:
+                newTrainingLength += 1
+                trainingIDs[rowIndex] = True
+                rowObj['output'] = outputColumn[rowIndex]
 
         # There is going to be one value for each row (e.g. number of items sold)
         rowValue = row[ valueIndex ]
@@ -128,12 +130,14 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength):
     trainingIDColumn = []
     testingData = []
     testingIDColumn = []
+    outputColumn = []
     for rowDict in listResults:
         rowID = rowDict.pop('id', None)
         try:
             if trainingIDs[rowID] == True:
                 trainingData.append(rowDict)
-                trainingIDcolumn.append( rowID )
+                trainingIDColumn.append( rowID )
+                outputColumn.append( rowDict.pop('output', None) )
             else:
                 testingData.append( rowDict )
                 testingIDColumn.append( rowID )
@@ -144,6 +148,6 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength):
 
         # printParent(rowDict)
     listResults = trainingData + testingData
-    idColumn = trainingIDcolumn + testingIDColumn
+    idColumn = trainingIDColumn + testingIDColumn
     printParent(listResults)
-    return [listResults, idColumn, trainingLength]
+    return [listResults, idColumn, trainingLength, outputColumn]

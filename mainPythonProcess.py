@@ -94,15 +94,18 @@ if args['verbose'] != 0:
     printParent('finished imputing missing values')
 
 # 4. if we have a single ID spread across multiple rows, sum by ID so that each ID ends up being only a single row with the aggregated results of all the relevant rows
-groupedRows = sumById.sum(dataDescription, X, headerRow, idColumn, trainingLength)
+groupedRows = sumById.sum(dataDescription, X, headerRow, idColumn, trainingLength, outputColumn)
 X = groupedRows[0]
 idColumn = groupedRows[1]
+trainingLength = groupedRows[2]
+outputColumn = groupedRows[3]
 
 if args['verbose'] != 0:
     printParent('finished grouping by ID if relevant')
+# printParent('X after sumByID')
+# printParent(X)
 
-
-writeToFile.writeData(X, args, headerRow, False )
+# writeToFile.writeData(X, args, headerRow, False )
 
 
 # 3. convert entire dataset to have categorical data encoded properly. 
