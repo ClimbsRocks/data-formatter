@@ -1,8 +1,5 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var startPyTest = require('./startPyTest');
-var killChildProcess = require('./killChildProcess');
-
 
 module.exports = function() {
 

@@ -15,7 +15,7 @@ describe('data-formatter', function() {
 
   global.pyController = startPyTest('giveCredit');
 
-  // this timeout should be long enough to handle tests on a variety of machines
+  // this timeout should be long enough to handle tests on a variety of machines. If you are getting a timeout error, consider bumping this up even more. 
   this.timeout(600000);
 
   fileConcatting();

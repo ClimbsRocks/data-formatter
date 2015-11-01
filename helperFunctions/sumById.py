@@ -148,5 +148,5 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
         # printParent(rowDict)
     listResults = trainingData + testingData
     idColumn = trainingIDColumn + testingIDColumn
-    printParent(listResults)
+    # printParent(listResults)
     return [listResults, idColumn, trainingLength, outputColumn]

@@ -1,18 +1,13 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var startPyTest = require('./startPyTest');
-var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
   describe('Feature Selection', function() {
-    // 100 minutes
-    this.timeout(6000000);
 
     var allData = [];
 
     before(function(done) {
       console.time('feature selecting time');
-      // var pyController = startPyTest();
 
       pyController.on('message', function(message) {
 
@@ -24,7 +19,6 @@ module.exports = function() {
           }
           message.text = null;
           if (allData.length > 250000) {
-            // killChildProcess(pyController.childProcess);
             console.timeEnd('feature selecting time');
             done();
           }
@@ -32,12 +26,11 @@ module.exports = function() {
       });
     });
 
-    // it should apply to both our training and testing data separately
-      // expect all columns to have the same length
     it('should be applied to both our training and test data sets', function(done) {
       var expectedLength = allData[0].length;
       console.log('the length of each row after feature selection is:',expectedLength);
       
+      // expect all columns to have the same length
       function checkAllRows(matrix) {
         for (var i = 0; i < matrix.length; i++) {
           if ( matrix[i].length !== expectedLength ) {
@@ -53,7 +46,6 @@ module.exports = function() {
     });
 
 
-    // it should have fewer columns than before
     it('should should have fewer columns than before feature selection, but the same number of observations', function(done) {
       expect(allData.length).to.equal(251503);
       expect(allData[0]).to.have.length.below(100);
@@ -92,9 +84,9 @@ module.exports = function() {
       done();
     });
 
-  after(function() {
-    allData = [];
-  });
+    after(function() {
+      allData = [];
+    });
 
   });
 };

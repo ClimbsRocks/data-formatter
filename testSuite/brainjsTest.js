@@ -1,22 +1,16 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var startPyTest = require('./startPyTest');
-var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
   describe('brain.js formatting', function() {
 
     var results;
-    // var expectedInputLength;
 
     before(function(done) {
       console.time('brainjs time');
-      // var pyController = startPyTest();
-
 
       pyController.on('message', function(message) {
         if(message.type === 'brainjs.py') {
-          // killChildProcess(pyController.childProcess);
           results = message.text;
           console.timeEnd('brainjs time');
           done();

@@ -7,16 +7,12 @@ module.exports = function() {
   describe('neural network formatting', function() {
 
     var results;
-    // var expectedInputLength;
 
     before(function(done) {
       console.time('Neural Network time');
-      // var pyController = startPyTest();
-
 
       pyController.on('message', function(message) {
         if(message.type === 'minMax.py') {
-          // killChildProcess(pyController.childProcess);
           results = message.text;
           console.timeEnd('Neural Network time');
           done();

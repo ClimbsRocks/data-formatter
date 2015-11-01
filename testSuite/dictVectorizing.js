@@ -1,7 +1,5 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var startPyTest = require('./startPyTest');
-var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
   describe('dictVectorizing', function() {
@@ -11,7 +9,6 @@ module.exports = function() {
 
     before(function(done) {
       console.time('dict vectorizing time');
-      // var pyController = startPyTest();
 
       pyController.on('message', function(message) {
 
@@ -22,28 +19,22 @@ module.exports = function() {
           message.text = null;
 
           if (allData.length > 250000) {
-            // killChildProcess(pyController.childProcess);
             console.timeEnd('dict vectorizing time');
             done();
           }
         }
-        // message.text = null;
       
       });
     });
 
 
     it('should be performed on the combined training and testing dataset at the same time to ensure consistency', function(done) {
-      // individual row length
-      // count of columns with only 0's and 1's
       expect(allData.length).to.equal(251503);
       done();
     });
 
 
     it('should binarize all categorical values using one-hot encoding', function(done) {
-      // individual row length
-      // count of columns with only 0's and 1's
 
       var binarySummary = {};
       for (var i = 0; i < allData[0].length; i++) {
@@ -67,6 +58,7 @@ module.exports = function() {
           countOfBinaryColumns++;
         }
       }
+      
       // these are known sums of the combined dataset's continuous columns
       expect(countOfBinaryColumns).to.equal(144);
       binarySummary = null;
