@@ -100,6 +100,9 @@ idColumn = groupedRows[1]
 trainingLength = groupedRows[2]
 outputColumn = groupedRows[3]
 
+if(test):
+    messageParent([X, idColumn, trainingLength, outputColumn], 'sumById.py')
+
 if args['verbose'] != 0:
     printParent('finished grouping by ID if relevant')
 # printParent('X after sumByID')

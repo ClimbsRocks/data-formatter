@@ -8,7 +8,6 @@ from helperFunctions.sendMessages import obviousPrint
 
 
 def sum( dataDescription, X, headerRow, idColumn, trainingLength, outputColumn):
-    printParent('inside sumByID.sum')
     if checkForDupes(idColumn, trainingLength):
         printParent('found duplicate IDs')
         # TODO: we now have two different return formats: dictionaries, and lists

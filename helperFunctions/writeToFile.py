@@ -103,5 +103,7 @@ def writeData(X, args, headerRow, nn ):
             'X_train': X_train,
             'X_test': X_test
         }
+    printParent('fileNames where we have written the data:')
+    printParent(fileNames)
         
     messageParent( fileNames, 'fileNames' )
