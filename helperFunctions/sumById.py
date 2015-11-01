@@ -9,7 +9,10 @@ from helperFunctions.sendMessages import obviousPrint
 
 def sum( dataDescription, X, headerRow, idColumn, trainingLength, outputColumn):
     if checkForDupes(idColumn, trainingLength):
-        printParent('found duplicate IDs')
+        printParent('We have found multiple rows with the same ID in them.')
+        printParent('We are going to assume that all rows with the same ID in them should be summed up intelligently')
+        printParent('This will tranform your dataset from being "long" to being "wide".')
+        printParent('If this is not what you intended, please submit an issue and/or a Pull Request explaining your sitaution!')
         # TODO: we now have two different return formats: dictionaries, and lists
         # probably easiest to convert X to dictionaries here regardless of whether it has dupes or not
         # hmmm, imputing missing values would likely be less useful for these cases
@@ -73,11 +76,11 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
 
             # if we have to create a new rowObj, that means that we have not encountered this ID before. 
             # not encountering this ID before, and being in a position within our X dataset that is less than the training length, means that this is a new, unique row summary that belongs to our trainingLength
+
             if rowIndex < trainingLength:
                 newTrainingLength += 1
                 trainingIDs[rowIndex] = True
                 rowObj['output'] = outputColumn[rowIndex]
-
         # There is going to be one value for each row (e.g. number of items sold)
         rowValue = row[ valueIndex ]
         for columnIndex, value in enumerate(row):
@@ -113,8 +116,6 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
                     # number of rows for each categorical value (dairy, for example)
 
     listResults = results.values()
-    printParent('results length after turning from dictionary into values')
-    printParent(len(results))
     idColumn = []
     # TODO: 
         # create a list of IDs that are in the training set
@@ -149,4 +150,4 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
     listResults = trainingData + testingData
     idColumn = trainingIDColumn + testingIDColumn
     # printParent(listResults)
-    return [listResults, idColumn, trainingLength, outputColumn]
+    return [listResults, idColumn, newTrainingLength, outputColumn]
