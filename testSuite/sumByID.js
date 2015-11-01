@@ -8,9 +8,6 @@ module.exports = function() {
 
   describe('sumById', function() {
   
-    // var originalIdColumn;
-    // var originalOutputColumn;
-    // var originalX;
     var idColumn;
     var outputColumn;
     var X;
@@ -18,13 +15,7 @@ module.exports = function() {
 
     before(function(done) {
       console.time('sumByID time');
-      // var pyController = startPyTest();
       pyController.on('message', function(message) {
-        // if(message.type === 'imputingMissingValues.py') {
-        //   originalIdColumn = message.text[1];
-        //   originalOutputColumn = message.text[2];
-        //   originalX = message.text[0];
-        // }
         if(message.type === 'sumById.py') {
           idColumn = message.text[1];
           trainingLength = message.text[2];
