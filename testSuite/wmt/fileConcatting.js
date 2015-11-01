@@ -1,26 +1,19 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
-var startPyTest = require('./startPyTest');
-var killChildProcess = require('./killChildProcess');
 
 module.exports = function() {
 
 
-  // this describe block will contain all the tests for our fileConcatting module
   describe('fileConcatting', function() {
-    // this operation can be slow, so give it some time to process:
 
     var results;
 
     before(function(done) {
       console.time('file concatting time');
-      // var pyController = startPyTest();
 
-      pyController.on('message', function(message) {
+      pyControllerWmt.on('message', function(message) {
         // message is the message object coming to us from the Python process
-        // we are expecting to get back an array of the concatted results
         if(message.type === 'concat.py') {
-          // killChildProcess(pyController.childProcess);
           results = message.text;
           console.timeEnd('file concatting time');
           done();
@@ -30,9 +23,19 @@ module.exports = function() {
     });
 
     it('should delete columns with a dataDescription header of "IGNORE"', function() {
+      // dataDescription row
       expect( results[0].length ).to.equal(4);
+      // headerRow
       expect( results[1].length ).to.equal(4);
-      expect( results[3].length ).to.equal(4);
+      // our X dataset
+      var allRowsEqual4 = true;
+      for( var i = 0; i < results[3].length; i++) {
+        if( results[3][i].length !== 4 ) {
+          allRowsEqual4 = false;
+          break;
+        }
+      }
+      expect( allRowsEqual4 ).to.be.true;
     });
 
 
@@ -43,8 +46,6 @@ module.exports = function() {
       results[3] = null;
       results = null;
     });
-
-
 
   });
 };
