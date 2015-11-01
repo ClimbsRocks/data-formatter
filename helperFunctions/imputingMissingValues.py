@@ -145,8 +145,14 @@ def createImputedColumns( columnMatrix, dataDescription, fillInVals, headerRow )
 
 
 def impute( columnMatrix, dataDescription, colMap, fillInVals ):
+    printParent('colMap:')
+    printParent(colMap)
     # we have one column dedicated just to holding the count of the total number of missing values for this row
-    countOfMissingValsColIndex = colMap[ 'countOfMissingValues' ]
+    # however, if we only have one column with missing values, we will not have this countOfMissingValues column
+    try:
+        countOfMissingValsColIndex = colMap[ 'countOfMissingValues' ]
+    except:
+        pass
 
     for colIndex, column in enumerate(columnMatrix):
         if dataDescription[ colIndex ] == 'categorical':
@@ -182,10 +188,13 @@ def impute( columnMatrix, dataDescription, colMap, fillInVals ):
                         # it is just one over from the imputedColumn
                         # set that value equal to 1
                     columnMatrix[ imputedColIndex + 1 ][ rowIndex ] = 1
-                    # find the column holding the count of all missing values for that row
-                        # increment that value by 1
-                    columnMatrix[ countOfMissingValsColIndex ][ rowIndex ] += 1
 
+                    try:
+                        # find the column holding the count of all missing values for that row
+                            # increment that value by 1
+                        columnMatrix[ countOfMissingValsColIndex ][ rowIndex ] += 1
+                    except:
+                        pass
         except:
             pass
             # if this is not a column we've previously identified as having missing values, do nothing
