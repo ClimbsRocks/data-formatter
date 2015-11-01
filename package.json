@@ -4,7 +4,9 @@
   "description": "Formats and cleans your data to get it ready for machine learning!",
   "main": "index.js",
   "scripts": {
-    "test": "mocha testSuite/test.js"
+    "test": "npm run test:wmt && npm run test:giveCredit",
+    "test:giveCredit": "mocha testSuite/test.js",
+    "test:wmt": "mocha testSuite/wmt/test.js"
   },
   "repository": {
     "type": "git",
