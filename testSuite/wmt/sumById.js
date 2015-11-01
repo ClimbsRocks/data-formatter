@@ -13,9 +13,11 @@ module.exports = function() {
     var trainingLength;
 
     before(function(done) {
+
       console.time('sumByID time');
       pyController.on('message', function(message) {
         if(message.type === 'sumById.py') {
+
           idColumn = message.text[1];
           trainingLength = message.text[2];
           outputColumn = message.text[3];
@@ -32,8 +34,8 @@ module.exports = function() {
       var idIndex = headerRow.indexOf('id');
 
       function summarizeIDColumn() {
-        for (var i = 0; i < results.length; i++) {
-          var id = results[i][idIndex];
+        for (var i = 0; i < idColumn.length; i++) {
+          var id = idColumn[i];
           if( idSummaryObj[id] !== undefined) {
             return false;
           } else {
@@ -43,17 +45,39 @@ module.exports = function() {
         return true;
       }
 
-      expect( summarizeIDColumn(idColumn) ).to.be.true;
+      expect( summarizeIDColumn( idColumn) ).to.be.true;
 
     });
 
-    it('should not had id or output column in the rowObj itself, only in their own separate columns', function() {
+    it('should not have id or output column in the rowObj itself, only in their own separate columns', function() {
+      function checkForIDAndOutput(results) {
+        for( var i = 0; i < results.length; i++) {
+          var rowObj = results[i];
+          for( var key in rowObj ) {
+            if( key === 'id' || key === 'output') {
+              return false;
+            }
+          }
+        }
+        return true;
+      };
 
+      expect( checkForIDAndOutput(results) ).to.be.true;
     });
 
 
 
     it('should return a list of dictionaries', function() {
+      function checkForObjects(results) {
+        for( var i = 0; i < results.length; i++) {
+          if( results[i].prototype.constructor !== Object) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      expect( checkForObjects(results) ).to.be.true;
 
     });
 
