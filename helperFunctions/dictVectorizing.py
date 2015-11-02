@@ -7,6 +7,8 @@ from sendMessages import obviousPrint
 vectorizer = DictVectorizer()
 
 def vectorize(listOfDicts):
-    listOfDicts = vectorizer.fit_transform(listOfDicts).toarray()
+    printParent('about to dict vectorize the data')
+    # listOfDicts = vectorizer.fit_transform(listOfDicts).toarray()
+    listOfDicts = vectorizer.fit_transform(listOfDicts)
     return [ listOfDicts, vectorizer.feature_names_, vectorizer.vocabulary_ ]
 
