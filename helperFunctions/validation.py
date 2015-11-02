@@ -37,17 +37,13 @@ def rowLength( row, expectedRowLength, rowCount ):
 
 def testingHeaderRow( row, expectedRowLength, trainingHeader ):
     if len( row ) != expectedRowLength:
-        # printParent('len(row)')
-        # printParent(len(row))
-        # printParent('len( outputData[ 0 ]')
-        # printParent(len( outputData[ 0 ] ) )
-        printParent('we noticed that the testing and training datasets have different numbers of columns')
-        printParent('we are going to assume that the "Output" column(s) is(are) simply not included for the testing dataset.')
-        printParent( 'Here is the header row for your testing dataset:')
+        printParent('We noticed that the testing and training datasets have different numbers of columns.')
+        printParent('We are going to assume that the "Output" column is simply not included for the testing dataset.')
+        printParent( 'Here is the header row for the training data set:')
+        printParent( trainingHeader )
+        printParent( 'And here is the header row for your testing dataset:')
         row = [x.lower() for x in row]
         printParent( row )
-        printParent( 'And here is the header row for the training data set:')
-        printParent( trainingHeader )
         return False
     return True
 
