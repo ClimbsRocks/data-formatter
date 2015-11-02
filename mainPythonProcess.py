@@ -108,6 +108,13 @@ X = groupedRows[0]
 idColumn = groupedRows[1]
 trainingLength = groupedRows[2]
 args['trainingLength'] = trainingLength
+printParent('trainingLength in mainPythonProcess')
+printParent(args['trainingLength'])
+args['testingLength'] = len(X) - args['trainingLength']
+printParent('len X')
+printParent( len(X) )
+printParent('testingLength in mainPythonProcess')
+printParent(args['testingLength'])
 outputColumn = groupedRows[3]
 
 # if(test):
@@ -148,7 +155,7 @@ if args['verbose'] != 0:
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
 
 # featureSelectingResults = featureSelecting.rfecvSelection(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
-featureSelectingResults = featureSelecting.select(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
+featureSelectingResults = featureSelecting.select(X, outputColumn, args['trainingLength'], 0.001, vectorizedHeaderRow, test )
 X = featureSelectingResults[0]
 filteredHeaderRow = featureSelectingResults[1]
 
@@ -158,27 +165,27 @@ if args['verbose'] != 0:
 # 5. write results to file
 # this is the data we need for most scikit-learn algorithms!
 writeToFile.writeMetadata( outputColumn, idColumn, args, filteredHeaderRow )
-writeToFile.writeData(X, args, filteredHeaderRow, False )
+writeToFile.writeDataSparse(X, args, filteredHeaderRow, False )
 # writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow )
 # writeToFile.writeData(X, args, headerRow, False )
 
-if(test):
-    messageParent(X.tolist(), 'featureSelecting.py')
+# if(test):
+#     messageParent(X.tolist(), 'featureSelecting.py')
 
 # 6. for neural networks:
 # normalize the data to be values between -1 and 1
-X = minMax.normalize( X )
-writeToFile.writeData(X, args, filteredHeaderRow, True )
-if( test ):
-    messageParent(X.tolist(), 'minMax.py')
+# X = minMax.normalize( X )
+# writeToFile.writeData(X, args, filteredHeaderRow, True )
+# # if( test ):
+# #     messageParent(X.tolist(), 'minMax.py')
 
-# 7. format data specifically for brain.js, which takes a different format than scikit-neural-network
-brainX = brainjs.format( X.tolist(), outputColumn, idColumn, args )
-if( test ):
-    messageParent( brainX, 'brainjs.py' )
+# # 7. format data specifically for brain.js, which takes a different format than scikit-neural-network
+# brainX = brainjs.format( X.tolist(), outputColumn, idColumn, args )
+# # if( test ):
+# #     messageParent( brainX, 'brainjs.py' )
 
 messageParent({
-    'trainingDataLength': trainingLength
+    'trainingDataLength': args['trainingLength']
 }, 'fileNames')
 
 printParent('we have written your fully transformed data to a folder at:')
