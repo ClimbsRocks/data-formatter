@@ -126,8 +126,7 @@ def writeDataSparse(X, args, headerRow, nn ):
     # lifted directly from stackOverflow:
     # http://stackoverflow.com/questions/8955448/save-load-scipy-sparse-csr-matrix-in-portable-data-format
     def save_sparse_csr(filename,array):
-        np.savez(filename,data = array.data ,indices=array.indices,
-                 indptr =array.indptr, shape=array.shape )
+        np.savez(filename,data=array.data ,indices=array.indices, indptr=array.indptr, shape=array.shape )
 
     # scipy sparse matrices need a list of indices to slice
     # http://stackoverflow.com/questions/13352280/slicing-sparse-matrices-in-scipy-which-types-work-best

@@ -108,13 +108,7 @@ X = groupedRows[0]
 idColumn = groupedRows[1]
 trainingLength = groupedRows[2]
 args['trainingLength'] = trainingLength
-printParent('trainingLength in mainPythonProcess')
-printParent(args['trainingLength'])
 args['testingLength'] = len(X) - args['trainingLength']
-printParent('len X')
-printParent( len(X) )
-printParent('testingLength in mainPythonProcess')
-printParent(args['testingLength'])
 outputColumn = groupedRows[3]
 
 # if(test):

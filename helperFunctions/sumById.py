@@ -115,6 +115,7 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
 
     listResults = results.values()
     idColumn = []
+
     # TODO: 
         # create a list of IDs that are in the training set
         # once we have turned back into a list again, iterate through each object
@@ -129,7 +130,6 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
     testingData = []
     testingIDColumn = []
     outputColumn = []
-
     for rowDict in listResults:
         rowID = rowDict.pop('id', None)
         try:
@@ -143,8 +143,7 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
         except: 
             testingData.append( rowDict )
             testingIDColumn.append( rowID )
-            
-
+    
     listResults = trainingData + testingData
     idColumn = trainingIDColumn + testingIDColumn
     return [listResults, idColumn, newTrainingLength, outputColumn]
