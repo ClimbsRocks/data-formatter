@@ -18,13 +18,18 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test ):
     columnIndicesThatPass = [idx for idx, x in enumerate( classifier.feature_importances_ ) if x > featureImportanceThreshold]
 
     # use numpy to grab only those columns that passed the previous step
-    cleanedX = np.array( X )[ :, columnIndicesThatPass ]
+    # cleanedX = np.array( X )[ :, columnIndicesThatPass ]
+    cleanedX = X.tocsc()[:, columnIndicesThatPass]
 
     # create the new header row that contains only the column names that passed the test
     printingOutput = []
     filteredHeaderRow = []
-    for idx, importance in enumerate( classifier.feature_importances_ ):
-        if( classifier.feature_importances_[idx] > featureImportanceThreshold ):
+
+    featureImportancesList = classifier.feature_importances_.tolist()
+    # printParent(featureImportancesList)
+    for idx, importance in enumerate( featureImportancesList ):
+        # printParent(idx)
+        if featureImportancesList[idx] > featureImportanceThreshold :
             printingOutput.append( [ headerRow[idx], round( importance, 4) ])
             filteredHeaderRow.append( headerRow[idx] )
 
