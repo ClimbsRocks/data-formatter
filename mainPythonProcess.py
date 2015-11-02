@@ -17,6 +17,7 @@ from helperFunctions import sumById
 from helperFunctions import removeUniques
 from helperFunctions import imputingMissingValues
 from helperFunctions import listToDict
+from helperFunctions import noUniquesRedux
 from helperFunctions import dictVectorizing
 from helperFunctions import featureSelecting
 from helperFunctions import minMax
@@ -101,37 +102,42 @@ if args['verbose'] != 0:
 
 # 4. if we have a single ID spread across multiple rows, sum by ID so that each ID ends up being only a single row with the aggregated results of all the relevant rows
 groupedRows = sumById.sum(dataDescription, X, headerRow, idColumn, trainingLength, outputColumn)
+if trainingLength != groupedRows[2]:
+    wasSummed = True
 X = groupedRows[0]
 idColumn = groupedRows[1]
 trainingLength = groupedRows[2]
+args['trainingLength'] = trainingLength
 outputColumn = groupedRows[3]
 
-if(test):
-    messageParent([X, idColumn, trainingLength, outputColumn], 'sumById.py')
+# if(test):
+#     messageParent([X, idColumn, trainingLength, outputColumn], 'sumById.py')
 
 if args['verbose'] != 0:
     printParent('finished grouping by ID if relevant')
 # printParent('X after sumByID')
 # printParent(X)
 
-# writeToFile.writeData(X, args, headerRow, False )
-
+if wasSummed:
+    X = noUniquesRedux.clean(X)
 
 # 3. convert entire dataset to have categorical data encoded properly. 
 # This turns information like a single column holding city names of 'SF' and 'Akron' into two separate columns, one for 'Akron=True' and one for 'SF=True'.
 # This is called one-hot encoding, and is a standard way of handling categorical data. 
 # listOfDicts = listToDict.all(X, headerRow)
 vectorizedInfo = dictVectorizing.vectorize(X)
-X = vectorizedInfo[0].tolist()
+# X = vectorizedInfo[0].tolist()
+X = vectorizedInfo[0]
 vectorizedHeaderRow = vectorizedInfo[1]
-
-if(test):
-    # the data become too big to send over in one huge string, so we are splitting it up into two separate messages
-    messageParent( X[0:150000], 'dictVectorizing.py' )
-    messageParent( X[150000:], 'dictVectorizing.py' )
 
 if args['verbose'] != 0:
     printParent('finished vectorizing the categorical values')
+
+# if(test):
+#     # the data become too big to send over in one huge string, so we are splitting it up into two separate messages
+#     messageParent( X[0:150000], 'dictVectorizing.py' )
+#     messageParent( X[150000:], 'dictVectorizing.py' )
+
 
 
 # 4. Feature Selection means picking only those features that are actually predictive and useful
@@ -148,7 +154,6 @@ filteredHeaderRow = featureSelectingResults[1]
 
 if args['verbose'] != 0:
     printParent('finished running feature selecting')
-
 
 # 5. write results to file
 # this is the data we need for most scikit-learn algorithms!
