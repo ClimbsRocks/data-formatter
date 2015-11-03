@@ -30,7 +30,7 @@ describe('data-formatter', function() {
 
   neuralNetwork(); 
   
-  brainjsTest();
+  // brainjsTest();
 
   fileNames();
 
