@@ -19,8 +19,8 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test ):
 
     # use numpy to grab only those columns that passed the previous step
     # cleanedX = np.array( X )[ :, columnIndicesThatPass ]
-    cleanedX = X.tocsc()[:, columnIndicesThatPass]
-    cleanedX = X.tocsr()
+    cleanedX = X.tocsc()[ :, columnIndicesThatPass]
+    cleanedX = cleanedX.tocsr()
 
     # create the new header row that contains only the column names that passed the test
     printingOutput = []
