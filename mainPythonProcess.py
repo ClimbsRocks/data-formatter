@@ -102,8 +102,8 @@ if args['verbose'] != 0:
 
 # 4. if we have a single ID spread across multiple rows, sum by ID so that each ID ends up being only a single row with the aggregated results of all the relevant rows
 groupedRows = sumById.sum(dataDescription, X, headerRow, idColumn, trainingLength, outputColumn)
-if trainingLength != groupedRows[2]:
-    wasSummed = True
+# if trainingLength != groupedRows[2]:
+#     wasSummed = True
 X = groupedRows[0]
 idColumn = groupedRows[1]
 trainingLength = groupedRows[2]
@@ -111,16 +111,16 @@ args['trainingLength'] = trainingLength
 args['testingLength'] = len(X) - args['trainingLength']
 outputColumn = groupedRows[3]
 
-# if(test):
-#     messageParent([X, idColumn, trainingLength, outputColumn], 'sumById.py')
+if(test):
+    messageParent([X, idColumn, trainingLength, outputColumn], 'sumById.py')
 
 if args['verbose'] != 0:
     printParent('finished grouping by ID if relevant')
 # printParent('X after sumByID')
 # printParent(X)
 
-if wasSummed:
-    X = noUniquesRedux.clean(X)
+# if wasSummed:
+#     X = noUniquesRedux.clean(X)
 
 # 3. convert entire dataset to have categorical data encoded properly. 
 # This turns information like a single column holding city names of 'SF' and 'Akron' into two separate columns, one for 'Akron=True' and one for 'SF=True'.
@@ -134,10 +134,10 @@ vectorizedHeaderRow = vectorizedInfo[1]
 if args['verbose'] != 0:
     printParent('finished vectorizing the categorical values')
 
-# if(test):
-#     # the data become too big to send over in one huge string, so we are splitting it up into two separate messages
-#     messageParent( X[0:150000], 'dictVectorizing.py' )
-#     messageParent( X[150000:], 'dictVectorizing.py' )
+if(test):
+    # the data become too big to send over in one huge string, so we are splitting it up into two separate messages
+    messageParent( X[0:150000].toarray().tolist(), 'dictVectorizing.py' )
+    messageParent( X[150000:].toarray().tolist(), 'dictVectorizing.py' )
 
 
 
@@ -163,15 +163,16 @@ writeToFile.writeDataSparse(X, args, filteredHeaderRow, False )
 # writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow )
 # writeToFile.writeData(X, args, headerRow, False )
 
-# if(test):
-#     messageParent(X.tolist(), 'featureSelecting.py')
+if(test):
+    messageParent(X.toarray().tolist(), 'featureSelecting.py')
 
 # 6. for neural networks:
 # normalize the data to be values between -1 and 1
-# X = minMax.normalize( X )
-# writeToFile.writeData(X, args, filteredHeaderRow, True )
-# # if( test ):
-# #     messageParent(X.tolist(), 'minMax.py')
+X = minMax.normalize( X )
+writeToFile.writeDataSparse(X, args, filteredHeaderRow, True )
+
+if( test ):
+    messageParent(X.toarray().tolist(), 'minMax.py')
 
 # # 7. format data specifically for brain.js, which takes a different format than scikit-neural-network
 # brainX = brainjs.format( X.tolist(), outputColumn, idColumn, args )
