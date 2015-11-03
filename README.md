@@ -4,9 +4,17 @@
 This library is designed to work with ppComplete, but is so broadly useful that I wanted to make it easily available.
 
 ## Installation:
+To include as a dependency for a specific repo:
 ```
 npm install data-formatter
 ```
+
+To use from the command line anywhere in your system:
+```
+npm install -g data-formatter
+```
+
+
 
 ## What it does
 `data-formatter` is designed to take care of the chores of machine learning to let you focus on the fun stuff! 
@@ -30,6 +38,8 @@ Did any of the above get your heart racing and make you want to dive in to custo
 
 ## How to Use:
 1. Add a dataDescription row to the top of your training data (more info in a following section)
+
+### Within node.js code using require:
 2. Require the module:
 `var df = require('data-formatter');`
 3. Invoke with an object that has `trainingData` and `testingData` properties, and an optional callback:
@@ -41,6 +51,13 @@ df({
 ````
 The optional callback will be called once all data formatting has completed.
 
+### From the command line
+```
+data-formatter relative/path/to/training/data.csv relative/path/to/testing/data.csv
+```
+Make sure that you have used the `-g` flag when installing using npm.
+
+
 ### Format of Input File:
 
 1. .csv file
@@ -50,6 +67,7 @@ The optional callback will be called once all data formatting has completed.
   All other columns must be labeled as holding either Categorical or Numerical data:
   - "Categorical": all columns holding strings are categorical. Similarly, if you have saved someone's occupation as a number (1 for engineer, 2 for carpenter, 3 for processional cyclist, etc.), that column must be labeled "Categorical". 
   - "Continuous": any column that should hold only continuous numbers. Any non-numerical values in these columns will be assumed to be missing values, and will be replaced by the median value for that column.
+  - "IGNORE": any column that should be ignored. Added for convenience for datasets that would be difficult to manipulate/delete columns from otherwise. 
 3. Next row (the second row) must be a header row containing the names of each column.
 4. Make sure there are no empty rows!
 5. Make sure each row has the same number of columns (even if those columns are blank, they must exist).
