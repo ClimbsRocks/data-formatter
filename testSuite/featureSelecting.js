@@ -48,7 +48,8 @@ module.exports = function() {
 
     it('should should have fewer columns than before feature selection, but the same number of observations', function(done) {
       expect(allData.length).to.equal(251503);
-      expect(allData[0]).to.have.length.below(100);
+      // it is fairly consistently picking 66-68 features, but I want to leave a bit of room for adjustment
+      expect(allData[0]).to.have.length.within(60,75);
       done();
     });
 
