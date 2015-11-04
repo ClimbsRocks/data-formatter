@@ -24,13 +24,17 @@ def inputFiles(trainingFile, testingFile):
                 if rowCount == 0:
                     expectedRowLength = len( row )
                     dataDescription = [x.lower() for x in row]
-                    validation.dataDescription( dataDescription )
+                    hasID, testHeaderValidationLength = validation.dataDescription( dataDescription )
                 else: 
                     validation.rowLength( row, expectedRowLength, rowCount )
                     headerRow = [x.lower() for x in row]
             else:
                 validation.rowLength( row, expectedRowLength, rowCount )
                 trimmedRow = []
+                if hasID == False:
+                    # while we won't be using these IDs, we do need to make sure our idColumn has the right number of rows, so we are putting them in here. 
+                    idColumn.append( 'trainID' + str(rowCount) )
+
                 for idx, val in enumerate(row):
                     if dataDescription[idx] == 'id':
                         idColumn.append(val)
@@ -43,9 +47,8 @@ def inputFiles(trainingFile, testingFile):
                         trimmedRow.append(val)
 
                 outputData.append(trimmedRow)
-
             # keep track of which row we are on for error logging purposes
-            rowCount = rowCount + 1
+            rowCount += 1
 
         # keep track of how long our training data set is so we can split back out again later
         trainingLength = len(outputData)
@@ -58,19 +61,34 @@ def inputFiles(trainingFile, testingFile):
         testingRows = csv.reader(testingInput, dialect)
         testingRowCount = 0
 
+        # if the user passes in their own dataDescription row for the testing set, use it!
+        # but by default, we will use the standard dataDescription row from the training data
+        testingDataDescription = dataDescription
+
         # set missingOutputIndex equal to infinity to start with
         missingOutputIndex = float('inf')
 
         for row in testingRows:
             if testingRowCount == 0:
+                if validation.isTestingDataDescription(row):
+                    # if we have a dataDescription row for our testing dataset, use it! and acknowledge that the next row is our standard header row
+                    testingRowCount -= 1
+                    testingDataDescription = [x.lower() for x in row]
+                else:
+                    testingHeader = row
+                    # check to see if we find the words "continuous" or "categorical" in this row
+                        # if we do, then set testingDataDescription equal to this row
+                        # if we don't, we can proceed as normal.
+                        # define testingDataDescription above as being equal to normal dataDescription by default.
+                        # check to make sure that with all the IGNOREs considered, we have the right number of columns
 
-                # check to see that we have the same number of columns in the testing set as the training set
-                colsValidated = validation.testingHeaderRow( row, expectedRowLength, headerRow )
-                if colsValidated == False:
-                    # if not, assume that the missing column is the output column, and store that index position
-                    missingOutputIndex = dataDescription.index('output')
-                # skip the first row
-                expectedTestingRowLength = len( row )
+                    # check to see that we have the same number of columns in the testing set as the training set
+                    colsValidated = validation.testingHeaderRow( row, expectedRowLength, headerRow )
+                    if colsValidated == False:
+                        # if not, assume that the missing column is the output column, and store that index position
+                        missingOutputIndex = dataDescription.index('output')
+                    # skip the first row
+                    expectedTestingRowLength = len( row )
             else:
                 validation.testingRowLength( row, expectedTestingRowLength, testingRowCount )
                 trimmedRow = []
@@ -93,4 +111,9 @@ def inputFiles(trainingFile, testingFile):
                 outputData.append(trimmedRow)
             testingRowCount += 1
 
-    return [dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn]
+    printParent(idColumn[0:15])
+    try:
+        idHeader = headerRow[ dataDescription.index('id') ]
+    except:
+        idHeader = testingHeader[ testingDataDescription.index('id') ]
+    return [dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn, idHeader]
