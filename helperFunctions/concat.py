@@ -23,8 +23,24 @@ def inputFiles(trainingFile, testingFile):
                 # grab the dataDescription row and the header row, and make them both lowercase
                 if rowCount == 0:
                     expectedRowLength = len( row )
-                    dataDescription = [x.lower() for x in row]
-                    hasID, testHeaderValidationLength = validation.dataDescription( dataDescription )
+                    dataDescriptionRaw = [x.lower() for x in row]
+                    hasID, testHeaderValidationLength = validation.dataDescription( dataDescriptionRaw )
+
+                    # the user told us whether this is 'output regression' or 'output category'
+                    # we need to split out the problem type (regression or category), and leave only 'output'
+                    dataDescription = []
+                    for columnType in dataDescriptionRaw:
+                        printParent('columnType')
+                        printParent(columnType)
+                        if columnType[0:6] == 'output':
+                            printParent('head output')
+                            problemType = columnType[7:]
+                            printParent('problemType')
+                            printParent(problemType)
+                            dataDescription.append('output')
+                        else:
+                            dataDescription.append(columnType)
+
                 else: 
                     validation.rowLength( row, expectedRowLength, rowCount )
                     headerRow = [x.lower() for x in row]
@@ -90,18 +106,15 @@ def inputFiles(trainingFile, testingFile):
                     # skip the first row
                     expectedTestingRowLength = len( row )
             else:
+                # build up each row in the testing dataset
                 validation.testingRowLength( row, expectedTestingRowLength, testingRowCount )
                 trimmedRow = []
                 for idx, val in enumerate(row):
-                    # if this is the missing column that was supposed to be the output column, move the idx variable up by one to account for skipping over that column
-                        # the idx variable is only used to look for whether this is the id or output column, and is not used to determine hte value
-                    if idx >= missingOutputIndex:
-                        idx = idx + 1
-                    if dataDescription[idx] == 'id':
+                    if testingDataDescription[idx] == 'id':
                         idColumn.append(val)
-                    elif dataDescription[idx] == 'output':
+                    elif testingDataDescription[idx] == 'output':
                         outputColumn.append(val)
-                    elif dataDescription[idx] == 'ignore':
+                    elif testingDataDescription[idx] == 'ignore':
                         pass
                     else:
                         trimmedRow.append(val)
@@ -111,9 +124,8 @@ def inputFiles(trainingFile, testingFile):
                 outputData.append(trimmedRow)
             testingRowCount += 1
 
-    printParent(idColumn[0:15])
     try:
         idHeader = headerRow[ dataDescription.index('id') ]
     except:
         idHeader = testingHeader[ testingDataDescription.index('id') ]
-    return [dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn, idHeader]
+    return [dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn, idHeader, problemType]
