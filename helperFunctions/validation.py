@@ -6,9 +6,10 @@ def dataDescription(arr):
     expectedTestRowLength = 0
     expectedValues = {
         'id': False,
-        'output': False
+        'output category': False,
+        'output regression': False
     }
-    allowableValues = ['id','output','continuous','categorical','ignore']
+    allowableValues = ['id','output category','output regression','continuous','categorical','ignore']
 
     for name in arr:
         try:
@@ -25,7 +26,7 @@ def dataDescription(arr):
             printParent('Please remember that the first row must contain information describing that column of data')
             printParent('Acceptable values are: "ID", "Output", "Continuous", and "Categorical"')
             raise
-    if( not expectedValues['output'] ):
+    if( not expectedValues['output category'] and not expectedValues['output regression'] ):
         printParent('Warning, there is no column with an "Output" label in the first row')
         raise TypeError('dataDescription row incomplete')
 
@@ -41,8 +42,6 @@ def dataDescription(arr):
 
 def isTestingDataDescription(row):
     lowerRow = [x.lower() for x in row]
-    printParent('row inside isTestingDataDescription:')
-    printParent(lowerRow)
     if 'continuous' in lowerRow or 'categorical' in lowerRow:
         return True
     else:
