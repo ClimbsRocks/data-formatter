@@ -68,6 +68,7 @@ args['trainingLength'] = trainingLength
 X = concattedResults[3]
 idColumn = concattedResults[4]
 outputColumn = concattedResults[5]
+problemType = concattedResults[7]
 
 # throughout this file, we will send messages back to the parent process if we are currently running the tests. 
 if(test):
@@ -151,7 +152,7 @@ if(test):
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
 
 # featureSelectingResults = featureSelecting.rfecvSelection(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
-featureSelectingResults = featureSelecting.select(X, outputColumn, args['trainingLength'], 0.001, vectorizedHeaderRow, test )
+featureSelectingResults = featureSelecting.select(X, outputColumn, args['trainingLength'], 0.001, vectorizedHeaderRow, test, problemType )
 X = featureSelectingResults[0]
 filteredHeaderRow = featureSelectingResults[1]
 
@@ -182,7 +183,8 @@ if( test ):
 # #     messageParent( brainX, 'brainjs.py' )
 
 messageParent({
-    'trainingDataLength': args['trainingLength']
+    'trainingDataLength': args['trainingLength'],
+    'problemType': problemType
 }, 'fileNames')
 
 printParent('we have written your fully transformed data to a folder at:')
