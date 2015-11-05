@@ -94,8 +94,8 @@ def groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputCol
                 except:
                     # for each column that is categorical, add a property to the rowObj, if it does not exist already 
                     # add the continuous value for that row to the value for this property 
-                    rowObj[ columnHeader + value + valueHeader ] = rowValue
-                    rowObj[ columnHeader + value + valueHeader + 'count' ] = rowValue
+                    rowObj[ columnHeader + str(value) + valueHeader ] = rowValue
+                    rowObj[ columnHeader + str(value) + valueHeader + 'count' ] = rowValue
                     # total categories this ID will eventually hold
                     rowObj['categoryCount'] += 1
 
