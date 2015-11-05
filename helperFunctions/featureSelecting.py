@@ -9,14 +9,10 @@ from sendMessages import messageParent
 from sendMessages import obviousPrint
 
 def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, problemType ):
-    printParent('problemType')
-    printParent(problemType)
     # train a random forest
     if problemType == 'category':
-        printParent('heard category')
         classifier = RandomForestClassifier( n_jobs=-1, n_estimators=30 )
     else:
-        printParent('heard regression')
         classifier = RandomForestRegressor( n_jobs=-1, n_estimators=30 )
     classifier.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 

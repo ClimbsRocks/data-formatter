@@ -30,13 +30,7 @@ def inputFiles(trainingFile, testingFile):
                     # we need to split out the problem type (regression or category), and leave only 'output'
                     dataDescription = []
                     for columnType in dataDescriptionRaw:
-                        printParent('columnType')
-                        printParent(columnType)
                         if columnType[0:6] == 'output':
-                            printParent('head output')
-                            problemType = columnType[7:]
-                            printParent('problemType')
-                            printParent(problemType)
                             dataDescription.append('output')
                         else:
                             dataDescription.append(columnType)
