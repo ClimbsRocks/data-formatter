@@ -1,3 +1,4 @@
+"id","categorical","ignore","continuous","categorical","categorical"
 "VisitNumber","Weekday","Upc","ScanCount","DepartmentDescription","FinelineNumber"
 1,"Friday",72503389714,1,"SHOES",3002
 1,"Friday",1707710732,1,"DAIRY",1526
