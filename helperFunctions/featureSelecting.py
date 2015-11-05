@@ -1,4 +1,5 @@
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import RFECV
 import numpy as np
@@ -7,10 +8,16 @@ from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
 
-def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test ):
-
+def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, problemType ):
+    printParent('problemType')
+    printParent(problemType)
     # train a random forest
-    classifier = RandomForestClassifier( n_jobs=-1, n_estimators=30 )
+    if problemType == 'category':
+        printParent('heard category')
+        classifier = RandomForestClassifier( n_jobs=-1, n_estimators=30 )
+    else:
+        printParent('heard regression')
+        classifier = RandomForestRegressor( n_jobs=-1, n_estimators=30 )
     classifier.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
     # that forest will tell us the feature_importances_ of each of the features it was trained on
