@@ -32,6 +32,7 @@ def inputFiles(trainingFile, testingFile):
                     for columnType in dataDescriptionRaw:
                         if columnType[0:6] == 'output':
                             dataDescription.append('output')
+                            problemType = columnType[8:0]
                         else:
                             dataDescription.append(columnType)
 
