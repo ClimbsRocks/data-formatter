@@ -28,7 +28,7 @@
 
     // TODO TODO: generalize this so it will work even on long paths that the user sends in
     if( args.trainingPrettyName === undefined ) {
-      args.trainingPrettyName = path.basename( args.trainignData ).slice(0,-4);
+      args.trainingPrettyName = path.basename( args.trainingData ).slice(0,-4);
     }
 
     // TODO TODO: generalize this so it will work even on long paths that the user sends in
