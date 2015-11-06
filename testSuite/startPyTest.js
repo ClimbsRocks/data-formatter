@@ -33,20 +33,14 @@ module.exports = function(dataSetName) {
     test: true
   };
   if( dataSetName === 'giveCredit' ) {
-    args['trainingData'] = path.join(testFolder, 'trainKaggleGiveMeSomeCredit.csv');
-    args['testingData'] = path.join(testFolder, 'testKaggleGiveMeSomeCredit.csv');
-    args['trainingPrettyName'] = 'giveCredittrain';
-    args['testingPrettyName'] = 'giveCredittest';
+    args['trainingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'giveCredit', 'train.csv');
+    args['testingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'giveCredit', 'test.csv');
   } else if (dataSetName === 'wmt') {
-    args['trainingData'] = path.join(testFolder, 'wmt/train.csv');
-    args['testingData'] = path.join(testFolder, 'wmt/test.csv');
-    args['trainingPrettyName'] = 'wmtTrain';
-    args['testingPrettyName'] = 'wmtTest';
+    args['trainingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'wmt', 'train.csv');
+    args['testingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'wmt', 'test.csv');
   } else if (dataSetName === 'rossman') {
-    args['trainingData'] = path.join(testFolder, 'joinData/train.csv');
-    args['testingData'] = path.join(testFolder, 'joinData/test.csv');
-    args['trainingPrettyName'] = 'joinDataTrain';
-    args['testingPrettyName'] = 'joinDataTest';
+    args['trainingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'rossman', 'train.csv');
+    args['testingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'rossman', 'test.csv');
   }
   var pyOptions = makePyOptions( JSON.stringify( args ) );
 
