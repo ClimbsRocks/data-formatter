@@ -24,7 +24,7 @@ def dataDescription(arr):
             printParent('Warning, we have received a value in the first row that is not valid:')
             printParent(name)
             printParent('Please remember that the first row must contain information describing that column of data')
-            printParent('Acceptable values are: "ID", "Output", "Continuous", and "Categorical"')
+            printParent('Acceptable values are: "ID", "Output Category", "Output Regression", "Continuous", "Categorical", and "IGNORE", though they are not case sensitive.')
             raise
     if( not expectedValues['output category'] and not expectedValues['output regression'] ):
         printParent('Warning, there is no column with an "Output" label in the first row')
@@ -39,6 +39,21 @@ def dataDescription(arr):
 
     # returning True means that we do have all the pieces we need to continue as normal
     return True, expectedTestRowLength
+
+def joinDataDescription(dataDescription):
+    allowableValues = ['id','continuous','categorical','ignore']
+
+    for name in dataDescription:
+        try:
+            allowableValues.index(name)
+
+        except:
+            printParent('Warning, we have received a value in the first row that is not valid:')
+            printParent(name)
+            printParent('Please remember that the first row must contain information describing that column of data')
+            printParent('Acceptable values are: "ID", "Output", "Continuous", and "Categorical"')
+            raise
+    
 
 def isTestingDataDescription(row):
     lowerRow = [x.lower() for x in row]
