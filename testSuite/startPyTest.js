@@ -42,6 +42,11 @@ module.exports = function(dataSetName) {
     args['testingData'] = path.join(testFolder, 'wmt/test.csv');
     args['trainingPrettyName'] = 'wmtTrain';
     args['testingPrettyName'] = 'wmtTest';
+  } else if (dataSetName === 'rossman') {
+    args['trainingData'] = path.join(testFolder, 'joinData/train.csv');
+    args['testingData'] = path.join(testFolder, 'joinData/test.csv');
+    args['trainingPrettyName'] = 'joinDataTrain';
+    args['testingPrettyName'] = 'joinDataTest';
   }
   var pyOptions = makePyOptions( JSON.stringify( args ) );
 
