@@ -48,8 +48,10 @@ def joinDataDescription(dataDescription):
             allowableValues.index(name)
 
         except:
-            printParent('Warning, we have received a value in the first row that is not valid:')
+            printParent('Warning, we have received a value in the dataDescription row that is not valid:')
             printParent(name)
+            printParent('The entire dataDescription row is:')
+            printParent(dataDescription)
             printParent('Please remember that the first row must contain information describing that column of data')
             printParent('Acceptable values are: "ID", "Output", "Continuous", and "Categorical"')
             raise
