@@ -35,12 +35,19 @@ module.exports = function(dataSetName) {
   if( dataSetName === 'giveCredit' ) {
     args['trainingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'giveCredit', 'train.csv');
     args['testingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'giveCredit', 'test.csv');
+    args['trainingPrettyName'] = 'giveCredittrain'
+    args['testingPrettyName'] = 'giveCredittest'
   } else if (dataSetName === 'wmt') {
     args['trainingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'wmt', 'train.csv');
     args['testingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'wmt', 'test.csv');
+    args['trainingPrettyName'] = 'wmttrain'
+    args['testingPrettyName'] = 'wmttest'
   } else if (dataSetName === 'rossman') {
     args['trainingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'rossman', 'train.csv');
     args['testingData'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'rossman', 'test.csv');
+    args['joinFileName'] = path.join(testFolder, '..', 'node_modules', 'data-for-tests', 'rossman', 'store.csv');
+    args['trainingPrettyName'] = 'rossmantrain'
+    args['testingPrettyName'] = 'rossmantest'
   }
   var pyOptions = makePyOptions( JSON.stringify( args ) );
 

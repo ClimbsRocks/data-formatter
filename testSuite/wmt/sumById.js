@@ -130,8 +130,13 @@ module.exports = function() {
     //   // also check lengths of these lists
     // });
 
+    after(function() {
+      idColumn = null;
+      outputColumn = null;
+      X = null;
+      trainingLength = null;
+    });
     
   });
-
 
 };
