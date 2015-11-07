@@ -83,6 +83,9 @@ A full, absolute path to a .csv file. See above for more info on adding an addit
 ###### `testingData`
 The testing data. This file is assumed to only have a header row, not a dataDescription row. The columns *must* be in the same order as they are for the `trainingData` file. This is almost always the case anyways. 
 
+###### `joinFileName` [OPTIONAL]
+A full, absolute path to a .csv file that you would like to join in with the testing and training datasets. This file must have both a dataDescription and a header row. By default, it will be joined on any value in the headerRow that is shared across our training/testing dataset, and the join file.
+
 ###### `outputFolder` [OPTIONAL]
 This property of the `args` object is optaional. If included, all formatted files will be written to this folder. This folder will be created if it does not exist already. 
 DEFAULT: If a value is not passed in, this will default to creating a folder called `data-formatterResults` in whichever directory this library is invoked in. This is designed to make files easy to find if, say, you invoke this library from a directory where you are already working on a machine learning project. 
