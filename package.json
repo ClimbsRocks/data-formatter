@@ -4,8 +4,9 @@
   "description": "Formats and cleans your data to get it ready for machine learning!",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test:wmt && npm run test:giveCredit",
+    "test": "npm run test:joinData && npm run test:wmt && npm run test:giveCredit",
     "test:giveCredit": "mocha testSuite/test.js",
+    "test:joinData": "mocha testSuite/joinData/test.js",
     "test:wmt": "mocha testSuite/wmt/test.js"
   },
   "repository": {
@@ -61,7 +62,7 @@
   ],
   "devDependencies": {
     "chai": "^3.3.0",
-    "data-for-tests": "0.0.1",
+    "data-for-tests": "0.0.2",
     "mocha": "^2.3.3",
     "sinon": "^1.17.1"
   },
