@@ -3,7 +3,7 @@ var mocha = require('mocha');
 
 module.exports = function() {
 
-  describe('sumByID', function() {
+  describe('joining data', function() {
     
     var dataDescription;
     var headerRow;
@@ -13,12 +13,11 @@ module.exports = function() {
     before(function(done) {
 
       console.time('joiningData time');
-      pyControllerWmt.on('message', function(message) {
+      pyControllerRossman.on('message', function(message) {
         if(message.type === 'join.py') {
 
           dataDescription = message.text[1];
-          trainingLength = message.text[2];
-          headerRow = message.text[3];
+          headerRow = message.text[2];
           X = message.text[0];
 
           console.timeEnd('joiningData time');
@@ -29,7 +28,7 @@ module.exports = function() {
 
     // should have a certain number of columns
     it('should have columns from the input data and join data', function() {
-      expect( X.length ).to.equal(14);
+      expect( X[0].length ).to.equal(13);
     });
     // compare the sums of columns to known correct values
 
@@ -57,15 +56,15 @@ module.exports = function() {
     // ideally, test for cases where we pass in a join value, and cases where we do not, and just match it up based on matching header names
     // dataDescription row should have certain values and a certain length
     it('should have accurate dataDescription values for all columns', function() {
-      var expectedDataDescription = ["Categorical","Categorical","Categorical","Categorical","Categorical","Categorical","Categorical","Categorical","Continuous","Categorical","Categorical","Categorical","Categorical"];
-      expect( dataDescription.length ).to.equal(14);
+      var expectedDataDescription = ["categorical","categorical","categorical","categorical","categorical","categorical","categorical","categorical","continuous","categorical","categorical","categorical","categorical"];
+      expect( dataDescription.length ).to.equal(13);
       expect( dataDescription ).to.deep.equal( expectedDataDescription );
     })
     // header row should have certain values and a certain length
     it('should have accurate headerRow values for all columns', function() {
-      var expectedHeader = ["Store","DayOfWeek","Sales","Open","Promo","StateHoliday","SchoolHoliday","StoreType","Assortment","CompetitionDistance","CompetitionOpenSinceYear","Promo2","Promo2SinceYear","PromoInterval"];
-      expect( headerRow.length ).to.equal(14);
+      var expectedHeader = ["store","dayofweek","open","promo","stateholiday","schoolholiday","storetype","assortment","competitiondistance","competitionopensinceyear","promo2","promo2sinceyear","promointerval"];
       expect( headerRow ).to.deep.equal( expectedHeader );
+      expect( headerRow.length ).to.equal(13);
     })
 
     after(function() {
