@@ -13,6 +13,7 @@ from helperFunctions.sendMessages import obviousPrint
 # here are all the individual files that do most of the work. 
 # mainPythonProcess.py mostly just coordinates and lays out the order
 from helperFunctions import concat
+from helperFunctions import join
 from helperFunctions import sumById
 from helperFunctions import removeUniques
 from helperFunctions import imputingMissingValues
@@ -73,6 +74,17 @@ problemType = concattedResults[7]
 # throughout this file, we will send messages back to the parent process if we are currently running the tests. 
 if(test):
     messageParent([dataDescription, headerRow, trainingLength, X], 'concat.py')
+
+try:
+    if args['joinFileName'] != None:
+        printParent('entered the if block for joining data')
+        X, dataDescription, headerRow = join.datasets(X, args['joinFileName'], headerRow, dataDescription, args)
+except:
+    pass
+
+if test:
+    messageParent([X, dataDescription, headerRow], 'join.py')
+
 
 
 # 2. Remove unique categorical values from the dataset
@@ -138,10 +150,12 @@ if args['verbose'] != 0:
     printParent('finished vectorizing the categorical values')
 
 if(test):
-    # the data become too big to send over in one huge string, so we are splitting it up into two separate messages
-    messageParent( X[0:150000].toarray().tolist(), 'dictVectorizing.py' )
-    messageParent( X[150000:].toarray().tolist(), 'dictVectorizing.py' )
-
+    try:
+        # the data become too big to send over in one huge string, so we are splitting it up into two separate messages
+        messageParent( X[0:150000].toarray().tolist(), 'dictVectorizing.py' )
+        messageParent( X[150000:].toarray().tolist(), 'dictVectorizing.py' )
+    except:
+        messageParent( X.toarray().tolist(), 'dictVectorizing.py' )
 
 
 # 4. Feature Selection means picking only those features that are actually predictive and useful
