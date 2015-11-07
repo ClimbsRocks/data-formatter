@@ -2,31 +2,45 @@ from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
 import validation
+import csv
 
 def datasets(X, joinFileName, XHeaderRow, dataDescription, args):
+
+    # TODO: read in and remove the first row. having two "header" rows appers to be throwing off the sniffer when we have multiple commas in a single column, even if they are quote-enclosed.
+    # write all but the first row (or two, possibly) to the temp.csv file.
+    # read in that temp.csv file later. 
+    # with open(joinFileName, 'rU') as f:
+    #     with open(args['outputFolder'] + 'temp.csv','w+') as f1:
+    #         f.next() # skip header line
+    #         for line in f:
+    #             f1.write(line)
 
     # 1. read in data in joinFileName
     joinDict = {}
     with open(joinFileName, 'rU') as joinFile:
         # detect the "dialect" of this type of csv file
-        dialect = csv.Sniffer().sniff(joinFile.read(1024))
-        joinFile.seek(0)
+        try:
+            dialect = csv.Sniffer().sniff(joinFile.read(2048))
+            joinFile.seek(0)
+        except:
+            dialect = 'excel'
         joinRows = csv.reader(joinFile, dialect)
 
         rowCount = 0
+        joinedValsLength = -1
 
         for row in joinRows:
             if rowCount < 2:
-                # grab the dataDescription row and the header row, and make them both lowercase
+                # grab the joinDataDescription row and the header row, and make them both lowercase
                 if rowCount == 0:
                     expectedRowLength = len( row )
-                    # 2. get header row from that file
-                    dataDescription = [x.lower() for x in row]
-                    validation.joinDataDescription(dataDescription)
+                    # 2. get joinDataDescription row from that file
+                    joinDataDescription = [x.lower() for x in row]
+                    validation.joinDataDescription(joinDataDescription)
 
                 else: 
                     validation.rowLength( row, expectedRowLength, rowCount )
-                    # 3. get dataDescription row from that file 
+                    # 3. get header row from that file 
                     headerRow = [x.lower() for x in row]
 
                     joinOnIdColumn = False
@@ -34,6 +48,8 @@ def datasets(X, joinFileName, XHeaderRow, dataDescription, args):
                     try:
                         # 4. see if we have an args['on'] property to join the files on
                         joinHeader = args['on'].lower()
+                        joinIndex = headerRow.index( joinHeader )
+                        xJoinIndex = XHeaderRow.index( joinHeader )
                     except:
                         try:
                             # see if our idColumn is what we're joining on (which seems like it'll happen at some point)
@@ -41,23 +57,49 @@ def datasets(X, joinFileName, XHeaderRow, dataDescription, args):
                             joinOnIdColumn = True
                         except:
                             # 5. see if we have the same headerRow name in both files to join on
-                            joinHeader =  set(headerRow).intersection(XHeaderRow)
+                            for x in headerRow:
+                                if x in XHeaderRow:
+                                    joinHeader = x
+                            # joinHeader =  set(headerRow).intersection(XHeaderRow)
                             joinIndex = headerRow.index( joinHeader )
+                            xJoinIndex = XHeaderRow.index( joinHeader )
             else:
                 validation.rowLength( row, expectedRowLength, rowCount )
                 trimmedRow = []
                 joinVal = row[joinIndex]
 
                 for idx, val in enumerate(row):
-                    if dataDescription[idx] != 'id' and dataDescription[idx] != 'ignore':
+                    if joinDataDescription[idx] != 'id' and joinDataDescription[idx] != 'ignore' and idx != joinIndex:
                         trimmedRow.append(val)
                 joinDict[ joinVal ] = trimmedRow
+                if len( trimmedRow ) > joinedValsLength:
+                    joinedValsLength = len( trimmedRow )
 
             # keep track of which row we are on for error logging purposes
             rowCount += 1
 
-
+    newX = []
     # 5. join the files
+    blankVals = [None for x in range(0,joinedValsLength)]
+    for rowIndex, row in enumerate(X):
+        if joinOnIdColumn:
+            try:
+                joinID = idColumn[rowIndex]
+                newVals = joinDict[ joinID ]
+                newX.append( row.join(newVals) )
+            except:
+                # append blank values so all rows still have the same number of columns
+                newX.append( row.join(blankVals) )
+        else:
+            try:
+                joinID = row[xJoinIndex]
+                newVals = joinDict[ joinID ]
+                newX.append( row + newVals )
+            except:
+                # append blank values so all rows still have the same number of columns
+                newX.append( row + blankVals )
+
+
         # just do it myself so we have more control and don't need to convert to dataFrames and back
         # read the join file into a dict
             # the keys for the dict will be the matching column
@@ -67,5 +109,14 @@ def datasets(X, joinFileName, XHeaderRow, dataDescription, args):
             # append all the values in the joinFile dict for that id
 
     # append header rows
+    for idx, name in enumerate(headerRow):
+        if joinDataDescription[idx] != 'id' and joinDataDescription[idx] != 'ignore' and idx != joinIndex:
+            XHeaderRow.append(name)
+
+    for idx, name in enumerate(joinDataDescription):
+        if name != 'id' and name != 'ignore' and idx != joinIndex:
+            dataDescription.append(name)
     # append dataDescription rows
     # return everything
+    X = None
+    return newX, dataDescription, XHeaderRow
