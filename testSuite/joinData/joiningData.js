@@ -8,7 +8,7 @@ module.exports = function() {
     var dataDescription;
     var headerRow;
     var X;
-    var trainingLength;
+    var problemType;
 
     before(function(done) {
 
@@ -16,9 +16,10 @@ module.exports = function() {
       pyControllerRossman.on('message', function(message) {
         if(message.type === 'join.py') {
 
+          X = message.text[0];
           dataDescription = message.text[1];
           headerRow = message.text[2];
-          X = message.text[0];
+          problemType = message.text[3];
 
           console.timeEnd('joiningData time');
           done();
@@ -65,7 +66,11 @@ module.exports = function() {
       var expectedHeader = ["store","dayofweek","open","promo","stateholiday","schoolholiday","storetype","assortment","competitiondistance","competitionopensinceyear","promo2","promo2sinceyear","promointerval"];
       expect( headerRow ).to.deep.equal( expectedHeader );
       expect( headerRow.length ).to.equal(13);
-    })
+    });
+
+    it('should keep track of the problem type (regression or category', function() {
+      expect( problemType ).to.equal('regression');
+    });
 
     after(function() {
       dataDescription = null;

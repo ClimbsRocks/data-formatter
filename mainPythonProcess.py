@@ -83,7 +83,7 @@ except:
     pass
 
 if test:
-    messageParent([X, dataDescription, headerRow], 'join.py')
+    messageParent([X, dataDescription, headerRow, problemType], 'join.py')
 
 
 
