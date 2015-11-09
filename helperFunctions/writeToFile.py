@@ -17,29 +17,49 @@ def save_sparse_csr(filename,array):
 
 
 def writeMetadata(y, idColumn, args, headerRow):
-    y_train= path.join( args['outputFolder'], 'y_train_' + args['trainingPrettyName'] + '.csv' )
-    id_train= path.join( args['outputFolder'], 'id_train_' + args['trainingPrettyName'] + '.csv' )
-    id_test= path.join( args['outputFolder'], 'id_test_' + args['testingPrettyName'] + '.csv' )
+
+    # these are the file names (with full file paths) that we will be writing to
+    y_train= path.join( args['outputFolder'], 'y_train_' + args['trainingPrettyName'] + '.npz' )
+    id_train= path.join( args['outputFolder'], 'id_train_' + args['trainingPrettyName'] + '.npz' )
+    id_test= path.join( args['outputFolder'], 'id_test_' + args['testingPrettyName'] + '.npz' )
 
     trainingLength = args['trainingLength']
 
+    # convert all our data to np arrays, and break apart based on whether it's in the training data or not
     idTrainData = np.array( idColumn[ 0 : trainingLength ] )
     idTestData = np.array( idColumn[ trainingLength : ] )
     y = np.array( y ) 
 
-    y = [int(i) for i in y[0:trainingLength]]
-    idTrainData = [int(i) for i in idTrainData]
-    idTestData = [int(i) for i in idTestData]
+    # if our values are not already stored as numbers, convert them to numbers
+    try: 
+        ySparse = csr_matrix(y)
+    except:
+        yInt = [float(i) for i in y[0:trainingLength]]
+        ySparse = csr_matrix( yInt )
 
-    save_sparse_csr(y_train, csr_matrix(y) )
-    save_sparse_csr(id_train, csr_matrix( idTrainData ) )
-    save_sparse_csr(id_test, csr_matrix( idTestData ))
+    try:
+        idTrainSparse = csr_matrix(idTrainData)
+    except:
+        idTrainInt = [float(i) for i in idTrainData]
+        idTrainSparse = csr_matrix( idTrainInt )
+
+    try:
+        idTestSparse = csr_matrix(idTestData)
+    except:
+        idTestInt = [float(i) for i in idTestData]
+        idTestSparse = csr_matrix( idTestInt )
+
+    save_sparse_csr(y_train, ySparse )
+    save_sparse_csr(id_train, idTrainSparse )
+    save_sparse_csr(id_test, idTestSparse )
 
     
     fileNames = {
         'y_train': y_train,
         'id_train': id_train,
-        'id_test': id_test
+        'id_test': id_test,
+        'idHeader': args['idHeader'],
+        'outputHeader': args['outputHeader']
     }
     messageParent( fileNames, 'fileNames' )
     
