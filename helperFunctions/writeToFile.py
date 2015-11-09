@@ -13,6 +13,7 @@ from sendMessages import obviousPrint
 # shoutout to the original author:
 # http://stackoverflow.com/questions/8955448/save-load-scipy-sparse-csr-matrix-in-portable-data-format
 def save_sparse_csr(filename,array):
+    indices = [int(x) for x in array.indices]
     np.savez(filename,data=array.data ,indices=array.indices, indptr=array.indptr, shape=array.shape )
 
 
@@ -164,9 +165,25 @@ def writeDataSparse(X, args, headerRow, nn ):
     trainingFileName = args['trainingPrettyName'] + '.npz'
     testingFileName = args['testingPrettyName'] + '.npz'
 
-    if( nn ):
+    if nn != "No" :
         trainingFileName = 'nn_' + trainingFileName
         testingFileName = 'nn_' + testingFileName
+        yFileName = 'y_train_' + 'nn_' +  args['trainingPrettyName'] + '.npz'
+        y_train = path.join( args['outputFolder'], yFileName )
+
+        y = np.array( nn ) 
+        y = [float(i) for i in y]
+        
+
+        # if our values are not already stored as numbers, convert them to numbers
+        try: 
+            ySparse = csr_matrix(y)
+            printParent('successfully turned y into a sparse matrix!')
+        except:
+            yInt = [float(i) for i in y[0:trainingLength]]
+            ySparse = csr_matrix( yInt )
+
+        save_sparse_csr(y_train, ySparse )
 
     # save the file names into variables- we will use them to create the file and in the fileNames hash messaged out to the parent.
     X_train= path.join( args['outputFolder'],  'X_train_' + trainingFileName )
@@ -180,10 +197,11 @@ def writeDataSparse(X, args, headerRow, nn ):
     save_sparse_csr(X_train, X[trainRange,:])
     save_sparse_csr(X_test, X[testRange])
 
-    if( nn ):
+    if( nn != "No" ):
         fileNames = {
             'X_train_nn': X_train,
-            'X_test_nn': X_test
+            'X_test_nn': X_test,
+            'y_train_nn': y_train
         }
     else:
         fileNames = {
