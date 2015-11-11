@@ -180,7 +180,7 @@ if args['verbose'] != 0:
 # 5. write results to file
 # this is the data we need for most scikit-learn algorithms!
 writeToFile.writeMetadata( outputColumn, idColumn, args, filteredHeaderRow )
-writeToFile.writeDataSparse(X, args, filteredHeaderRow, "No" )
+writeToFile.writeDataSparse(X, args, filteredHeaderRow, False )
 # writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow )
 # writeToFile.writeData(X, args, headerRow, False )
 
@@ -189,9 +189,12 @@ if(test):
 
 # 6. for neural networks:
 # normalize the data to be values between -1 and 1
-X = minMax.normalize( X )
-outputColumn = minMax.normalize( outputColumn )
-writeToFile.writeDataSparse(X, args, filteredHeaderRow, outputColumn )
+X = minMax.normalize( X, False )
+# printParent('outputColumn')
+# printParent(outputColumn[0:trainingLength])
+if problemType == 'regression':
+    outputColumn = minMax.normalize( outputColumn[0:trainingLength], True )
+writeToFile.writeDataSparse(X, args, filteredHeaderRow, outputColumn[0:trainingLength] )
 
 if( test ):
     messageParent(X.toarray().tolist(), 'minMax.py')
