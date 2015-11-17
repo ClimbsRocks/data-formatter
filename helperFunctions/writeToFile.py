@@ -22,7 +22,7 @@ def writeMetadata(y, idColumn, args, headerRow):
     # these are the file names (with full file paths) that we will be writing to
     y_train= path.join( args['outputFolder'], 'y_train_' + args['trainingPrettyName'] + '.npz' )
     id_train= path.join( args['outputFolder'], 'id_train_' + args['trainingPrettyName'] + '.npz' )
-    id_test= path.join( args['outputFolder'], 'id_test_' + args['testingPrettyName'] + '.npz' )
+    id_test= path.join( args['outputFolder'], 'id_test_' + args['testingPrettyName'] + args['trainingPrettyName'] + '.npz' )
 
     trainingLength = args['trainingLength']
 
@@ -74,7 +74,7 @@ def writeMetadataDense(y, idColumn, args, headerRow ):
     # save the file names into variables- we will use them to create the file and in the fileNames hash messaged out to the parent.
     y_train= path.join( args['outputFolder'], 'y_train_' + args['trainingPrettyName'] + '.csv' )
     id_train= path.join( args['outputFolder'], 'id_train_' + args['trainingPrettyName'] + '.csv' )
-    id_test= path.join( args['outputFolder'], 'id_test_' + args['testingPrettyName'] + '.csv' )
+    id_test= path.join( args['outputFolder'], 'id_test_' + args['testingPrettyName'] + args['trainingPrettyName'] + '.csv' )
 
     with open( y_train, 'w+') as outputFile:
         csvOutputFile = csv.writer(outputFile)
@@ -121,7 +121,7 @@ def writeDataDense(X, args, headerRow, nn ):
 
     # grab the name of the training and testing files from the full path to those datasets
     trainingFileName = args['trainingPrettyName'] + '.csv'
-    testingFileName = args['testingPrettyName'] + '.csv'
+    testingFileName = args['testingPrettyName'] + args['trainingPrettyName'] + '.csv'
 
     if( nn ):
         trainingFileName = 'nn_' + trainingFileName
@@ -163,9 +163,9 @@ def writeDataSparse(X, args, headerRow, nn ):
 
     # grab the name of the training and testing files from the full path to those datasets
     trainingFileName = args['trainingPrettyName'] + '.npz'
-    testingFileName = args['testingPrettyName'] + '.npz'
+    testingFileName = args['testingPrettyName'] + args['trainingPrettyName'] + '.npz'
 
-    if nn != "No" :
+    if type(nn) is not bool:
         trainingFileName = 'nn_' + trainingFileName
         testingFileName = 'nn_' + testingFileName
         yFileName = 'y_train_' + 'nn_' +  args['trainingPrettyName'] + '.npz'
@@ -197,7 +197,7 @@ def writeDataSparse(X, args, headerRow, nn ):
     save_sparse_csr(X_train, X[trainRange,:])
     save_sparse_csr(X_test, X[testRange])
 
-    if( nn != "No" ):
+    if type(nn) is not bool:
         fileNames = {
             'X_train_nn': X_train,
             'X_test_nn': X_test,
