@@ -45,12 +45,13 @@ module.exports = function( argsObject, callback ) {
         console.log('heard an error!');
         console.error(err);
       }
-    } else {
-      process.emit('finishedFormatting');
-      if (typeof callback === 'function' ) {
-        callback(fileNames);
-      }
+    } 
+
+    process.emit('finishedFormatting');
+    if (typeof callback === 'function' ) {
+      callback(fileNames);
     }
+    
   });
 
   attachListeners(pyController);
