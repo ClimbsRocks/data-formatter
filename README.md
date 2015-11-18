@@ -55,7 +55,7 @@ The optional callback will be called once all data formatting has completed.
 ```
 data-formatter relative/path/to/training/data.csv relative/path/to/testing/data.csv
 ```
-Make sure that you have used the `-g` flag when installing using npm.
+Make sure that you have used the `-g` flag when installing using npm if you want to use `data-formatter` from the command line.
 
 
 ### Format of Input File:
