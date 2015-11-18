@@ -44,13 +44,17 @@ def inputFiles(trainingFile, testingFile):
                 trimmedRow = []
                 if hasID == False:
                     # while we won't be using these IDs, we do need to make sure our idColumn has the right number of rows, so we are putting them in here. 
-                    idColumn.append( 'trainID' + str(rowCount) )
+                    idColumn.append( int(rowCount + 8000000000) )
 
                 for idx, val in enumerate(row):
                     if dataDescription[idx] == 'id':
                         idColumn.append(val)
                     elif dataDescription[idx] == 'output':
-                        outputColumn.append(val)
+                        # TODO: add in some error handling around making sure everything in the outputColumn is the same type.
+                        try:
+                            outputColumn.append(float(val))
+                        except:
+                            outputColumn.append(val)
                     elif dataDescription[idx] == 'ignore':
                         # some columns contain data we do not want to use. It seems trivial to remove these from our dataset here, rather than forcing them to try to open the dataset up in some other program to attempt to delete the column. 
                         pass
