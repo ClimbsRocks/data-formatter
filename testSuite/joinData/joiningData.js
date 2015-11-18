@@ -1,5 +1,6 @@
 var expect = require('chai').expect;
 var mocha = require('mocha');
+var killChildProcess = require('../killChildProcess');
 
 module.exports = function() {
 
@@ -16,12 +17,16 @@ module.exports = function() {
       pyControllerRossman.on('message', function(message) {
         if(message.type === 'join.py') {
 
+
           X = message.text[0];
           dataDescription = message.text[1];
           headerRow = message.text[2];
           problemType = message.text[3];
 
           console.timeEnd('joiningData time');
+          // setTimeout(function() {
+            killChildProcess(global.pyControllerRossman.childProcess);
+          // },25000);
           done();
         }
       });

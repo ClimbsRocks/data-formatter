@@ -2,6 +2,7 @@ var expect = require('chai').expect;
 var mocha = require('mocha');
 var startPyTest = require('../startPyTest');
 var joiningData = require('./joiningData');
+var fileNames = require('./fileNames');
 
 // this block will contain all the tests for the entire data-formatter package
 describe('joining external data into our training and testing files', function() {
@@ -12,5 +13,8 @@ describe('joining external data into our training and testing files', function()
   this.timeout(360000);
 
   joiningData();
+
+
+  // fileNames();
 
 });

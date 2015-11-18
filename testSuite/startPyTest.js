@@ -29,7 +29,7 @@ module.exports = function(dataSetName) {
   // by intentionally leaving the outputFolder field blank, we are implicitly adding in a test to make sure we are creating a directory at the right location (data-formatter should automatically detect which folder it is bieng invoked from, and create a directory there if one does not exist already)
   var args = {
     outputFolder: path.join(testFolder, 'formattedResults'),
-    verbose: 0,
+    verbose: 1,
     test: true
   };
   if( dataSetName === 'giveCredit' ) {
