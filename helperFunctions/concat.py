@@ -13,7 +13,10 @@ def inputFiles(trainingFile, testingFile):
 
     with open(trainingFile, 'rU') as trainingInput:
         # detect the "dialect" of this type of csv file
-        dialect = csv.Sniffer().sniff(trainingInput.read(1024))
+        try:
+            dialect = csv.Sniffer().sniff(trainingInput.read(1024))
+        except:
+            dialect = 'excel'
         trainingInput.seek(0)
         trainingRows = csv.reader(trainingInput, dialect)
 
@@ -70,7 +73,10 @@ def inputFiles(trainingFile, testingFile):
 
     with open(testingFile, 'rU') as testingInput:
         # detect the dialect of the csv file
-        dialect = csv.Sniffer().sniff(testingInput.read(1024))
+        try:
+            dialect = csv.Sniffer().sniff(testingInput.read(1024))
+        except:
+            dialect = 'excel'
         testingInput.seek(0)
 
         testingRows = csv.reader(testingInput, dialect)
