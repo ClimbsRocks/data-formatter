@@ -87,6 +87,8 @@ if test:
 if args['verbose'] != 0:
     printParent('finished joining the data')
 
+# 2. if we have a date column, do some feature engineering on it!
+
 
 
 # 2. Remove unique categorical values from the dataset
@@ -206,6 +208,7 @@ if( test ):
 
 messageParent({
     'trainingDataLength': args['trainingLength'],
+    'testingDataLength': args['testingLength'],
     'problemType': problemType
 }, 'fileNames')
 
