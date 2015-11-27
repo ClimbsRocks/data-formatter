@@ -19,11 +19,13 @@ def dates(X, dataDescription, headerRow):
         headerRow.append('isWeekend')
         dataDescription.append('categorical')
 
-        headerRow.append('daysSinceFirstDay')
+        headerRow.append('daysSinceMinDate')
         dataDescription.append('numerical')
 
         # note, the holidays will only apply to US holidays at first.
         # i'd love a PR that expands support to other countries!
+        # sweet, holidays shouldn't be too difficult!
+            # http://stackoverflow.com/questions/2394235/detecting-a-us-holiday
         # headerRow.append('isFederalHoliday')
         # dataDescription.append('categorical')
 
@@ -41,7 +43,7 @@ def dates(X, dataDescription, headerRow):
             rowDate = parse(row[dateColumnIndex])
 
             # save that datetime object in place of the original string (temporarily)
-            # this will save us having to parse this date again on the second iteration through when we set daysSinceFirstDay
+            # this will save us having to parse this date again on the second iteration through when we set daysSinceMinDate
             row[dateColumnIndex] = rowDate
             if rowDate < minDate:
                 minDate = rowDate
