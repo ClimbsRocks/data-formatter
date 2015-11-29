@@ -1,9 +1,21 @@
-
+from sendMessages import printParent
+from sendMessages import obviousPrint
+from itertools import chain, combinations
 
 def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
 
     # precompute the powerSet of groupByIndices
-    allCombinations = []
+    # straight from the python docs: https://docs.python.org/2/library/itertools.html#recipes
+    def powerset(iterable):
+        # "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+        s = list(iterable)
+        return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+    allCombinations = list(powerset(groupByIndices))
+    # the first item in here is just the empty (blank) set, so let's remove that
+    allCombinations.pop(0)
+
+    obviousPrint('allCombinations',allCombinations)
     # and for each one, make sure we have a pretty version of that combination we can add to the headerRow
         # e.g. salesBystore, salesBystoreByDayOfWeek, etc.
 
