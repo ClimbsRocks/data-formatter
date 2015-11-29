@@ -91,11 +91,8 @@ problemType = concattedResults[7]
 if(test):
     messageParent([dataDescription, headerRow, trainingLength, X], 'concat.py')
 
-try:
-    if args['joinFileName'] != None:
-        X, dataDescription, headerRow = join.datasets(X, args['joinFileName'], headerRow, dataDescription, args)
-except:
-    pass
+if args['joinFileName'][-4:] == '.csv':
+    X, dataDescription, headerRow = join.datasets(X, args['joinFileName'], headerRow, dataDescription, args)
 
 if test:
     messageParent([X, dataDescription, headerRow, problemType], 'join.py')
@@ -168,6 +165,8 @@ vectorizedInfo = dictVectorizing.vectorize(X)
 # X = vectorizedInfo[0].tolist()
 X = vectorizedInfo[0]
 vectorizedHeaderRow = vectorizedInfo[1]
+printParent('vectorizedHeaderRow')
+printParent(vectorizedHeaderRow)
 
 if args['verbose'] != 0:
     printParent('finished vectorizing the categorical values')
