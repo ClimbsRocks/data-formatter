@@ -2,7 +2,17 @@ from sendMessages import printParent
 from sendMessages import obviousPrint
 from itertools import chain, combinations
 
+import numpy as np
+
 def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
+    printParent('immediately inside groupBy')
+    printParent('X.shape')
+    printParent([len(X), len(X[0]) ])
+    printParent('dataDescription')
+    printParent(dataDescription)
+    printParent('headerRow')
+    printParent(headerRow)
+
 
     # precompute the powerSet of groupByIndices
     # straight from the python docs: https://docs.python.org/2/library/itertools.html#recipes
@@ -15,7 +25,6 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
     # the first item in here is just the empty (blank) set, so let's remove that
     allCombinations.pop(0)
 
-    obviousPrint('allCombinations',allCombinations)
     # and for each one, make sure we have a pretty version of that combination we can add to the headerRow
         # e.g. salesBystore, salesBystoreByDayOfWeek, etc.
 
@@ -27,21 +36,26 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
     # we must grab the values at those indices for this row
         # e.g. storeId2DayOfWeek5Holiday0
     def specificCombinationCalculator(row, indices):
-        specificCombo = ''
+        specificCombo = 'grouped'
         for indicesIdx, groupByIndex in enumerate(indices):
+            # grab the header row (for context), and then the value for this row (e.g. storeID + 158 = 'storeID158')
             try:
-                val = str(row[groupByIndex])
+                val = headerRow[groupByIndex] + str(row[groupByIndex])
             except:
-                val = row[groupByIndex]
+                val = headerRow[groupByIndex] + row[groupByIndex]
             specificCombo += val
 
             # separate each value with the word 'By', as in 'salesBystore'
             if indicesIdx < len(indices) - 1:
                 specificCombo += 'By'
+        return specificCombo
 
 
     # iterate through all the rows in our dataset (X)
-    for rowID, row in enumerate(X):
+        # we can only compute the known outcome for the rows in our training dataset, but X right now holds the combined training and testing dataset
+        # iterate only through the training data portion
+    trainingX = X[ 0 : len(outputColumn) ]
+    for rowID, row in enumerate( trainingX ):
 
         # we have already precomputed all the possible combinations of the indices in groupByIndices
         # we want to perform this summarization on each of those combinations
@@ -52,22 +66,88 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
 
             # add this row's output value to this particular row's combination in summary
             # each rowSpecificCombination is going to be an array, which makes mode and average and numOccurrences all super easy to calculate
+            thisRowsYVal = outputColumn[ rowID ]
             try:
-                summary[ rowSpecificCombination ].append( outputColumn[ rowID ] )
+                summary[ rowSpecificCombination ].append( thisRowsYVal )
             except:
-                summary[ rowSpecificCombination ] = [ outputColumn[ rowID ] ]
+                summary[ rowSpecificCombination ] = [ thisRowsYVal ]
 
 
+    statsSummary = {}
+    for key in summary:
+        statsSummary[key] = {
+            'average': np.average(summary[key]),
+            'median': np.median(summary[key]),
+            'min': np.nanmin(summary[key]),
+            'max': np.nanmax(summary[key]),
+            'range': np.nanmax(summary[key]) - np.nanmin(summary[key]),
+            'variance': np.var(summary[key])
+        }
 
     # repeat the process!
         # except this time, instead of summarizing, we want to either average or median or min or max or range or all of the above, for all of the combos seen in this row
             # i vote for all of the above, and then we'll just have to put more attention into feature selection
     # iterate through X again
+        # this time, make sure to include the calculated value for the training and test dataset (the entire X)
+    appendedHeader = False
     for row in X:
         # iterate through all the possible combinations of groupBy features we calculated earlier
         for combination in allCombinations:
-            row.append( summary[combination] )
-            headerRow.append( combinationNames[combination] )
-            # each of these calculated combinations must be a number
-            # this will have to be updated once we have multi-label or multi-category predictions
-            dataDescription.append( 'continuous' )
+
+            rowSpecificCombination = specificCombinationCalculator( row, combination )
+            # summaryList = summary[ rowSpecificCombination ]
+
+            # rowAverage = np.average(summaryList)
+            # rowMedian = np.median(summaryList)
+            # # max and min ignoring nan
+            # rowMax = np.nanmax(summaryList)
+            # rowMin = np.nanmin(summaryList)
+            # rowRange = rowMax - rowMin
+            # rowVariance = np.var(summaryList)
+
+            # row.append(rowAverage)
+            # row.append(rowMedian)
+            # row.append(rowMax)
+            # row.append(rowMin)
+            # row.append(rowRange)
+            # row.append(rowVariance)
+            rowStats = statsSummary[rowSpecificCombination]
+            for statName in rowStats:
+                row.append(rowStats[statName])
+
+            # if this is our first row, we have to update the header as well, since we are adding in new columns
+            if appendedHeader == False:
+                baseName = 'grouped'
+                for indicesIdx, colIndex in enumerate(combination):
+                    # grab the header row (for context)
+                    baseName += headerRow[colIndex]
+
+                    # separate each value with the word 'By', as in 'salesBystore'
+                    if indicesIdx < len(combination) - 1:
+                        baseName += 'By'
+
+                for statName in rowStats:
+                    headerRow.append( baseName + statName )
+    
+                    # each of these calculated combinations must be a number
+                    # this will have to be updated once we have multi-label or multi-category predictions
+                    dataDescription.append('continuous')
+
+                # dataDescription.append('continuous')
+                # dataDescription.append('continuous')
+                # dataDescription.append('continuous')
+                # dataDescription.append('continuous')
+                # dataDescription.append('continuous')
+                # dataDescription.append('continuous')
+
+        appendedHeader = True
+            
+
+    printParent('right before returning in groupBy')
+    printParent('X.shape')
+    printParent([len(X), len(X[0]) ])
+    printParent('dataDescription')
+    printParent(dataDescription)
+    printParent('headerRow')
+    printParent(headerRow)
+    return X, dataDescription, headerRow
