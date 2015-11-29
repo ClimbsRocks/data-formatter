@@ -98,7 +98,8 @@ def datasets(X, joinFileName, XHeaderRow, dataDescription, args):
             except:
                 # append blank values so all rows still have the same number of columns
                 newX.append( row + blankVals )
-
+        X[rowIndex] = None
+        del row
 
         # just do it myself so we have more control and don't need to convert to dataFrames and back
         # read the join file into a dict
@@ -118,5 +119,6 @@ def datasets(X, joinFileName, XHeaderRow, dataDescription, args):
             dataDescription.append(name)
     # append dataDescription rows
     # return everything
-    X = None
+    del X
+    # X = None
     return newX, dataDescription, XHeaderRow
