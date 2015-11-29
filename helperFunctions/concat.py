@@ -36,6 +36,8 @@ def inputFiles(trainingFile, testingFile):
                         if columnType[0:6] == 'output':
                             dataDescription.append('output')
                             problemType = columnType[7:]
+                        elif columnType[0:8] == 'groupby ':
+                            dataDescription.append( columnType[8:] )
                         else:
                             dataDescription.append(columnType)
 
