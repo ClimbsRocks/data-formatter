@@ -5,14 +5,6 @@ from itertools import chain, combinations
 import numpy as np
 
 def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
-    printParent('immediately inside groupBy')
-    printParent('X.shape')
-    printParent([len(X), len(X[0]) ])
-    printParent('dataDescription')
-    printParent(dataDescription)
-    printParent('headerRow')
-    printParent(headerRow)
-
 
     # precompute the powerSet of groupByIndices
     # straight from the python docs: https://docs.python.org/2/library/itertools.html#recipes
@@ -95,23 +87,21 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
         for combination in allCombinations:
 
             rowSpecificCombination = specificCombinationCalculator( row, combination )
-            # summaryList = summary[ rowSpecificCombination ]
 
-            # rowAverage = np.average(summaryList)
-            # rowMedian = np.median(summaryList)
-            # # max and min ignoring nan
-            # rowMax = np.nanmax(summaryList)
-            # rowMin = np.nanmin(summaryList)
-            # rowRange = rowMax - rowMin
-            # rowVariance = np.var(summaryList)
+            try:
+                rowStats = statsSummary[rowSpecificCombination]
+            except:
+                # this is for the case where we have combinations of values in our test dataset that we do not have in our train dataset
+                # we'll just fill those in with blank values and then let imputer and feature selection take care of the rest
+                rowStats = {
+                    'average': '',
+                    'median': '',
+                    'min': '',
+                    'max': '',
+                    'range': '',
+                    'variance': ''
+                }
 
-            # row.append(rowAverage)
-            # row.append(rowMedian)
-            # row.append(rowMax)
-            # row.append(rowMin)
-            # row.append(rowRange)
-            # row.append(rowVariance)
-            rowStats = statsSummary[rowSpecificCombination]
             for statName in rowStats:
                 row.append(rowStats[statName])
 
@@ -133,12 +123,6 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
                     # this will have to be updated once we have multi-label or multi-category predictions
                     dataDescription.append('continuous')
 
-                # dataDescription.append('continuous')
-                # dataDescription.append('continuous')
-                # dataDescription.append('continuous')
-                # dataDescription.append('continuous')
-                # dataDescription.append('continuous')
-                # dataDescription.append('continuous')
 
         appendedHeader = True
             
@@ -146,8 +130,4 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
     printParent('right before returning in groupBy')
     printParent('X.shape')
     printParent([len(X), len(X[0]) ])
-    printParent('dataDescription')
-    printParent(dataDescription)
-    printParent('headerRow')
-    printParent(headerRow)
     return X, dataDescription, headerRow
