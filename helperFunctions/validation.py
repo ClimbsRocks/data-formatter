@@ -9,7 +9,7 @@ def dataDescription(arr):
         'output category': False,
         'output regression': False
     }
-    allowableValues = ['id','output category','output regression','continuous','categorical','ignore']
+    allowableValues = ['id','output category','output regression','continuous','categorical','date','ignore']
 
     for name in arr:
         try:
@@ -24,7 +24,7 @@ def dataDescription(arr):
             printParent('Warning, we have received a value in the first row that is not valid:')
             printParent(name)
             printParent('Please remember that the first row must contain information describing that column of data')
-            printParent('Acceptable values are: "ID", "Output Category", "Output Regression", "Continuous", "Categorical", and "IGNORE", though they are not case sensitive.')
+            printParent('Acceptable values are: "ID", "Output Category", "Output Regression", "Continuous", "Categorical", "Date", and "IGNORE", though they are not case sensitive.')
             raise
     if( not expectedValues['output category'] and not expectedValues['output regression'] ):
         printParent('Warning, there is no column with an "Output" label in the first row')
@@ -41,7 +41,7 @@ def dataDescription(arr):
     return True, expectedTestRowLength
 
 def joinDataDescription(dataDescription):
-    allowableValues = ['id','continuous','categorical','ignore']
+    allowableValues = ['id','continuous','categorical','date','ignore']
 
     for name in dataDescription:
         try:
@@ -53,7 +53,7 @@ def joinDataDescription(dataDescription):
             printParent('The entire dataDescription row is:')
             printParent(dataDescription)
             printParent('Please remember that the first row must contain information describing that column of data')
-            printParent('Acceptable values are: "ID", "Output", "Continuous", and "Categorical"')
+            printParent('Acceptable values are: "ID", "Continuous", "Categorical", "Date", and "IGNORE", though they are not case sensitive')
             raise
     
 
