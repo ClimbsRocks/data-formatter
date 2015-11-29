@@ -27,7 +27,7 @@ def inputFiles(trainingFile, testingFile):
                 if rowCount == 0:
                     expectedRowLength = len( row )
                     dataDescriptionRaw = [x.lower() for x in row]
-                    hasID, testHeaderValidationLength, dateIndices, groupByIndices = validation.dataDescription( dataDescriptionRaw )
+                    hasID, testHeaderValidationLength = validation.dataDescription( dataDescriptionRaw )
 
                     # the user told us whether this is 'output regression' or 'output category'
                     # we need to split out the problem type (regression or category), and leave only 'output'
