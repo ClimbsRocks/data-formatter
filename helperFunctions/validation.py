@@ -11,21 +11,16 @@ def dataDescription(arr):
     }
     allowableValues = ['id','output category','output regression','continuous','categorical','date','ignore']
 
-    dateIndices = []
-    groupByIndices = []
 
     for colIndex, name in enumerate(arr):
 
         # remove groupBy from in front of any other dataDescription words it might be paired with
         if name[0:8] == 'groupby ':
-            groupByIndices.append(colIndex)
             name = name[8:]
 
         try:
             allowableValues.index(name)
             expectedValues[name] = True
-            if name == 'date':
-                dateIndices.append(colIndex)
             # sometimes we will include columns in our training dataset that we will not include in our testing dataset. we want to allow for that
             # we already have logic in place for handling missing output values in our testing dataset. 
             if name not in ['ignore']:
@@ -45,11 +40,11 @@ def dataDescription(arr):
         printParent('Warning, there is no column with an "ID" label in the first row')
         # our testing dataset must have an id in it, so if our training data does not have an id column, we would expect our testing data to have one more column
         expectedTestRowLength += 1
-        return False, expectedTestRowLength, dateIndices, groupByIndices
+        return False, expectedTestRowLength
         raise TypeError('dataDescription row incomplete')
 
     # returning True means that we do have all the pieces we need to continue as normal
-    return True, expectedTestRowLength, dateIndices, groupByIndices
+    return True, expectedTestRowLength
 
 def joinDataDescription(dataDescription):
     allowableValues = ['id','continuous','categorical','date','ignore']
