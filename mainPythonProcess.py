@@ -14,6 +14,8 @@ from helperFunctions.sendMessages import obviousPrint
 # mainPythonProcess.py mostly just coordinates and lays out the order
 from helperFunctions import concat
 from helperFunctions import join
+from helperFunctions import groupBy
+from helperFunctions import featureEngineering
 from helperFunctions import sumById
 from helperFunctions import removeUniques
 from helperFunctions import imputingMissingValues
@@ -70,6 +72,8 @@ X = concattedResults[3]
 idColumn = concattedResults[4]
 outputColumn = concattedResults[5]
 problemType = concattedResults[7]
+dateIndices = concattedResults[8]
+groupByIndices
 
 # throughout this file, we will send messages back to the parent process if we are currently running the tests. 
 if(test):
@@ -88,7 +92,12 @@ if args['verbose'] != 0:
     printParent('finished joining the data')
 
 # 2. if we have a date column, do some feature engineering on it!
+if len(dateIndices) > 0:
+    # featureEngineering.compute(X, dateIndices, dataDescription, headerRow, outputColumn  )
 
+# 3. if the user asked us to group by anything, do so!
+if len(groupByIndices) > 0:
+    groupBy.compute(X, groupByIndices, dataDescription, headerRow, outputColumn )
 
 
 # 2. Remove unique categorical values from the dataset
