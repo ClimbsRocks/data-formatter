@@ -126,8 +126,6 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
 
         appendedHeader = True
             
-
-    printParent('right before returning in groupBy')
-    printParent('X.shape')
-    printParent([len(X), len(X[0]) ])
+    del summary
+    del statsSummary
     return X, dataDescription, headerRow
