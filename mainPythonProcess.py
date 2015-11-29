@@ -50,12 +50,17 @@ args['idHeader'] = idHeader
 args['outputHeader'] = outputHeader
 
 # we have already saved id and output into separate columns, so we need to remove those from our headerRow and dataDescription
+
+# once we have removed the valuse we are not using, we can use dataDescriptionRaw to create dateIndices and groupByIndices
+dataDescriptionRaw = concattedResults[8]
 try:
     del headerRow[ dataDescription.index('id') ]
+    del dataDescriptionRaw[ dataDescription.index('id') ]
     dataDescription.remove('id')
 except:
     pass
 del headerRow[ dataDescription.index('output') ]
+del dataDescriptionRaw[ dataDescription.index('output') ]
 dataDescription.remove('output')
 
 # we have ignored the data in the "IGNORE" columns, but now we need to remove those identifiers from headerRow and dataDescription
@@ -63,6 +68,15 @@ ignoredIndices = [idx for idx, x in enumerate(dataDescription) if x == 'ignore']
 for index in reversed(ignoredIndices):
     del headerRow[index]
     del dataDescription[index]
+    del dataDescriptionRaw[index]
+
+groupByIndices = []
+dateIndices = []
+for colIndex, colType in enumerate(dataDescriptionRaw):
+    if colType == 'date':
+        dateIndices.append(colIndex)
+    elif colType[0:7] == 'groupby':
+        groupByIndices.append(colIndex)
 
 # trainingLength is the length of the training data set, so we can separate training and testing at the end
 trainingLength = concattedResults[2]
@@ -72,8 +86,6 @@ X = concattedResults[3]
 idColumn = concattedResults[4]
 outputColumn = concattedResults[5]
 problemType = concattedResults[7]
-dateIndices = concattedResults[8]
-groupByIndices
 
 # throughout this file, we will send messages back to the parent process if we are currently running the tests. 
 if(test):
@@ -81,7 +93,6 @@ if(test):
 
 try:
     if args['joinFileName'] != None:
-        printParent('entered the if block for joining data')
         X, dataDescription, headerRow = join.datasets(X, args['joinFileName'], headerRow, dataDescription, args)
 except:
     pass
@@ -92,12 +103,12 @@ if args['verbose'] != 0:
     printParent('finished joining the data')
 
 # 2. if we have a date column, do some feature engineering on it!
-if len(dateIndices) > 0:
+# if len(dateIndices) > 0:
     # featureEngineering.compute(X, dateIndices, dataDescription, headerRow, outputColumn  )
 
 # 3. if the user asked us to group by anything, do so!
 if len(groupByIndices) > 0:
-    groupBy.compute(X, groupByIndices, dataDescription, headerRow, outputColumn )
+    X, dataDescription, headerRow = groupBy.compute(X, groupByIndices, dataDescription, headerRow, outputColumn )
 
 
 # 2. Remove unique categorical values from the dataset
@@ -122,6 +133,7 @@ dataDescription = imputedValuesResults[ 1 ]
 headerRow = imputedValuesResults[ 2 ]
 # writeToFile.writeData(X, args, headerRow, False )
 
+
 if(test):
     messageParent([X, idColumn, outputColumn], 'imputingMissingValues.py')
 
@@ -139,15 +151,11 @@ args['trainingLength'] = trainingLength
 args['testingLength'] = len(X) - args['trainingLength']
 outputColumn = groupedRows[3]
 
-
-# printParent('right after sumById')
 if(test):
     messageParent([X, idColumn, trainingLength, outputColumn], 'sumById.py')
 
 if args['verbose'] != 0:
     printParent('finished grouping by ID if relevant')
-# printParent('X after sumByID')
-# printParent(X)
 
 # if wasSummed:
 #     X = noUniquesRedux.clean(X)
