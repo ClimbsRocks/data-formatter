@@ -47,7 +47,7 @@ def dataDescription(arr):
     return True, expectedTestRowLength
 
 def joinDataDescription(dataDescription):
-    allowableValues = ['id','continuous','categorical','date','ignore']
+    allowableValues = ['id','continuous','groupby continuous','categorical','groupby categorical','date','groupby date','ignore']
 
     for name in dataDescription:
         try:
