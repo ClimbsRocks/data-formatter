@@ -12,11 +12,7 @@ def normalize( X, minMax ):
     if minMax:
         min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0, 1), copy=False)
         X = np.array(X)
-        printParent('X.shape in minMax.normalize before reshaping')
-        printParent(X.shape)
         X = X.reshape((-1,1))
-        printParent('X.shape in minMax.normalize after reshaping')
-        printParent(X.shape)
         # printParent(X.tolist())
         X = min_max_scaler.fit_transform(X)
         # flatten our list. min_max_scaler requires a list where each item is itself a list (a list of nested lists). 

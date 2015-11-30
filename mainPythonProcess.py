@@ -165,8 +165,6 @@ vectorizedInfo = dictVectorizing.vectorize(X)
 # X = vectorizedInfo[0].tolist()
 X = vectorizedInfo[0]
 vectorizedHeaderRow = vectorizedInfo[1]
-printParent('vectorizedHeaderRow')
-printParent(vectorizedHeaderRow)
 
 if args['verbose'] != 0:
     printParent('finished vectorizing the categorical values')
