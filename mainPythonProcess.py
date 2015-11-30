@@ -92,7 +92,7 @@ if(test):
     messageParent([dataDescription, headerRow, trainingLength, X], 'concat.py')
 
 if args['joinFileName'][-4:] == '.csv':
-    X, dataDescription, headerRow = join.datasets(X, args['joinFileName'], headerRow, dataDescription, args)
+    X, dataDescription, headerRow, groupByIndices, dateIndices = join.datasets(X, args['joinFileName'], headerRow, dataDescription, args, groupByIndices, dateIndices)
 
 if test:
     messageParent([X, dataDescription, headerRow, problemType], 'join.py')
@@ -100,12 +100,13 @@ if args['verbose'] != 0:
     printParent('finished joining the data')
 
 # 2. if we have a date column, do some feature engineering on it!
+# this functionality is mostly complete, but hasn't been finished yet
 # if len(dateIndices) > 0:
     # featureEngineering.compute(X, dateIndices, dataDescription, headerRow, outputColumn  )
 
 # 3. if the user asked us to group by anything, do so!
 if len(groupByIndices) > 0:
-    X, dataDescription, headerRow = groupBy.compute(X, groupByIndices, dataDescription, headerRow, outputColumn )
+    X, dataDescription, headerRow = groupBy.compute(X, groupByIndices, dataDescription, headerRow, outputColumn, trainingLength )
 
 
 # 2. Remove unique categorical values from the dataset
