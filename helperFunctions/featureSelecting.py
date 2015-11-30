@@ -10,10 +10,21 @@ from sendMessages import messageParent
 from sendMessages import obviousPrint
 
 # this is purely a helper function for select. it should not be used outside of select 
-def cleanDataset(X, coefficients, threshold, headerRow):
+
+# TODO TODO: figure this out relatively, instead of hard coding in the threshold
+    # make sure we take absolute values into account
+    # find the max value and compare everything else to that
+def cleanDataset(X, coefficients, thresholdDivisor, headerRow):
     # that forest will tell us the feature_importances_ of each of the features it was trained on
     # we want to grab only those column indices that pass the featureImportanceThreshold passed in to us
-    columnIndicesThatPass = [idx for idx, x in enumerate( coefficients ) if x > threshold]
+
+    absCoefficients = [abs(x) for x in coefficients]
+    maxCoefficient = max(absCoefficients)
+    threshold = maxCoefficient / thresholdDivisor
+
+    columnIndicesThatPass = [ idx for idx, x in enumerate( absCoefficients ) if x > threshold ]
+
+    # columnIndicesThatPass = [idx for idx, x in enumerate( coefficients ) if abs(x) > threshold]
 
     # use numpy to grab only those columns that passed the previous step
     # cleanedX = np.array( X )[ :, columnIndicesThatPass ]
@@ -29,7 +40,7 @@ def cleanDataset(X, coefficients, threshold, headerRow):
     # printParent(featureImportancesList)
     for idx, importance in enumerate( featureImportancesList ):
         # printParent(idx)
-        if featureImportancesList[idx] > threshold :
+        if abs(featureImportancesList[idx]) > threshold :
             printingOutput.append( [ headerRow[idx], round( importance, 4) ])
             filteredHeaderRow.append( headerRow[idx] )
 
@@ -55,38 +66,48 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, p
     estimator.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
 
-    # remove everything that is at least four orders of magnitude shy of our featureImportanceThreshold
-    X, headerRow, printingOutput = cleanDataset(X, estimator.coef_, featureImportanceThreshold / 10000, headerRow) 
+    # remove everything that is at least three orders of magnitude shy of the best feature
+    X, headerRow, printingOutput = cleanDataset(X, estimator.coef_, 1000, headerRow) 
 
-    # first, train linearly to remove all the completely useless features
-    if problemType == 'category':
-        estimator = LogisticRegression(n_jobs=-1)
-    else:
-        estimator = LinearRegression(n_jobs=-1)
+    # printParent('estimator.coef_ after the first round of feature selecting')
+    # printParent(list(estimator.coef_))
 
-    estimator.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
+    printParent('here are the features that were kept by the first round of regression, sorted by their feature importance')
+    printParent(printingOutput)
 
 
-    # remove everything that is at least two orders of magnitude shy of our featureImportanceThreshold
-    X, headerRow, printingOutput = cleanDataset(X, estimator.coef_, featureImportanceThreshold / 100, headerRow)
+    # # first, train linearly to remove all the completely useless features
+    # if problemType == 'category':
+    #     estimator = LogisticRegression(n_jobs=-1)
+    # else:
+    #     estimator = LinearRegression(n_jobs=-1)
+
+    # estimator.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
+
+
+    # # remove everything that is at least two orders of magnitude shy of our featureImportanceThreshold
+    # X, headerRow, printingOutput = cleanDataset(X, estimator.coef_, 100, headerRow)
+    # # printParent('here are the features that were kept by the second round of regression, sorted by their feature importance')
+    # # printParent(printingOutput)
 
     rfStartTime = time.time()
 
     # train a random forest
     if problemType == 'category':
-        classifier = RandomForestClassifier( n_jobs=-1, n_estimators=30 )
+        classifier = RandomForestClassifier( n_jobs=-1, n_estimators=20 )
     else:
-        classifier = RandomForestRegressor( n_jobs=-1, n_estimators=30 )
+        classifier = RandomForestRegressor( n_jobs=-1, n_estimators=20 )
     classifier.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
-    X, filteredHeaderRow, printingOutput = cleanDataset(X, classifier.feature_importances_, featureImportanceThreshold, headerRow )
+    # X, filteredHeaderRow, printingOutput = cleanDataset(X, classifier.feature_importances_, featureImportanceThreshold, headerRow )
+    X, filteredHeaderRow, printingOutput = cleanDataset(X, classifier.feature_importances_, 1000, headerRow )
     
 
     if( not test ):
         printParent('here are the features that were kept, sorted by their feature importance')
         printParent(printingOutput)
 
-    printParent('total time for the random forest part of feature selection:')
+    printParent('total time for the random forest part of feature selection, in minutes:')
     # this will get us execution time in minutes, to one decimal place
     printParent( round( (time.time() - rfStartTime)/60, 1 ) )
 
