@@ -4,7 +4,7 @@ from sendMessages import obviousPrint
 import validation
 import csv
 
-def datasets(X, joinFileName, XHeaderRow, dataDescription, args):
+def datasets(X, joinFileName, XHeaderRow, dataDescription, args, groupByIndices, dateIndices):
 
     # TODO: read in and remove the first row. having two "header" rows appers to be throwing off the sniffer when we have multiple commas in a single column, even if they are quote-enclosed.
     # write all but the first row (or two, possibly) to the temp.csv file.
@@ -114,11 +114,19 @@ def datasets(X, joinFileName, XHeaderRow, dataDescription, args):
         if joinDataDescription[idx] != 'id' and joinDataDescription[idx] != 'ignore' and idx != joinIndex:
             XHeaderRow.append(name)
 
+    # append dataDescription rows, and our groupByIndices and dateIndices
+    originalDataDescriptionLength = len(dataDescription)
     for idx, name in enumerate(joinDataDescription):
         if name != 'id' and name != 'ignore' and idx != joinIndex:
-            dataDescription.append(name)
-    # append dataDescription rows
-    # return everything
+            if name[0:7] == 'groupby':
+                # append only the non groupby part of this name
+                dataDescription.append(name[8:])
+                groupByIndices.append( idx + originalDataDescriptionLength )
+            elif name == 'date':
+                dataDescription.append(name)
+                dateIndices.append( idx + originalDataDescriptionLength )
+            else:
+                dataDescription.append(name)
+
     del X
-    # X = None
-    return newX, dataDescription, XHeaderRow
+    return newX, dataDescription, XHeaderRow, groupByIndices, dateIndices
