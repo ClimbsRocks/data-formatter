@@ -4,7 +4,9 @@ from itertools import chain, combinations
 
 import numpy as np
 
-def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
+def compute(X, groupByIndices, dataDescription, headerRow, outputColumn, trainingLength ):
+    printParent('X.shape at the start of groupBy')
+    printParent([len(X), len( X[0] )])
 
     # precompute the powerSet of groupByIndices
     # straight from the python docs: https://docs.python.org/2/library/itertools.html#recipes
@@ -46,23 +48,23 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
     # iterate through all the rows in our dataset (X)
         # we can only compute the known outcome for the rows in our training dataset, but X right now holds the combined training and testing dataset
         # iterate only through the training data portion
-    trainingX = X[ 0 : len(outputColumn) ]
-    for rowID, row in enumerate( trainingX ):
+    # trainingX = X[ 0 : len(outputColumn) ]
+    for rowID, row in enumerate( X ):
+        if rowID < trainingLength:
+            # we have already precomputed all the possible combinations of the indices in groupByIndices
+            # we want to perform this summarization on each of those combinations
+            for combination in allCombinations:
 
-        # we have already precomputed all the possible combinations of the indices in groupByIndices
-        # we want to perform this summarization on each of those combinations
-        for combination in allCombinations:
+                # what values do those indices translate to for this specific row?
+                rowSpecificCombination = specificCombinationCalculator( row, combination )
 
-            # what values do those indices translate to for this specific row?
-            rowSpecificCombination = specificCombinationCalculator( row, combination )
-
-            # add this row's output value to this particular row's combination in summary
-            # each rowSpecificCombination is going to be an array, which makes mode and average and numOccurrences all super easy to calculate
-            thisRowsYVal = outputColumn[ rowID ]
-            try:
-                summary[ rowSpecificCombination ].append( thisRowsYVal )
-            except:
-                summary[ rowSpecificCombination ] = [ thisRowsYVal ]
+                # add this row's output value to this particular row's combination in summary
+                # each rowSpecificCombination is going to be an array, which makes mode and average and numOccurrences all super easy to calculate
+                thisRowsYVal = outputColumn[ rowID ]
+                try:
+                    summary[ rowSpecificCombination ].append( thisRowsYVal )
+                except:
+                    summary[ rowSpecificCombination ] = [ thisRowsYVal ]
 
 
     statsSummary = {}
@@ -70,11 +72,12 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
         statsSummary[key] = {
             'average': np.average(summary[key]),
             'median': np.median(summary[key]),
-            'min': np.nanmin(summary[key]),
-            'max': np.nanmax(summary[key]),
-            'range': np.nanmax(summary[key]) - np.nanmin(summary[key]),
-            'variance': np.var(summary[key])
+            # 'min': np.nanmin(summary[key]),
+            # 'max': np.nanmax(summary[key]),
+            # 'range': np.nanmax(summary[key]) - np.nanmin(summary[key]),
+            # 'variance': np.var(summary[key])
         }
+        statsSummary[key] = None
 
     # repeat the process!
         # except this time, instead of summarizing, we want to either average or median or min or max or range or all of the above, for all of the combos seen in this row
@@ -96,10 +99,10 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
                 rowStats = {
                     'average': '',
                     'median': '',
-                    'min': '',
-                    'max': '',
-                    'range': '',
-                    'variance': ''
+                    # 'min': '',
+                    # 'max': '',
+                    # 'range': '',
+                    # 'variance': ''
                 }
 
             for statName in rowStats:
@@ -125,7 +128,10 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn ):
 
 
         appendedHeader = True
-            
+    
+    printParent('X.shape at the end of groupBy')
+    printParent([len(X), len( X[0] )])
+
     del summary
     del statsSummary
     return X, dataDescription, headerRow
