@@ -18,6 +18,7 @@ from helperFunctions import groupBy
 from helperFunctions import featureEngineering
 from helperFunctions import sumById
 from helperFunctions import removeUniques
+from helperFunctions import polynomialFeatures
 from helperFunctions import imputingMissingValues
 from helperFunctions import listToDict
 from helperFunctions import noUniquesRedux
@@ -121,6 +122,11 @@ headerRow = noUniquesResults[ 2 ]
 
 if args['verbose'] != 0:
     printParent('finished removing non-unique categorical values')
+
+# 3. create all the interactions between features
+# this will take all features, and create new features that are the interactions between them (multiplied together)
+# this step can add huge amounts of space complexity, and is a good place to check if concerned about memory
+X, headerRow, dataDescription = polynomialFeatures.addAll(X, headerRow, dataDescription)
 
 # 3. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
     # we are including args only so that we can write to files at the intermediate stages for debugging
