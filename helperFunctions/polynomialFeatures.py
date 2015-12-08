@@ -54,8 +54,27 @@ def addAll(X, headerRow, dataDescription):
             if indicesIdx < len(indices) - 1:
                 specificCombo += 'And'
         return specificCombo
+   
+    def summedValue(row, indices):
+        rowSum = 0
+        for idx in indices:
+            rowSum += row[idx]
+        return rowSum
 
-    
+    def multipliedValue(row, indices):
+        rowProduct = 0
+        for idx in indices:
+            rowProduct *= row[idx]
+        return rowProduct
+
+    firstRow = true
+    for row in continuousRows:
+        for indicesList in allCombinations:
+            if firstRow:
+                # TODO: add in new header values using specificCombinationCalculator
+
+
+
     # X = degreeTwoFeatures.fit_transform(X)
     printParent('X.shape inside polynomialFeatures.py')
     printParent(X.shape)
