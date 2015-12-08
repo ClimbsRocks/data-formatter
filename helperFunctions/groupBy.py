@@ -5,8 +5,8 @@ from itertools import chain, combinations
 import numpy as np
 
 def compute(X, groupByIndices, dataDescription, headerRow, outputColumn, trainingLength ):
-    printParent('X.shape at the start of groupBy')
-    printParent([len(X), len( X[0] )])
+    # printParent('X.shape at the start of groupBy')
+    # printParent([len(X), len( X[0] )])
 
     # precompute the powerSet of groupByIndices
     # straight from the python docs: https://docs.python.org/2/library/itertools.html#recipes
@@ -77,7 +77,7 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn, trainin
             # 'range': np.nanmax(summary[key]) - np.nanmin(summary[key]),
             # 'variance': np.var(summary[key])
         }
-        statsSummary[key] = None
+        summary[key] = None
 
     # repeat the process!
         # except this time, instead of summarizing, we want to either average or median or min or max or range or all of the above, for all of the combos seen in this row
@@ -129,8 +129,8 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn, trainin
 
         appendedHeader = True
     
-    printParent('X.shape at the end of groupBy')
-    printParent([len(X), len( X[0] )])
+    # printParent('X.shape at the end of groupBy')
+    # printParent([len(X), len( X[0] )])
 
     del summary
     del statsSummary
