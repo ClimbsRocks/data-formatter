@@ -5,6 +5,10 @@ import numpy as np
 from sendMessages import printParent, obviousPrint
 
 def addAll(X, headerRow, dataDescription):
+    printParent('X.shape at the start of polynomialFeatures.py')
+    printParent(X.shape)
+    printParent('headerRow at the start of polynomialFeatures.py')
+    printParent(headerRow)
     # TODO: check to make sure our data size is small enough to justify this
     # TODO: separate out so this is only the continuous columns
     columnMatrix = zip(*X)
@@ -81,14 +85,26 @@ def addAll(X, headerRow, dataDescription):
     for row in continuousRows:
         for indicesList in allCombinations:
             if firstRow:
+                # add in a new pretty name to our headerRow
+                # having good logging for our users is very important
+                headerRow.append('Summed',indicesList)
+                headerRow.append('Multiplied',indicesList)
+                headerRow.append('Divided',indicesList)
+
+                # tell dataDescription that each of these new columns is continuous
+                dataDescription.append('continuous')
+                dataDescription.append('continuous')
+                dataDescription.append('continuous')
                 # TODO: add in new header values using specificCombinationCalculator
             row.append(summedValue(row, indicesList))
             row.append(multipliedValue(row, indicesList))
             row.append(dividedValue(row, indicesList))
 
+    # TODO: join together our categorical columns and our continuous columns!
+    
 
     # X = degreeTwoFeatures.fit_transform(X)
-    printParent('X.shape inside polynomialFeatures.py')
-    printParent(X.shape)
+    printParent('headerRow at the end of polynomialFeatures.py')
+    printParent(headerRow)
     # TODO: figure out how to modify headerRow and dataDescription
     return X, headerRow, dataDescription
