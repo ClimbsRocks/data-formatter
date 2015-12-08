@@ -1,4 +1,5 @@
 import time
+import json
 
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
@@ -17,11 +18,24 @@ from sendMessages import obviousPrint
 def cleanDataset(X, coefficients, thresholdDivisor, headerRow):
     # that forest will tell us the feature_importances_ of each of the features it was trained on
     # we want to grab only those column indices that pass the featureImportanceThreshold passed in to us
+    # printParent('coefficients:')
+    # printParent(coefficients)
 
     absCoefficients = [abs(x) for x in coefficients]
-    maxCoefficient = max(absCoefficients)
+
+    # printParent('absCoefficients')
+    # printParent(json.dumps(absCoefficients))
+
+    maxCoefficient = np.amax(absCoefficients)
+
+    # maxCoefficient = max(list(absCoefficients))
+
     threshold = maxCoefficient / thresholdDivisor
 
+    # printParent('threshold:')
+    # printParent(threshold)
+
+    # columnIndicesThatPass = [ idx for idx, x in enumerate( absCoefficients ) if x > threshold ]
     columnIndicesThatPass = [ idx for idx, x in enumerate( absCoefficients ) if x > threshold ]
 
     # columnIndicesThatPass = [idx for idx, x in enumerate( coefficients ) if abs(x) > threshold]
@@ -63,11 +77,20 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, p
     else:
         estimator = LinearRegression(n_jobs=-1)
 
+    printParent('X.shape')
+    printParent(X.shape)
+
     estimator.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
+
+    try:
+        coefList = estimator.coef_[0]
+        len(coefList)
+    except:
+        coefList = estimator.coef_
 
 
     # remove everything that is at least three orders of magnitude shy of the best feature
-    X, headerRow, printingOutput = cleanDataset(X, estimator.coef_, 1000, headerRow) 
+    X, headerRow, printingOutput = cleanDataset(X, coefList, 1000, headerRow) 
 
     # printParent('estimator.coef_ after the first round of feature selecting')
     # printParent(list(estimator.coef_))
