@@ -24,6 +24,7 @@ def addAll(X, headerRow, dataDescription):
         # make sure to not leave duplicate data around for long
         columnMatrix[colIdx] = None
 
+    del columnMatrix
     continuousRows = zip(*continuousColumns)
     del continuousColumns
 
@@ -100,11 +101,20 @@ def addAll(X, headerRow, dataDescription):
             row.append(multipliedValue(row, indicesList))
             row.append(dividedValue(row, indicesList))
 
-    # TODO: join together our categorical columns and our continuous columns!
-    
+    # join together our categorical columns and our new continuous columns!
+    newContinuousColumns = zip(*continuousRows)
+    categoricalColumns.extend(newContinuousColumns)
+
+    # categoricalColumns is no longer an accurate name for the matrix, so let's change the name
+    columnX = categoricalColumns
+    del categoricalColumns
+
+    returnX = zip(*columnX)
 
     # X = degreeTwoFeatures.fit_transform(X)
     printParent('headerRow at the end of polynomialFeatures.py')
     printParent(headerRow)
+    printParent('X.shape at the end of polynomialFeatures.py')
+    printParent(returnX.shape)
     # TODO: figure out how to modify headerRow and dataDescription
-    return X, headerRow, dataDescription
+    return returnX, headerRow, dataDescription
