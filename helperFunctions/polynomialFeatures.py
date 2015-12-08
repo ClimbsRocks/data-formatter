@@ -35,7 +35,7 @@ def addAll(X, headerRow, dataDescription):
         s = list(iterable)
         return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
 
-    indicesForPowerset = range(len(continuousRows))
+    indicesForPowerset = range(len(continuousRows[0]))
     allCombinations = list(powerset(indicesForPowerset))
     # the first item in here is just the empty (blank) set, so let's remove that
     allCombinations.pop(0)
@@ -66,13 +66,13 @@ def addAll(X, headerRow, dataDescription):
     def summedValue(row, indices):
         rowSum = 0
         for idx in indices:
-            rowSum += row[idx]
+            rowSum += float(row[idx])
         return rowSum
 
     def multipliedValue(row, indices):
         rowProduct = 0
         for idx in indices:
-            rowProduct *= row[idx]
+            rowProduct *= float(row[idx])
         return rowProduct
 
     # this is not ideal as order matters for division
@@ -82,18 +82,19 @@ def addAll(X, headerRow, dataDescription):
     def dividedValue(row, indices):
         rowProduct = 0
         for idx in indices:
-            rowProduct /= row[idx]
+            rowProduct /= float(row[idx])
         return rowProduct
 
-    firstRow = true
-    for row in continuousRows:
+    firstRow = True
+    for rowIdx, row in enumerate(continuousRows):
+        row = list(row)
         for indicesList in allCombinations:
             if firstRow:
                 # add in a new pretty name to our headerRow
                 # having good logging for our users is very important
-                headerRow.append('Summed',indicesList)
-                # headerRow.append('Multiplied',indicesList)
-                # headerRow.append('Divided',indicesList)
+                headerRow.append(specificCombinationCalculator('Summed',indicesList))
+                headerRow.append(specificCombinationCalculator('Multiplied',indicesList))
+                headerRow.append(specificCombinationCalculator('Divided',indicesList))
 
                 # tell dataDescription that each of these new columns is continuous
                 dataDescription.append('continuous')
@@ -103,6 +104,7 @@ def addAll(X, headerRow, dataDescription):
             row.append(summedValue(row, indicesList))
             row.append(multipliedValue(row, indicesList))
             row.append(dividedValue(row, indicesList))
+        continuousRows[rowIdx] = row
 
     # join together our categorical columns and our new continuous columns!
     newContinuousColumns = zip(*continuousRows)
