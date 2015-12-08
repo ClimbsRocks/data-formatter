@@ -6,7 +6,7 @@ from sendMessages import printParent, obviousPrint
 
 def addAll(X, headerRow, dataDescription):
     printParent('X.shape at the start of polynomialFeatures.py')
-    printParent(X.shape)
+    printParent([len(X),len(X[0])])
     printParent('headerRow at the start of polynomialFeatures.py')
     printParent(headerRow)
     # TODO: check to make sure our data size is small enough to justify this
@@ -39,6 +39,9 @@ def addAll(X, headerRow, dataDescription):
     allCombinations = list(powerset(indicesForPowerset))
     # the first item in here is just the empty (blank) set, so let's remove that
     allCombinations.pop(0)
+
+    # for testing, let's only use the first 5 combos in allCombinations:
+    allCombinations = allCombinations[0:5]
 
     # and for each one, make sure we have a pretty version of that combination we can add to the headerRow
         # e.g. summedHeightAndWeight, dividedEarningsAndDebt, multipliedSquareFeetAndHours, etc.
@@ -89,13 +92,13 @@ def addAll(X, headerRow, dataDescription):
                 # add in a new pretty name to our headerRow
                 # having good logging for our users is very important
                 headerRow.append('Summed',indicesList)
-                headerRow.append('Multiplied',indicesList)
-                headerRow.append('Divided',indicesList)
+                # headerRow.append('Multiplied',indicesList)
+                # headerRow.append('Divided',indicesList)
 
                 # tell dataDescription that each of these new columns is continuous
                 dataDescription.append('continuous')
-                dataDescription.append('continuous')
-                dataDescription.append('continuous')
+                # dataDescription.append('continuous')
+                # dataDescription.append('continuous')
                 # TODO: add in new header values using specificCombinationCalculator
             row.append(summedValue(row, indicesList))
             row.append(multipliedValue(row, indicesList))
@@ -115,6 +118,6 @@ def addAll(X, headerRow, dataDescription):
     printParent('headerRow at the end of polynomialFeatures.py')
     printParent(headerRow)
     printParent('X.shape at the end of polynomialFeatures.py')
-    printParent(returnX.shape)
+    printParent([len(returnX),len(returnX[0])])
     # TODO: figure out how to modify headerRow and dataDescription
     return returnX, headerRow, dataDescription
