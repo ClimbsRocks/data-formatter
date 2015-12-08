@@ -67,12 +67,24 @@ def addAll(X, headerRow, dataDescription):
             rowProduct *= row[idx]
         return rowProduct
 
+    # this is not ideal as order matters for division
+    # say we're trying to get income per capita
+    # GDP / population is going to give us a very large number, while population/GDP is going to give us a very small number
+    # but it's good enough for MVP!
+    def dividedValue(row, indices):
+        rowProduct = 0
+        for idx in indices:
+            rowProduct /= row[idx]
+        return rowProduct
+
     firstRow = true
     for row in continuousRows:
         for indicesList in allCombinations:
             if firstRow:
                 # TODO: add in new header values using specificCombinationCalculator
-
+            row.append(summedValue(row, indicesList))
+            row.append(multipliedValue(row, indicesList))
+            row.append(dividedValue(row, indicesList))
 
 
     # X = degreeTwoFeatures.fit_transform(X)
