@@ -12,7 +12,7 @@ from sendMessages import obviousPrint
 
 # this is purely a helper function for select. it should not be used outside of this file
 # find the maximally useful feature value and compare everything else to that
-def cleanDataset(X, coefficients, thresholdDivisor, headerRow, cleanDataset):
+def cleanDataset(X, coefficients, thresholdDivisor, headerRow, dataDescription):
     # the forest will tell us the feature_importances_ of each of the features it was trained on
     # we want to grab only those column indices that pass the featureImportanceThreshold passed in to us
     # printParent('coefficients:')
@@ -92,7 +92,7 @@ def prune(  X, y, trainingLength, featureImportanceThreshold, headerRow, dataDes
 
 
 # this is the main public interface
-def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, problemType ):
+def select( X, y, trainingLength, featureImportanceThreshold, headerRow, dataDescription, test, problemType ):
 
     # first, train linearly to remove all the completely useless features
         # this lets us send fewer features into our random forest (or eventaully RFECV), which leads to dramatically faster training times (~ 2-3x improvement)
@@ -117,7 +117,7 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, p
 
 
     # remove everything that is at least three orders of magnitude shy of the best feature
-    X, headerRow, printingOutput = cleanDataset(X, coefList, 1000, headerRow) 
+    X, headerRow, printingOutput = cleanDataset(X, coefList, 1000, headerRow, dataDescription) 
 
     # printParent('estimator.coef_ after the first round of feature selecting')
     # printParent(list(estimator.coef_))
@@ -136,7 +136,7 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, p
     classifier.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
     # X, filteredHeaderRow, printingOutput = cleanDataset(X, classifier.feature_importances_, featureImportanceThreshold, headerRow )
-    X, filteredHeaderRow, printingOutput = cleanDataset(X, classifier.feature_importances_, 1000, headerRow )
+    X, filteredHeaderRow, printingOutput = cleanDataset(X, classifier.feature_importances_, 1000, headerRow, dataDescription )
     
 
     if( not test ):
