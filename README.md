@@ -1,7 +1,7 @@
 # data-formatter
 > Takes in a .csv file and formats it to be ready for machine learning using scikit-learn, or a neural network like brain.js or pyLearn2
 
-This library is designed to work with ppComplete, but is so broadly useful that I wanted to make it easily available.
+This library is designed to work with machineJS, but is so broadly useful that I wanted to make it easily available.
 
 ## Installation:
 To include as a dependency for a specific repo:
@@ -123,8 +123,8 @@ The formatted data files will be written into whichever directory you invoke `da
 
 ### Other Random Info
 
-#### ppComplete
-If you find this library useful, you might want to check out [ppComplete](https://github.com/ClimbsRocks/ppComplete), which helps reduce the drudge work of other parts of the machine learning process!
+#### machineJS
+If you find this library useful, you might want to check out [machineJS](https://github.com/ClimbsRocks/machineJS), which helps reduce the drudge work of other parts of the machine learning process!
 
 #### Contributing- yes please!
 There are few things that make me as happy as reading through Pull Requests over a morning espresso :)
