@@ -5,10 +5,10 @@ import numpy as np
 from sendMessages import printParent, obviousPrint
 
 def addAll(X, headerRow, dataDescription):
-    printParent('X.shape at the start of polynomialFeatures.py')
-    printParent([len(X),len(X[0])])
-    printParent('headerRow at the start of polynomialFeatures.py')
-    printParent(headerRow)
+    # printParent('X.shape at the start of polynomialFeatures.py')
+    # printParent([len(X),len(X[0])])
+    # printParent('headerRow at the start of polynomialFeatures.py')
+    # printParent(headerRow)
     # TODO: check to make sure our data size is small enough to justify this
     # TODO: separate out so this is only the continuous columns
     columnMatrix = zip(*X)
@@ -41,7 +41,7 @@ def addAll(X, headerRow, dataDescription):
     allCombinations.pop(0)
 
     # for testing, let's only use the first 5 combos in allCombinations:
-    allCombinations = allCombinations[0:5]
+    allCombinations = allCombinations[-15:]
 
     # and for each one, make sure we have a pretty version of that combination we can add to the headerRow
         # e.g. summedHeightAndWeight, dividedEarningsAndDebt, multipliedSquareFeetAndHours, etc.
@@ -51,6 +51,7 @@ def addAll(X, headerRow, dataDescription):
     # we must grab the values at those indices for this row
         # e.g. storeId2DayOfWeek5Holiday0
     def specificCombinationCalculator(startingString, indices):
+        # printParent(indices)
         # startingString is going to be something like "Summed" or "Multiplied" to tell the user how we aggregated data together for this column
         specificCombo = startingString
         for indicesIdx, groupByIndex in enumerate(indices):
@@ -62,8 +63,10 @@ def addAll(X, headerRow, dataDescription):
             if indicesIdx < len(indices) - 1:
                 specificCombo += 'And'
         return specificCombo
-   
+
     def summedValue(row, indices):
+        # printParent('row inside summedValue')
+        # printParent(row)
         rowSum = 0
         for idx in indices:
             rowSum += float(row[idx])
@@ -82,8 +85,16 @@ def addAll(X, headerRow, dataDescription):
     def dividedValue(row, indices):
         rowProduct = 0
         for idx in indices:
-            rowProduct /= float(row[idx])
+            val = float(row[idx])
+            if val != 0:
+                rowProduct /= val
         return rowProduct
+
+    # OPTIMIZATION:
+        # what if we did this on a randomized 20% subset of the data
+            # assuming trainingLength > 20000
+        # then calculate which ones actually matter. 
+        # then go through and perform this on the entire dataset for only those features that matter.
 
     firstRow = True
     for rowIdx, row in enumerate(continuousRows):
@@ -93,18 +104,24 @@ def addAll(X, headerRow, dataDescription):
                 # add in a new pretty name to our headerRow
                 # having good logging for our users is very important
                 headerRow.append(specificCombinationCalculator('Summed',indicesList))
-                headerRow.append(specificCombinationCalculator('Multiplied',indicesList))
-                headerRow.append(specificCombinationCalculator('Divided',indicesList))
+                # headerRow.append(specificCombinationCalculator('Multiplied',indicesList))
+                # headerRow.append(specificCombinationCalculator('Divided',indicesList))
 
                 # tell dataDescription that each of these new columns is continuous
                 dataDescription.append('continuous')
                 # dataDescription.append('continuous')
                 # dataDescription.append('continuous')
                 # TODO: add in new header values using specificCombinationCalculator
+            # TODO: we can optimize this
+                # just create one function that calculates all three of these values
+                # by iterating through the row a single time
+                # then, we have one function call, one iteration, one float(val), etc. 
+                # right now we're duplicating all that work three times
             row.append(summedValue(row, indicesList))
-            row.append(multipliedValue(row, indicesList))
-            row.append(dividedValue(row, indicesList))
+            # row.append(multipliedValue(row, indicesList))
+            # row.append(dividedValue(row, indicesList))
         continuousRows[rowIdx] = row
+        firstRow = False
 
     # join together our categorical columns and our new continuous columns!
     newContinuousColumns = zip(*continuousRows)
@@ -117,9 +134,11 @@ def addAll(X, headerRow, dataDescription):
     returnX = zip(*columnX)
 
     # X = degreeTwoFeatures.fit_transform(X)
-    printParent('headerRow at the end of polynomialFeatures.py')
-    printParent(headerRow)
-    printParent('X.shape at the end of polynomialFeatures.py')
-    printParent([len(returnX),len(returnX[0])])
+    # printParent('headerRow at the end of polynomialFeatures.py')
+    # printParent(headerRow)
+    # printParent('len(headerRow) at the end of polynomialFeatures.py')
+    # printParent(len(headerRow))
+    # printParent('X.shape at the end of polynomialFeatures.py')
+    # printParent([len(returnX),len(returnX[0])])
     # TODO: figure out how to modify headerRow and dataDescription
     return returnX, headerRow, dataDescription

@@ -123,10 +123,7 @@ headerRow = noUniquesResults[ 2 ]
 if args['verbose'] != 0:
     printParent('finished removing non-unique categorical values')
 
-# 3. create all the interactions between features
-# this will take all features, and create new features that are the interactions between them (multiplied together)
-# this step can add huge amounts of space complexity, and is a good place to check if concerned about memory
-X, headerRow, dataDescription = polynomialFeatures.addAll(X, headerRow, dataDescription)
+
 
 # 3. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
     # we are including args only so that we can write to files at the intermediate stages for debugging
@@ -143,6 +140,14 @@ if(test):
 
 if args['verbose'] != 0:
     printParent('finished imputing missing values')
+
+# 3. create all the interactions between features
+# this will take all features, and create new features that are the interactions between them (multiplied together)
+# this step can add huge amounts of space complexity, and is a good place to check if concerned about memory
+X, headerRow, dataDescription = polynomialFeatures.addAll(X, headerRow, dataDescription)
+if args['verbose'] != 0:
+    printParent('finished trying to add in combinations of the existing features as new features')
+
 
 # 4. if we have a single ID spread across multiple rows, sum by ID so that each ID ends up being only a single row with the aggregated results of all the relevant rows
 groupedRows = sumById.sum(dataDescription, X, headerRow, idColumn, trainingLength, outputColumn)
@@ -161,8 +166,10 @@ if(test):
 if args['verbose'] != 0:
     printParent('finished grouping by ID if relevant')
 
+# thought about doing additional cleaning of the dataset after summing by id. 
 # if wasSummed:
 #     X = noUniquesRedux.clean(X)
+
 
 # 3. convert entire dataset to have categorical data encoded properly. 
 # This turns information like a single column holding city names of 'SF' and 'Akron' into two separate columns, one for 'Akron=True' and one for 'SF=True'.
@@ -172,6 +179,7 @@ vectorizedInfo = dictVectorizing.vectorize(X)
 # X = vectorizedInfo[0].tolist()
 X = vectorizedInfo[0]
 vectorizedHeaderRow = vectorizedInfo[1]
+
 
 if args['verbose'] != 0:
     printParent('finished vectorizing the categorical values')

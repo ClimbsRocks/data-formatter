@@ -24,4 +24,6 @@ def vectorize(listOfDicts):
         listOfDicts[dictIdx] = None
         del rowDict
     del listOfDicts
+    # printParent('len(vectorizer.feature_names_) at the end of dictVectorizing.py')
+    # printParent(len(vectorizer.feature_names_))
     return [ sparseMatrix, vectorizer.feature_names_, vectorizer.vocabulary_ ]

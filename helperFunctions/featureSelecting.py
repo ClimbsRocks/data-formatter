@@ -82,7 +82,7 @@ def prune(  X, y, trainingLength, featureImportanceThreshold, headerRow, dataDes
         printParent('here are the features that were kept, sorted by their feature importance')
         printParent(printingOutput)
 
-    printParent('total time for the random forest part of feature selection, in minutes:')
+    printParent('total time for the second part of feature selection, in minutes:')
     # this will get us execution time in minutes, to one decimal place
     printParent( round( (time.time() - rfStartTime)/60, 1 ) )
 
@@ -92,7 +92,11 @@ def prune(  X, y, trainingLength, featureImportanceThreshold, headerRow, dataDes
 
 
 # this is the main public interface
-def select( X, y, trainingLength, featureImportanceThreshold, headerRow, dataDescription, test, problemType ):
+def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, problemType ):
+    # after dictVectorizing.py, we do not have a dataDescription row, nor do we need one. 
+    # however, we've modularized prune so that prune expects a dataDescription row
+    # here, we are simply creating a dummy dataDescription row that we will not use except to avoid an error in prune
+    dataDescription = ['dummyValue' for x in range(len(headerRow)) ]
 
     # first, train linearly to remove all the completely useless features
         # this lets us send fewer features into our random forest (or eventaully RFECV), which leads to dramatically faster training times (~ 2-3x improvement)
@@ -104,8 +108,8 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, dataDes
     else:
         estimator = LinearRegression(n_jobs=-1)
 
-    printParent('X.shape')
-    printParent(X.shape)
+    # printParent('X.shape')
+    # printParent(X.shape)
 
     estimator.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
@@ -116,8 +120,8 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, dataDes
         coefList = estimator.coef_
 
 
-    # remove everything that is at least three orders of magnitude shy of the best feature
-    X, headerRow, printingOutput = cleanDataset(X, coefList, 1000, headerRow, dataDescription) 
+    # remove everything that is at least 4 orders of magnitude shy of the best feature
+    X, headerRow, printingOutput, dataDescription = cleanDataset(X, coefList, 10000, headerRow, dataDescription) 
 
     # printParent('estimator.coef_ after the first round of feature selecting')
     # printParent(list(estimator.coef_))
@@ -136,7 +140,7 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, dataDes
     classifier.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
     # X, filteredHeaderRow, printingOutput = cleanDataset(X, classifier.feature_importances_, featureImportanceThreshold, headerRow )
-    X, filteredHeaderRow, printingOutput = cleanDataset(X, classifier.feature_importances_, 1000, headerRow, dataDescription )
+    X, filteredHeaderRow, printingOutput, dataDescription = cleanDataset(X, classifier.feature_importances_, 1000, headerRow, dataDescription )
     
 
     if( not test ):
