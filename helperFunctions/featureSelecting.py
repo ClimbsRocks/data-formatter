@@ -89,25 +89,25 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, p
     # repeat this process twice with different feature thresholds. 
     # first four orders of magnitude less than the most important feature, then two orders of magnitude less
     # hopefully by removing the features that are pure noise, we can all the signal to be found more reliably, and certainly more quickly.
-    if problemType == 'category':
-        estimator = LogisticRegression(n_jobs=-1)
-    else:
-        estimator = LinearRegression(n_jobs=-1)
+    # if problemType == 'category':
+    #     estimator = LogisticRegression(n_jobs=-1)
+    # else:
+    #     estimator = LinearRegression(n_jobs=-1)
 
-    estimator.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
+    # estimator.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
-    try:
-        coefList = estimator.coef_[0]
-        len(coefList)
-    except:
-        coefList = estimator.coef_
+    # try:
+    #     coefList = estimator.coef_[0]
+    #     len(coefList)
+    # except:
+    #     coefList = estimator.coef_
 
 
-    # remove everything that is at least 4 orders of magnitude shy of the best feature
-    X, headerRow, printingOutput, dataDescription = cleanDataset(X, coefList, 10000, headerRow, dataDescription) 
+    # # remove everything that is at least 4 orders of magnitude shy of the best feature
+    # X, headerRow, printingOutput, dataDescription = cleanDataset(X, coefList, 10000, headerRow, dataDescription) 
 
-    printParent('here are the features that were kept by the first round of regression, sorted by their feature importance')
-    printParent(printingOutput)
+    # printParent('here are the features that were kept by the first round of regression, sorted by their feature importance')
+    # printParent(printingOutput)
 
 
     rfStartTime = time.time()
@@ -119,6 +119,7 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, p
         classifier = RandomForestRegressor( n_jobs=-1, n_estimators=20 )
     classifier.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
+    # remove features that are at least 3 orders of magnitude shy of our most important feature
     X, filteredHeaderRow, printingOutput, dataDescription = cleanDataset(X, classifier.feature_importances_, 1000, headerRow, dataDescription )
     
 
