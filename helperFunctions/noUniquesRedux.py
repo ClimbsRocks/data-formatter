@@ -10,6 +10,4 @@ def clean(X):
                 columnCounts[key] += 1
             except:
                 columnCounts[key] = 1
-    # printParent( columnCounts )
-    # printParent( len(columnCounts.keys()) )
     return X

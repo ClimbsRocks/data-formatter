@@ -13,29 +13,16 @@ from sendMessages import obviousPrint
 # this is purely a helper function for select. it should not be used outside of this file
 # find the maximally useful feature value and compare everything else to that
 def cleanDataset(X, coefficients, thresholdDivisor, headerRow, dataDescription):
+
     # the forest will tell us the feature_importances_ of each of the features it was trained on
     # we want to grab only those column indices that pass the featureImportanceThreshold passed in to us
-    # printParent('coefficients:')
-    # printParent(coefficients)
-
     absCoefficients = [abs(x) for x in coefficients]
-
-    # printParent('absCoefficients')
-    # printParent(json.dumps(absCoefficients))
 
     maxCoefficient = np.amax(absCoefficients)
 
-    # maxCoefficient = max(list(absCoefficients))
-
     threshold = maxCoefficient / thresholdDivisor
 
-    # printParent('threshold:')
-    # printParent(threshold)
-
-    # columnIndicesThatPass = [ idx for idx, x in enumerate( absCoefficients ) if x > threshold ]
     columnIndicesThatPass = [ idx for idx, x in enumerate( absCoefficients ) if x > threshold ]
-
-    # columnIndicesThatPass = [idx for idx, x in enumerate( coefficients ) if abs(x) > threshold]
 
     # use column slicing to grab only those columns that passed the previous step
     cleanedX = X.tocsc()[ :, columnIndicesThatPass]
@@ -48,9 +35,8 @@ def cleanDataset(X, coefficients, thresholdDivisor, headerRow, dataDescription):
     filteredDataDescription = []
 
     featureImportancesList = coefficients.tolist()
-    # printParent(featureImportancesList)
     for idx, importance in enumerate( featureImportancesList ):
-        # printParent(idx)
+
         if abs(featureImportancesList[idx]) > threshold :
             printingOutput.append( [ headerRow[idx], round( importance, 4) ])
             filteredHeaderRow.append( headerRow[idx] )
@@ -82,7 +68,7 @@ def prune(  X, y, trainingLength, featureImportanceThreshold, headerRow, dataDes
         printParent('here are the features that were kept, sorted by their feature importance')
         printParent(printingOutput)
 
-    printParent('total time for the second part of feature selection, in minutes:')
+    printParent('total time for the pruning part of feature selection, in minutes:')
     # this will get us execution time in minutes, to one decimal place
     printParent( round( (time.time() - rfStartTime)/60, 1 ) )
 
@@ -108,9 +94,6 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, p
     else:
         estimator = LinearRegression(n_jobs=-1)
 
-    # printParent('X.shape')
-    # printParent(X.shape)
-
     estimator.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
     try:
@@ -122,9 +105,6 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, p
 
     # remove everything that is at least 4 orders of magnitude shy of the best feature
     X, headerRow, printingOutput, dataDescription = cleanDataset(X, coefList, 10000, headerRow, dataDescription) 
-
-    # printParent('estimator.coef_ after the first round of feature selecting')
-    # printParent(list(estimator.coef_))
 
     printParent('here are the features that were kept by the first round of regression, sorted by their feature importance')
     printParent(printingOutput)
@@ -139,7 +119,6 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, p
         classifier = RandomForestRegressor( n_jobs=-1, n_estimators=20 )
     classifier.fit( X[ 0 : trainingLength ], y[ 0 : trainingLength ] )
 
-    # X, filteredHeaderRow, printingOutput = cleanDataset(X, classifier.feature_importances_, featureImportanceThreshold, headerRow )
     X, filteredHeaderRow, printingOutput, dataDescription = cleanDataset(X, classifier.feature_importances_, 1000, headerRow, dataDescription )
     
 

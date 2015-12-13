@@ -207,9 +207,7 @@ def cleanAll(dataDescription, matrix, headerRow, args ):
     standardizedResults = standardizeMissingValues(dataDescription, matrix)
     cleanedColumnMatrix = standardizedResults[ 0 ]
     columnsWithMissingValues = standardizedResults[ 1 ]
-
-    # writeToFile.writeData( zip(*cleanedColumnMatrix), args, headerRow, False )
-
+    
 
     # calculate the replacement values for columns that are missing values
     fillInVals = calculateReplacementValues( cleanedColumnMatrix, columnsWithMissingValues, dataDescription )

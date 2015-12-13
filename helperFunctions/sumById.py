@@ -19,7 +19,6 @@ def sum( dataDescription, X, headerRow, idColumn, trainingLength, outputColumn):
             # it's more likely that we would have a separate file entirely for the metadata associated with each row (name, age, gender if our repeated ID is a customerID)
             # let's ignore this for now (MVP!), and then think later about imputing missing values on only the non-joined data, then joining in that data later. that would likely be much more space efficient than joining in that data up front
         return groupByID(dataDescription, X, headerRow, idColumn, trainingLength, outputColumn)
-        # return [listToDict.all( X, headerRow ), idColumn]
         
 
     else:

@@ -68,9 +68,6 @@ def writeMetadata(y, idColumn, args, headerRow):
 def writeMetadataDense(y, idColumn, args, headerRow ):
     # grab the name of the training and testing files from the full path to those datasets
 
-    # trainingFileName = path.split( args['trainingData'] )[ -1 ]
-    # testingFileName = path.split( args['testingData'] )[ -1 ]
-
     # save the file names into variables- we will use them to create the file and in the fileNames hash messaged out to the parent.
     y_train= path.join( args['outputFolder'], 'y_train_' + args['trainingPrettyName'] + '.csv' )
     id_train= path.join( args['outputFolder'], 'id_train_' + args['trainingPrettyName'] + '.csv' )
@@ -154,8 +151,6 @@ def writeDataDense(X, args, headerRow, nn ):
             'X_train': X_train,
             'X_test': X_test
         }
-    # printParent('fileNames where we have written the data:')
-    # printParent(fileNames)
         
     messageParent( fileNames, 'fileNames' )
 

@@ -5,8 +5,6 @@ from itertools import chain, combinations
 import numpy as np
 
 def compute(X, groupByIndices, dataDescription, headerRow, outputColumn, trainingLength ):
-    # printParent('X.shape at the start of groupBy')
-    # printParent([len(X), len( X[0] )])
 
     # precompute the powerSet of groupByIndices
     # straight from the python docs: https://docs.python.org/2/library/itertools.html#recipes
@@ -18,10 +16,6 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn, trainin
     allCombinations = list(powerset(groupByIndices))
     # the first item in here is just the empty (blank) set, so let's remove that
     allCombinations.pop(0)
-
-    # and for each one, make sure we have a pretty version of that combination we can add to the headerRow
-        # e.g. salesBystore, salesBystoreByDayOfWeek, etc.
-
 
     summary = {}
 
@@ -48,7 +42,6 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn, trainin
     # iterate through all the rows in our dataset (X)
         # we can only compute the known outcome for the rows in our training dataset, but X right now holds the combined training and testing dataset
         # iterate only through the training data portion
-    # trainingX = X[ 0 : len(outputColumn) ]
     for rowID, row in enumerate( X ):
         if rowID < trainingLength:
             # we have already precomputed all the possible combinations of the indices in groupByIndices
@@ -129,9 +122,6 @@ def compute(X, groupByIndices, dataDescription, headerRow, outputColumn, trainin
 
         appendedHeader = True
     
-    # printParent('X.shape at the end of groupBy')
-    # printParent([len(X), len( X[0] )])
-
     del summary
     del statsSummary
     return X, dataDescription, headerRow

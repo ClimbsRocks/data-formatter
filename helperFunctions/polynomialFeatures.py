@@ -5,10 +5,6 @@ import numpy as np
 from sendMessages import printParent, obviousPrint
 
 def addAll(X, headerRow, dataDescription):
-    # printParent('X.shape at the start of polynomialFeatures.py')
-    # printParent([len(X),len(X[0])])
-    # printParent('headerRow at the start of polynomialFeatures.py')
-    # printParent(headerRow)
     # TODO: check to make sure our data size is small enough to justify this
     # TODO: separate out so this is only the continuous columns
     columnMatrix = zip(*X)
@@ -51,7 +47,6 @@ def addAll(X, headerRow, dataDescription):
     # we must grab the values at those indices for this row
         # e.g. storeId2DayOfWeek5Holiday0
     def specificCombinationCalculator(startingString, indices):
-        # printParent(indices)
         # startingString is going to be something like "Summed" or "Multiplied" to tell the user how we aggregated data together for this column
         specificCombo = startingString
         for indicesIdx, groupByIndex in enumerate(indices):
@@ -65,8 +60,6 @@ def addAll(X, headerRow, dataDescription):
         return specificCombo
 
     def summedValue(row, indices):
-        # printParent('row inside summedValue')
-        # printParent(row)
         rowSum = 0
         for idx in indices:
             rowSum += float(row[idx])
@@ -133,12 +126,4 @@ def addAll(X, headerRow, dataDescription):
 
     returnX = zip(*columnX)
 
-    # X = degreeTwoFeatures.fit_transform(X)
-    # printParent('headerRow at the end of polynomialFeatures.py')
-    # printParent(headerRow)
-    # printParent('len(headerRow) at the end of polynomialFeatures.py')
-    # printParent(len(headerRow))
-    # printParent('X.shape at the end of polynomialFeatures.py')
-    # printParent([len(returnX),len(returnX[0])])
-    # TODO: figure out how to modify headerRow and dataDescription
     return returnX, headerRow, dataDescription
