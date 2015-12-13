@@ -36,9 +36,6 @@ def addAll(X, headerRow, dataDescription):
     # the first item in here is just the empty (blank) set, so let's remove that
     allCombinations.pop(0)
 
-    # for testing, let's only use the first 5 combos in allCombinations:
-    allCombinations = allCombinations[-15:]
-
     # and for each one, make sure we have a pretty version of that combination we can add to the headerRow
         # e.g. summedHeightAndWeight, dividedEarningsAndDebt, multipliedSquareFeetAndHours, etc.
 
