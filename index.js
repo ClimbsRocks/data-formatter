@@ -6,6 +6,7 @@
   var path = require('path');
   var mkdirp = require('mkdirp');
   var startPyChild = require('./helperFunctions/startPyChild.js');
+  var setDefaultValues = require('./helperFunctions/setDefaultValues.js');
 
   var cwd = process.cwd();
 
@@ -17,28 +18,7 @@
         // and once where we force anything that can be a float into a float, regardless of whether the user classified it as a categorical variable or not. 
       // then go through, train a small ensemble, and see which data set does better
 
-    if( args.test === undefined ) {
-      args.test = false;
-    }
-
-    if( args.outputFolder === undefined ) {
-      var invokingFolder = path.dirname( module.parent.filename );
-      args.outputFolder = path.join( invokingFolder, 'data-formatterResults' );
-    }
-
-    // TODO TODO: generalize this so it will work even on long paths that the user sends in
-    if( args.trainingPrettyName === undefined ) {
-      args.trainingPrettyName = path.basename( args.trainingData ).slice(0,-4);
-    }
-
-    // TODO TODO: generalize this so it will work even on long paths that the user sends in
-    if( args.testingPrettyName === undefined ) {
-      args.testingPrettyName = path.basename( args.testingData ).slice(0,-4);
-    }
-
-    if( args.verbose === undefined ) {
-      args.verbose = 1;
-    }
+    args = setDefaultValues(args);
 
     // make sure the output folder exists. if not, create it.
     mkdirp( args.outputFolder, function(err) {
