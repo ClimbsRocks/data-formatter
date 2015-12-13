@@ -30,7 +30,7 @@ def inputFiles(trainingFile, testingFile):
                     hasID, testHeaderValidationLength = validation.dataDescription( dataDescriptionRaw )
 
                     # the user told us whether this is 'output regression' or 'output category'
-                    # we need to split out the problem type (regression or category), and leave only 'output'
+                    # we need to split out the problem type (regression, category, or multi-category), and leave only 'output'
                     dataDescription = []
                     for columnType in dataDescriptionRaw:
                         if columnType[0:6] == 'output':
