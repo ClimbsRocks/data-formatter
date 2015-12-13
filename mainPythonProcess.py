@@ -145,13 +145,13 @@ if args['verbose'] != 0:
 # this will take all features, and create new features that are the interactions between them (multiplied together)
 # this step can add huge amounts of space complexity, and is a good place to check if concerned about memory
 # because of the memory issues, we do not run this by default, and will only run it if you tell us to. 
-try:
-    if args['allFeatureCombinations']:
-        X, headerRow, dataDescription = polynomialFeatures.addAll(X, headerRow, dataDescription)
-        if args['verbose'] != 0:
-            printParent('finished trying to add in combinations of the existing features as new features')
-except:
-    pass
+# try:
+if args['allFeatureCombinations']:
+    X, headerRow, dataDescription = polynomialFeatures.addAll(X, headerRow, dataDescription)
+    if args['verbose'] != 0:
+        printParent('finished trying to add in combinations of the existing features as new features')
+# except:
+#     pass
 
 # 4. if we have a single ID spread across multiple rows, sum by ID so that each ID ends up being only a single row with the aggregated results of all the relevant rows
 groupedRows = sumById.sum(dataDescription, X, headerRow, idColumn, trainingLength, outputColumn)
