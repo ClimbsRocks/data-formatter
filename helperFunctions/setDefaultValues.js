@@ -1,3 +1,4 @@
+var path = require('path');
 module.exports = function(args) {
 
   if( args.test === undefined ) {
