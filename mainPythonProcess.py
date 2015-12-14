@@ -204,13 +204,14 @@ if(test):
     # this helps models train faster, and is actually more predictive in the end since there's less noise to distract from the valuable features. 
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
 
-# featureSelectingResults = featureSelecting.rfecvSelection(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
-featureSelectingResults = featureSelecting.select(X, outputColumn, args['trainingLength'], 0.001, vectorizedHeaderRow, test, problemType )
-X = featureSelectingResults[0]
-filteredHeaderRow = featureSelectingResults[1]
+if not args['keepAllFeatures']:
+    # featureSelectingResults = featureSelecting.rfecvSelection(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
+    featureSelectingResults = featureSelecting.select(X, outputColumn, args['trainingLength'], 0.001, vectorizedHeaderRow, test, problemType )
+    X = featureSelectingResults[0]
+    filteredHeaderRow = featureSelectingResults[1]
 
-if args['verbose'] != 0:
-    printParent('finished running feature selecting')
+    if args['verbose'] != 0:
+        printParent('finished running feature selecting')
 
 # 5. write results to file
 # this is the data we need for most scikit-learn algorithms!
