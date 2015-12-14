@@ -15,7 +15,6 @@ npm install -g data-formatter
 ```
 
 
-
 ## What it does
 `data-formatter` is designed to take care of the chores of machine learning to let you focus on the fun stuff! 
 
@@ -63,7 +62,11 @@ Make sure that you have used the `-g` flag when installing using npm if you want
 1. .csv file
 2. The first row holds information describing each column. Specifically, it *must* specify:
   - "ID", the column that holds the IDs
-  - "Output", the column that holds the variable we are trying to predict for the test dataset, and train on for the training data set
+  - "Output", the column that holds the variable we are trying to predict for the test dataset, and train on for the training data set. You must specify what type of problem it is we're working with. Accepted values are:
+    - "Output Regression" for regression problems
+    - "Output Category" for classification problems predicting a single yes or no value
+    - "Output Multi-Category" if there are multiple categories included in this output column
+    - Note: we do not have any plans to support multiple different output columns in the same training dataset. Multiple categories within the same column of training data is a fully supported use case, but multiple output columns is not. 
   All other columns must be labeled as holding either Categorical or Numerical data:
   - "Categorical": all columns holding strings are categorical. Similarly, if you have saved someone's occupation as a number (1 for engineer, 2 for carpenter, 3 for processional cyclist, etc.), that column must be labeled "Categorical". 
   - "Continuous": any column that should hold only continuous numbers. Any non-numerical values in these columns will be assumed to be missing values, and will be replaced by the median value for that column.
@@ -92,6 +95,12 @@ DEFAULT: If a value is not passed in, this will default to creating a folder cal
 
 #### `callback` [OPTIONAL]
 After the args object, you may choose to pass in a callback function that will be invoked once training is done. This parameter is optional. If provided, the callback function will be invoked with an object containing the file paths to all of the formatted data files created. 
+
+#### `keepAllFeatures` [OPTIONAL]
+If you do not want to perform any feature selection, and keep all the features (both the ones in the original training data, and the ones created by `data-formatter`), pass in `true` for this flag
+
+#### `allFeatureCombinations` [OPTIONAL]
+This is still a beta feature. If you want to try adding all possible combinations of continuous features together, set this flag to true. Since it creates all possible combinations of all the continuous features, this can rapidly create a memory problem, and should only be used on small datasets, or if you have a ton of RAM. 
 
 
 ### Format of Output Files:
