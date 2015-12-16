@@ -48,7 +48,6 @@ def standardizeMissingValues(dataDescription, matrix ):
                 
                 else:
                     cleanColumn.append(value)
-
         cleanedColumnMatrix.append( cleanColumn )
 
     return [ cleanedColumnMatrix, columnsWithMissingValues ]
@@ -92,9 +91,9 @@ def calculateReplacementValues( columnMatrix, columnsWithMissingValues, dataDesc
                 # the mode value
                 fillInVals[ colIndex ] = max(set(column), key=column.count)
         except: 
-            pass
             printParent('we failed to create a fillInVals value for this key')
             printParent(colIndex)
+            pass
 
     # remove all values of None from fillInVals
     # this way we will only create imputed columns if we can replace missing values in that column with something useful

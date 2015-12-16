@@ -102,8 +102,9 @@ if args['verbose'] != 0:
 
 # 2. if we have a date column, do some feature engineering on it!
 # this functionality is mostly complete, but hasn't been finished yet
-# if len(dateIndices) > 0:
-    # featureEngineering.compute(X, dateIndices, dataDescription, headerRow, outputColumn  )
+# NOTE: you can only pass in a single date column for now.
+if len(dateIndices) > 0:
+    X, dataDescription, headerRow = featureEngineering.dates(X, dataDescription, headerRow )
 
 # 3. if the user asked us to group by anything, do so!
 if len(groupByIndices) > 0:
@@ -122,7 +123,6 @@ headerRow = noUniquesResults[ 2 ]
 
 if args['verbose'] != 0:
     printParent('finished removing non-unique categorical values')
-
 
 
 # 3. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
@@ -171,6 +171,7 @@ if(test):
 
 if args['verbose'] != 0:
     printParent('finished grouping by ID if relevant')
+
 
 # thought about doing additional cleaning of the dataset after summing by id. 
 # if wasSummed:

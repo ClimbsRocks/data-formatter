@@ -29,7 +29,7 @@ def dates(X, dataDescription, headerRow):
         # the machine learning algorithms won't know how to intrepret a datetime object
         # so we will instead replace the datetime object with a measure of how many days this row has been since the minimum date in the dataset. 
         headerRow[dateColumnIndex] = 'daysSinceMinDate'
-        dataDescription[dateColumnIndex] = 'numerical'
+        dataDescription[dateColumnIndex] = 'continuous'
 
         # note, the holidays will only apply to US holidays at first.
         # i'd love a PR that expands support to other countries!
@@ -76,12 +76,10 @@ def dates(X, dataDescription, headerRow):
         for rowIdx, row in enumerate(X):
             # right now the value stored at the dateColumnIndex is a datetime object from the previous iteration
             # go through and overwrite that with a simple number representing the number of days since the first day in the dataset
-            row[dateColumnIndex] = row[dateColumnIndex] - minDate
+            row[dateColumnIndex] = (row[dateColumnIndex] - minDate).days
             X[rowIdx] = row
 
         printParent('successfully ran featureEngineering.dates!')
-        printParent('headerRow at the end:')
-        printParent(headerRow)
 
     return X, dataDescription, headerRow
 
