@@ -1,9 +1,16 @@
 from dateutil.parser import parse
+from sendMessages import printParent
 
 def dates(X, dataDescription, headerRow):
+    hasDateColumn = False
     try:
         dateColumnIndex = dataDescription.index('date')
+        hasDateColumn = True
+    except:
+        printParent('we were not able to feature engineer the dates')
+        pass
 
+    if hasDateColumn:
         headerRow.append('dayOfWeek')
         dataDescription.append('categorical')
         
@@ -19,8 +26,10 @@ def dates(X, dataDescription, headerRow):
         headerRow.append('isWeekend')
         dataDescription.append('categorical')
 
-        headerRow.append('daysSinceMinDate')
-        dataDescription.append('numerical')
+        # the machine learning algorithms won't know how to intrepret a datetime object
+        # so we will instead replace the datetime object with a measure of how many days this row has been since the minimum date in the dataset. 
+        headerRow[dateColumnIndex] = 'daysSinceMinDate'
+        dataDescription[dateColumnIndex] = 'numerical'
 
         # note, the holidays will only apply to US holidays at first.
         # i'd love a PR that expands support to other countries!
@@ -28,7 +37,6 @@ def dates(X, dataDescription, headerRow):
             # http://stackoverflow.com/questions/2394235/detecting-a-us-holiday
         # headerRow.append('isFederalHoliday')
         # dataDescription.append('categorical')
-
         # headerRow.append('isNonFederalHoliday')
         # dataDescription.append('categorical')
 
@@ -48,17 +56,20 @@ def dates(X, dataDescription, headerRow):
             if rowDate < minDate:
                 minDate = rowDate
 
+            # turn all of these integers into strings, because they are going to be handled as categorical values.
+            # data-formatter assumes categorical values are strings for things like using as the key in dictionaries
             dayOfWeek = rowDate.weekday()
-            row.append( dayOfWeek )
-            row.append(rowDate.year)
-            row.append(rowDate.day)
+            row.append( str(dayOfWeek) )
+            row.append(str(rowDate.year))
+            row.append(str(rowDate.month))
+            row.append(str(rowDate.day))
 
-            # boolean flag for whether this is a weekend or not
+            # (stringified) boolean flag for whether this is a weekend or not
             # note that in Python, the week starts at 0 on Mondays, whereas in JS, the week starts at 0 on Sundays
             if dayOfWeek in [5,6]:
-                row.append(True)
+                row.append(str(True))
             else:
-                row.append(False)
+                row.append(str(False))
 
             X[rowIdx] = row
 
@@ -68,10 +79,9 @@ def dates(X, dataDescription, headerRow):
             row[dateColumnIndex] = row[dateColumnIndex] - minDate
             X[rowIdx] = row
 
+        printParent('successfully ran featureEngineering.dates!')
+        printParent('headerRow at the end:')
+        printParent(headerRow)
 
-    except:
-        printParent('we were not able to feature engineer the dates')
-        pass
-    
-    return (X, dataDescription)
+    return X, dataDescription, headerRow
 
