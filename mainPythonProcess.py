@@ -128,10 +128,12 @@ if args['verbose'] != 0:
 # 3. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
     # we are including args only so that we can write to files at the intermediate stages for debugging
     # TODO: remove args from this arguments list once debugging is finished. 
+
 imputedValuesResults = imputingMissingValues.cleanAll(dataDescription, X, headerRow, args )
 X = imputedValuesResults[ 0 ]
 dataDescription = imputedValuesResults[ 1 ]
 headerRow = imputedValuesResults[ 2 ]
+
 # writeToFile.writeData(X, args, headerRow, False )
 
 
@@ -208,15 +210,15 @@ if not args['keepAllFeatures']:
     # featureSelectingResults = featureSelecting.rfecvSelection(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
     featureSelectingResults = featureSelecting.select(X, outputColumn, args['trainingLength'], 0.001, vectorizedHeaderRow, test, problemType )
     X = featureSelectingResults[0]
-    filteredHeaderRow = featureSelectingResults[1]
+    headerRow = featureSelectingResults[1]
 
     if args['verbose'] != 0:
         printParent('finished running feature selecting')
 
 # 5. write results to file
 # this is the data we need for most scikit-learn algorithms!
-writeToFile.writeMetadata( outputColumn, idColumn, args, filteredHeaderRow )
-writeToFile.writeDataSparse(X, args, filteredHeaderRow, False )
+writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow )
+writeToFile.writeDataSparse(X, args, headerRow, False )
 # writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow )
 # writeToFile.writeData(X, args, headerRow, False )
 
@@ -230,7 +232,7 @@ X = minMax.normalize( X, False )
 # printParent(outputColumn[0:trainingLength])
 if problemType == 'regression':
     outputColumn = minMax.normalize( outputColumn[0:trainingLength], True )
-writeToFile.writeDataSparse(X, args, filteredHeaderRow, outputColumn[0:trainingLength] )
+writeToFile.writeDataSparse(X, args, headerRow, outputColumn[0:trainingLength] )
 
 if( test ):
     messageParent(X.toarray().tolist(), 'minMax.py')
