@@ -228,4 +228,4 @@ def cleanAll(dataDescription, matrix, headerRow ):
 
     # return all the new values (X, dataDescription, headerRow)
         # since we are adding on new columns, we have modified the dataDescription and headerRow variables
-    return [ cleanedRowMatrix, dataDescription, headerRow ]
+    return cleanedRowMatrix, dataDescription, headerRow

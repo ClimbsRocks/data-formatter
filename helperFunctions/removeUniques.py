@@ -48,4 +48,4 @@ def remove( rowMatrix, dataDescription, headerRow ):
         del headerRow[ colIndex ]
         del dataDescription[ colIndex ]
     X = zip(*cleanedColumns)
-    return [X, dataDescription, headerRow]
+    return X, dataDescription, headerRow

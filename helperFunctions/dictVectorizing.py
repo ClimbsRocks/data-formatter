@@ -24,4 +24,6 @@ def vectorize(listOfDicts):
         listOfDicts[dictIdx] = None
         del rowDict
     del listOfDicts
-    return [ sparseMatrix, vectorizer.feature_names_, vectorizer.vocabulary_ ]
+
+    # we are not doing anything with vectorizer.vocabulary_. simply mentioning it in case it is useful for future usage
+    return sparseMatrix, vectorizer.feature_names_

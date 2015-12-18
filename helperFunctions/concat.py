@@ -136,4 +136,4 @@ def inputFiles(trainingFile, testingFile):
     except:
         idHeader = testingHeader[ testingDataDescription.index('id') ]
 
-    return [dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn, idHeader, problemType, dataDescriptionRaw]
+    return dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn, idHeader, problemType, dataDescriptionRaw

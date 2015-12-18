@@ -36,25 +36,21 @@ test = args['test']
 
 # 1. concatenate together the training and testing data sets
 # this ensures that whatever transitions we perform in data-formatter will be equally applied to both the training and testing data set
-concattedResults = concat.inputFiles(trainingFile, testingFile)
+# dataDescription identifies whether each column is "output","id","categorical", or "continuous"
+dataDescription, headerRow, trainingLength, X, idColumn, outputColumn, idHeader, problemType, dataDescriptionRaw = concat.inputFiles(trainingFile, testingFile)
 if args['verbose'] != 0:
     printParent('finished concatting the training and testing files together')
 
-# dataDescription identifies whether each column is "output","id","categorical", or "continuous"
-dataDescription = concattedResults[0]
-headerRow = concattedResults[1]
 
 # save the pretty name for the output column
 outputHeader = headerRow[ dataDescription.index('output') ]
-idHeader = concattedResults[6]
 args['idHeader'] = idHeader
 args['outputHeader'] = outputHeader
 
 # we have already saved id and output into separate columns, so we need to remove those from our headerRow and dataDescription
-
 # once we have removed the valuse we are not using, we can use dataDescriptionRaw to create dateIndices and groupByIndices
-dataDescriptionRaw = concattedResults[8]
 try:
+    # the user does not have to pass in an id header for the training data
     del headerRow[ dataDescription.index('id') ]
     del dataDescriptionRaw[ dataDescription.index('id') ]
     dataDescription.remove('id')
@@ -80,13 +76,7 @@ for colIndex, colType in enumerate(dataDescriptionRaw):
         groupByIndices.append(colIndex)
 
 # trainingLength is the length of the training data set, so we can separate training and testing at the end
-trainingLength = concattedResults[2]
 args['trainingLength'] = trainingLength
-
-X = concattedResults[3]
-idColumn = concattedResults[4]
-outputColumn = concattedResults[5]
-problemType = concattedResults[7]
 
 # throughout this file, we will send messages back to the parent process if we are currently running the tests. 
 if(test):
@@ -114,12 +104,8 @@ if len(groupByIndices) > 0:
 # 2. Remove unique categorical values from the dataset
     # Unique categorical values are items like an individual person's name
     # Clearly, they are not broadly useful for making predictions, and contribute to overfitting
-noUniquesResults = removeUniques.remove( X, dataDescription, headerRow )
-X = noUniquesResults[ 0 ]
-
-# some columns may contain only unique values. In that case, we will delete those columns, which will have an effect on dataDescription and headerRow
-dataDescription = noUniquesResults[ 1 ]
-headerRow = noUniquesResults[ 2 ]
+    # some columns may contain only unique values. In that case, we will delete those columns, which will have an effect on dataDescription and headerRow
+X, dataDescription, headerRow = removeUniques.remove( X, dataDescription, headerRow )
 
 if args['verbose'] != 0:
     printParent('finished removing non-unique categorical values')
@@ -128,13 +114,7 @@ if args['verbose'] != 0:
 # 3. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
     # we are including args only so that we can write to files at the intermediate stages for debugging
 
-imputedValuesResults = imputingMissingValues.cleanAll(dataDescription, X, headerRow )
-X = imputedValuesResults[ 0 ]
-dataDescription = imputedValuesResults[ 1 ]
-headerRow = imputedValuesResults[ 2 ]
-
-# writeToFile.writeData(X, args, headerRow, False )
-
+X, dataDescription, headerRow = imputingMissingValues.cleanAll(dataDescription, X, headerRow )
 
 if(test):
     messageParent([X, idColumn, outputColumn], 'imputingMissingValues.py')
@@ -146,24 +126,16 @@ if args['verbose'] != 0:
 # this will take all features, and create new features that are the interactions between them (multiplied together)
 # this step can add huge amounts of space complexity, and is a good place to check if concerned about memory
 # because of the memory issues, we do not run this by default, and will only run it if you tell us to. 
-# try:
 if args['allFeatureCombinations']:
     X, headerRow, dataDescription = polynomialFeatures.addAll(X, headerRow, dataDescription)
     if args['verbose'] != 0:
         printParent('finished trying to add in combinations of the existing features as new features')
-# except:
-#     pass
 
 # 4. if we have a single ID spread across multiple rows, sum by ID so that each ID ends up being only a single row with the aggregated results of all the relevant rows
-groupedRows = sumById.sum(dataDescription, X, headerRow, idColumn, trainingLength, outputColumn)
-# if trainingLength != groupedRows[2]:
-#     wasSummed = True
-X = groupedRows[0]
-idColumn = groupedRows[1]
-trainingLength = groupedRows[2]
+X, idColumn, trainingLength, outputColumn = sumById.sum(dataDescription, X, headerRow, idColumn, trainingLength, outputColumn)
+
 args['trainingLength'] = trainingLength
 args['testingLength'] = len(X) - args['trainingLength']
-outputColumn = groupedRows[3]
 
 if(test):
     messageParent([X, idColumn, trainingLength, outputColumn], 'sumById.py')
@@ -171,21 +143,10 @@ if(test):
 if args['verbose'] != 0:
     printParent('finished grouping by ID if relevant')
 
-
-# thought about doing additional cleaning of the dataset after summing by id. 
-# if wasSummed:
-#     X = noUniquesRedux.clean(X)
-
-
 # 3. convert entire dataset to have categorical data encoded properly. 
 # This turns information like a single column holding city names of 'SF' and 'Akron' into two separate columns, one for 'Akron=True' and one for 'SF=True'.
 # This is called one-hot encoding, and is a standard way of handling categorical data. 
-# listOfDicts = listToDict.all(X, headerRow)
-vectorizedInfo = dictVectorizing.vectorize(X)
-# X = vectorizedInfo[0].tolist()
-X = vectorizedInfo[0]
-vectorizedHeaderRow = vectorizedInfo[1]
-
+X, vectorizedHeaderRow = dictVectorizing.vectorize(X)
 
 if args['verbose'] != 0:
     printParent('finished vectorizing the categorical values')
@@ -207,10 +168,9 @@ if(test):
 # passing in a value of 0.001 as the featureImportanceThreshold number means we are only eliminating features that are close to meaningless. 
 
 if not args['keepAllFeatures']:
-    # featureSelectingResults = featureSelecting.rfecvSelection(X, outputColumn, trainingLength, 0.001, vectorizedHeaderRow, test )
-    featureSelectingResults = featureSelecting.select(X, outputColumn, args['trainingLength'], 0.001, vectorizedHeaderRow, test, problemType )
-    X = featureSelectingResults[0]
-    headerRow = featureSelectingResults[1]
+    X, headerRow = featureSelecting.select(X, outputColumn, args['trainingLength'], 0.001, vectorizedHeaderRow, test, problemType )
+    # X = featureSelectingResults[0]
+    # headerRow = featureSelectingResults[1]
 
     if args['verbose'] != 0:
         printParent('finished running feature selecting')
@@ -219,8 +179,6 @@ if not args['keepAllFeatures']:
 # this is the data we need for most scikit-learn algorithms!
 writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow )
 writeToFile.writeDataSparse(X, args, headerRow, False )
-# writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow )
-# writeToFile.writeData(X, args, headerRow, False )
 
 if(test):
     messageParent(X.toarray().tolist(), 'featureSelecting.py')
@@ -228,8 +186,6 @@ if(test):
 # 6. for neural networks:
 # normalize the data to be values between -1 and 1
 X = minMax.normalize( X, False )
-# printParent('outputColumn')
-# printParent(outputColumn[0:trainingLength])
 if problemType == 'regression':
     outputColumn = minMax.normalize( outputColumn[0:trainingLength], True )
 writeToFile.writeDataSparse(X, args, headerRow, outputColumn[0:trainingLength] )
@@ -238,6 +194,7 @@ if( test ):
     messageParent(X.toarray().tolist(), 'minMax.py')
 
 # # 7. format data specifically for brain.js, which takes a different format than scikit-neural-network
+# # this module is currently deprecated until someone requests it again. 
 # brainX = brainjs.format( X.tolist(), outputColumn, idColumn, args )
 # # if( test ):
 # #     messageParent( brainX, 'brainjs.py' )

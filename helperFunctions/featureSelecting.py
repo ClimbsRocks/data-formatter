@@ -132,4 +132,4 @@ def select( X, y, trainingLength, featureImportanceThreshold, headerRow, test, p
     printParent( round( (time.time() - rfStartTime)/60, 1 ) )
 
 
-    return [ X, filteredHeaderRow ]
+    return X, filteredHeaderRow 
