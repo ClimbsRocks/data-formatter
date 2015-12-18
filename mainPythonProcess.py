@@ -127,9 +127,8 @@ if args['verbose'] != 0:
 
 # 3. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
     # we are including args only so that we can write to files at the intermediate stages for debugging
-    # TODO: remove args from this arguments list once debugging is finished. 
 
-imputedValuesResults = imputingMissingValues.cleanAll(dataDescription, X, headerRow, args )
+imputedValuesResults = imputingMissingValues.cleanAll(dataDescription, X, headerRow )
 X = imputedValuesResults[ 0 ]
 dataDescription = imputedValuesResults[ 1 ]
 headerRow = imputedValuesResults[ 2 ]

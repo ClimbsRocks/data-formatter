@@ -200,7 +200,7 @@ def impute( columnMatrix, dataDescription, colMap, fillInVals ):
 
 # cleanAll is the function that will be publicly invoked. 
 # cleanAll simply plays controller for the functions defined above
-def cleanAll(dataDescription, matrix, headerRow, args ):
+def cleanAll(dataDescription, matrix, headerRow ):
 
     # standardize missing values to all be None
     standardizedResults = standardizeMissingValues(dataDescription, matrix)
