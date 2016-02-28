@@ -10,7 +10,7 @@ def dataDescription(arr):
         'output regression': False,
         'output multi-category': False
     }
-    allowableValues = ['id','output category','output multi-category','output regression','continuous','categorical','date','ignore']
+    allowableValues = ['id','output category','output multi-category','output regression','continuous','categorical','date','ignore','validation split']
 
 
     for colIndex, name in enumerate(arr):
@@ -33,7 +33,7 @@ def dataDescription(arr):
             printParent('Warning, we have received a value in the first row that is not valid:')
             printParent(name)
             printParent('Please remember that the first row must contain information describing that column of data')
-            printParent('Acceptable values are: "ID", "Output Category", "Output Multi-Category", "Output Regression", "Continuous", "Categorical", "Date", and "IGNORE", though they are not case sensitive.')
+            printParent('Acceptable values are: "ID", "Output Category", "Output Multi-Category", "Output Regression", "Continuous", "Categorical", "Date", "IGNORE", and "Validation Split", though they are not case sensitive.')
             raise
     if( not expectedValues['output category'] and not expectedValues['output regression'] and not expectedValues['output multi-category']):
         printParent('Warning, there is no column with an "Output" label in the first row')
