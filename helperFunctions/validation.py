@@ -8,7 +8,8 @@ def dataDescription(arr):
         'id': False,
         'output category': False,
         'output regression': False,
-        'output multi-category': False
+        'output multi-category': False,
+        'validation split': False
     }
     allowableValues = ['id','output category','output multi-category','output regression','continuous','categorical','date','ignore','validation split']
 
@@ -50,13 +51,14 @@ def dataDescription(arr):
 
     if( not expectedValues['id'] ):
         printParent('Warning, there is no column with an "ID" label in the first row')
+        printParent('Not having an ID column is ok, as long as this is intentional.')
         # our testing dataset must have an id in it, so if our training data does not have an id column, we would expect our testing data to have one more column
         expectedTestRowLength += 1
-        return False, expectedTestRowLength
+        return False, expectedTestRowLength, expectedValues['validation split']
         raise TypeError('dataDescription row incomplete')
 
     # returning True means that we do have all the pieces we need to continue as normal
-    return True, expectedTestRowLength
+    return True, expectedTestRowLength, expectedValues['validation split']
 
 def joinDataDescription(dataDescription):
     allowableValues = ['id','continuous','groupby continuous','categorical','groupby categorical','date','groupby date','ignore', 'validation split']
