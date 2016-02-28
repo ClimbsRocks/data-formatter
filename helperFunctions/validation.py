@@ -26,7 +26,7 @@ def dataDescription(arr):
             expectedValues[name] = True
             # sometimes we will include columns in our training dataset that we will not include in our testing dataset. we want to allow for that
             # we already have logic in place for handling missing output values in our testing dataset. 
-            if name not in ['ignore']:
+            if name not in ['ignore', 'validation split']:
                 expectedTestRowLength += 1
 
         except:
@@ -59,19 +59,29 @@ def dataDescription(arr):
     return True, expectedTestRowLength
 
 def joinDataDescription(dataDescription):
-    allowableValues = ['id','continuous','groupby continuous','categorical','groupby categorical','date','groupby date','ignore']
+    allowableValues = ['id','continuous','groupby continuous','categorical','groupby categorical','date','groupby date','ignore', 'validation split']
 
     for name in dataDescription:
         try:
             allowableValues.index(name)
 
         except:
+            printParent('*********************************************************************')
+            printParent('\n')
             printParent('Warning, we have received a value in the dataDescription row that is not valid:')
             printParent(name)
             printParent('The entire dataDescription row is:')
             printParent(dataDescription)
             printParent('Please remember that the first row must contain information describing that column of data')
-            printParent('Acceptable values are: "ID", "Continuous", "Categorical", "Date", and "IGNORE", though they are not case sensitive')
+            printParent('Acceptable values are: "ID", "Continuous", "Categorical", "Date", "IGNORE", and "Validation Split", though they are not case sensitive')
+            printParent('\n')
+            printParent('*********************************************************************')
+            printParent('This is an error that prevents the rest of the prorgram from running. Please fix and run machineJS again.')
+            printParent('\n')
+            printParent('\n')
+            printParent('\n')
+            printParent('\n')
+
             raise
     
 
