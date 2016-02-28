@@ -37,7 +37,7 @@ test = args['test']
 # 1. concatenate together the training and testing data sets
 # this ensures that whatever transitions we perform in data-formatter will be equally applied to both the training and testing data set
 # dataDescription identifies whether each column is "output","id","categorical", or "continuous"
-dataDescription, headerRow, trainingLength, X, idColumn, outputColumn, idHeader, problemType, dataDescriptionRaw = concat.inputFiles(trainingFile, testingFile)
+dataDescription, headerRow, trainingLength, X, idColumn, outputColumn, idHeader, problemType, dataDescriptionRaw, hasCustomValidationSplit, validationSplitColumn = concat.inputFiles(trainingFile, testingFile)
 if args['verbose'] != 0:
     printParent('finished concatting the training and testing files together')
 
@@ -48,12 +48,16 @@ args['idHeader'] = idHeader
 args['outputHeader'] = outputHeader
 
 # we have already saved id and output into separate columns, so we need to remove those from our headerRow and dataDescription
-# once we have removed the valuse we are not using, we can use dataDescriptionRaw to create dateIndices and groupByIndices
+# once we have removed the values we are not using, we can use dataDescriptionRaw to create dateIndices and groupByIndices
 try:
-    # the user does not have to pass in an id header for the training data
+    # the user does not have to pass in an id header or a validation split for the training data
     del headerRow[ dataDescription.index('id') ]
     del dataDescriptionRaw[ dataDescription.index('id') ]
     dataDescription.remove('id')
+
+    del headerRow[ dataDescription.index('validation split') ]
+    del dataDescriptionRaw[ dataDescription.index('validation split') ]
+    dataDescription.remove('validation split')
 except:
     pass
 del headerRow[ dataDescription.index('output') ]
