@@ -71,6 +71,7 @@ Make sure that you have used the `-g` flag when installing using npm if you want
   - "Categorical": all columns holding strings are categorical. Similarly, if you have saved someone's occupation as a number (1 for engineer, 2 for carpenter, 3 for processional cyclist, etc.), that column must be labeled "Categorical". 
   - "Continuous": any column that should hold only continuous numbers. Any non-numerical values in these columns will be assumed to be missing values, and will be replaced by the median value for that column.
   - "IGNORE": any column that should be ignored. Added for convenience for datasets that would be difficult to manipulate/delete columns from otherwise. 
+  - "Validation Split": If you would like to use this column to determine which rows to keep in the training data, and which to split out into the validation data. This is primarily useful for competitors working on the Numer.ai dataset, and should be the header for the "validation" column provided in their first few data sets. 
 3. Next row (the second row) must be a header row containing the names of each column.
 4. Make sure there are no empty rows!
 5. Make sure each row has the same number of columns (even if those columns are blank, they must exist).
