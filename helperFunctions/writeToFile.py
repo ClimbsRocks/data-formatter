@@ -17,12 +17,13 @@ def save_sparse_csr(filename,array):
     np.savez(filename,data=array.data ,indices=array.indices, indptr=array.indptr, shape=array.shape )
 
 
-def writeMetadata(y, idColumn, args, headerRow):
+def writeMetadata(y, idColumn, args, headerRow, validationSplitColumn, hasCustomValidationSplit):
 
     # these are the file names (with full file paths) that we will be writing to
-    y_train= path.join( args['outputFolder'], 'y_train_' + args['trainingPrettyName'] + '.npz' )
-    id_train= path.join( args['outputFolder'], 'id_train_' + args['trainingPrettyName'] + '.npz' )
-    id_test= path.join( args['outputFolder'], 'id_test_' + args['testingPrettyName'] + args['trainingPrettyName'] + '.npz' )
+    y_train = path.join( args['outputFolder'], 'y_train_' + args['trainingPrettyName'] + '.npz' )
+    id_train = path.join( args['outputFolder'], 'id_train_' + args['trainingPrettyName'] + '.npz' )
+    id_test = path.join( args['outputFolder'], 'id_test_' + args['testingPrettyName'] + args['trainingPrettyName'] + '.npz' )
+    validation_split_column = path.join( args['outputFolder'], 'validation_split_column_' + args['trainingPrettyName'] + '.npz' )
 
     trainingLength = args['trainingLength']
 
@@ -30,6 +31,7 @@ def writeMetadata(y, idColumn, args, headerRow):
     idTrainData = np.array( idColumn[ 0 : trainingLength ] )
     idTestData = np.array( idColumn[ trainingLength : ] )
     y = np.array( y ) 
+    validationSplitColumnData = np.array( validationSplitColumn )
 
     # if our values are not already stored as numbers, convert them to numbers
     try: 
@@ -50,9 +52,16 @@ def writeMetadata(y, idColumn, args, headerRow):
         idTestInt = [float(i) for i in idTestData]
         idTestSparse = csr_matrix( idTestInt )
 
+    try:
+        validationSplitSparse = csr_matrix(validationSplitColumnData)
+    except:
+        validationSplitInt = [float(i) for i in validationSplitColumnData]
+        validationSplitSparse = csr_matrix( validationSplitInt )
+
     save_sparse_csr(y_train, ySparse )
     save_sparse_csr(id_train, idTrainSparse )
     save_sparse_csr(id_test, idTestSparse )
+    save_sparse_csr(validation_split_column, validationSplitSparse )
 
     
     fileNames = {
@@ -60,7 +69,9 @@ def writeMetadata(y, idColumn, args, headerRow):
         'id_train': id_train,
         'id_test': id_test,
         'idHeader': args['idHeader'],
-        'outputHeader': args['outputHeader']
+        'outputHeader': args['outputHeader'],
+        'validation_split_column': validation_split_column,
+        'hasCustomValidationSplit': hasCustomValidationSplit
     }
     messageParent( fileNames, 'fileNames' )
     
