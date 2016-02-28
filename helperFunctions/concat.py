@@ -9,6 +9,7 @@ def inputFiles(trainingFile, testingFile):
     # we will break out separately the ID column, the output column, and then the rest of the data
     outputData = []
     idColumn = []
+    validationSplitColumn = []
     outputColumn = []
 
     with open(trainingFile, 'rU') as trainingInput:
@@ -27,7 +28,7 @@ def inputFiles(trainingFile, testingFile):
                 if rowCount == 0:
                     expectedRowLength = len( row )
                     dataDescriptionRaw = [x.lower() for x in row]
-                    hasID, testHeaderValidationLength = validation.dataDescription( dataDescriptionRaw )
+                    hasID, testHeaderValidationLength, hasCustomValidationSplit = validation.dataDescription( dataDescriptionRaw )
 
                     # the user told us whether this is 'output regression' or 'output category'
                     # we need to split out the problem type (regression, category, or multi-category), and leave only 'output'
@@ -54,6 +55,8 @@ def inputFiles(trainingFile, testingFile):
                 for idx, val in enumerate(row):
                     if dataDescription[idx] == 'id':
                         idColumn.append(val)
+                    elif dataDescription[idx] == 'validation split':
+                        validationSplitColumn.append(val)
                     elif dataDescription[idx] == 'output':
                         # TODO: add in some error handling around making sure everything in the outputColumn is the same type.
                         try:
@@ -136,4 +139,4 @@ def inputFiles(trainingFile, testingFile):
     except:
         idHeader = testingHeader[ testingDataDescription.index('id') ]
 
-    return dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn, idHeader, problemType, dataDescriptionRaw
+    return dataDescription, headerRow, trainingLength, outputData, idColumn, outputColumn, idHeader, problemType, dataDescriptionRaw, hasCustomValidationSplit, validationSplitColumn
