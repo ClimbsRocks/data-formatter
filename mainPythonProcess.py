@@ -41,7 +41,6 @@ dataDescription, headerRow, trainingLength, X, idColumn, outputColumn, idHeader,
 if args['verbose'] != 0:
     printParent('finished concatting the training and testing files together')
 
-
 # save the pretty name for the output column
 outputHeader = headerRow[ dataDescription.index('output') ]
 args['idHeader'] = idHeader
@@ -181,7 +180,7 @@ if not args['keepAllFeatures']:
 
 # 5. write results to file
 # this is the data we need for most scikit-learn algorithms!
-writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow )
+writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow, validationSplitColumn, hasCustomValidationSplit )
 writeToFile.writeDataSparse(X, args, headerRow, False )
 
 if(test):
