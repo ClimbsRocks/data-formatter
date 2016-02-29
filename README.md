@@ -1,9 +1,48 @@
 # data-formatter
-> Takes in a .csv file and formats it to be ready for machine learning using scikit-learn, or a neural network like brain.js or pyLearn2
+> Takes in a .csv file and formats it to be ready for machine learning using scikit-learn or machineJS
 
-This library is designed to work with machineJS, but is so broadly useful that I wanted to make it easily available.
+## What it does
+`data-formatter` is designed to take care of the chores of machine learning to let you focus on the fun stuff! 
+
+## How to label each column:
+Each column must have a label. Your options are few- this is designed to be easy!
+
+Column label options:
+1. ID
+2. Output Regression
+3. Output Category (this is the one to use for numer.ai's early competitions)
+4. Output Multi-Category
+5. Categorical
+6. Continuous
+7. Ignore
+8. Validation Split (used for the validation column from numer.ai, rarely used otherwise)
+
+For more detailed info, see below. 
+
+### Format of Input File:
+
+1. .csv file
+2. The first row holds information describing each column. Specifically, it *must* specify:
+  - "ID", the column that holds the IDs
+  - "Output", the column that holds the variable we are trying to predict for the test dataset, and train on for the training data set. You must specify what type of problem it is we're working with. Accepted values are:
+    - "Output Regression" for regression problems
+    - "Output Category" for classification problems predicting a single yes or no value
+    - "Output Multi-Category" if there are multiple categories included in this output column
+    - Note: we do not have any plans to support multiple different output columns in the same training dataset. Multiple categories within the same column of training data is a fully supported use case, but multiple output columns is not. 
+  All other columns must be labeled as holding either Categorical or Continuous data:
+  - "Categorical": all columns holding strings are categorical. Similarly, if you have saved someone's occupation as a number (1 for engineer, 2 for carpenter, 3 for processional cyclist, etc.), that column must be labeled "Categorical". 
+  - "Continuous": any column that should hold only continuous numbers. Any non-numerical values in these columns will be assumed to be missing values, and will be replaced by the median value for that column.
+  - "IGNORE": any column that should be ignored. Added for convenience for datasets that would be difficult to manipulate/delete columns from otherwise. 
+  - "Validation Split": If you would like to use this column to determine which rows to keep in the training data, and which to split out into the validation data. This is primarily useful for competitors working on the Numer.ai dataset, and should be the header for the "validation" column provided in their first few data sets. 
+3. Next row (the second row) must be a header row containing the names of each column.
+4. Make sure there are no empty rows!
+5. Make sure each row has the same number of columns (even if those columns are blank, they must exist).
+6. Make sure any strings are formatted using UTF-8 (don't worry about this one unless you get an odd error message).
+
 
 ## Installation:
+This comes pre-bundled with `machineJS`. To use it for other projects: 
+
 To include as a dependency for a specific repo:
 ```
 npm install data-formatter
@@ -14,9 +53,6 @@ To use from the command line anywhere in your system:
 npm install -g data-formatter
 ```
 
-
-## What it does
-`data-formatter` is designed to take care of the chores of machine learning to let you focus on the fun stuff! 
 
 ### Some key benefits:
   - It goes through your dataset, and automatically formats it to work with `scikit-learn`, `scikit-neuralnetwork` and `brainjs`.
@@ -35,7 +71,20 @@ Does some of that make your head spin? Have no idea what one (or more) of those 
 #### Expert?
 Did any of the above get your heart racing and make you want to dive in to customize for your own project or kaggle competition? Awesome, follow along with `mainPythonProcess.py` and customize to your heart's content, while still having in place a structure to automate the process for you!
 
-## How to Use:
+
+### Format of Output Files:
+The formatted data will be broken out into a number of different files, to be compatible with scikit-learn's API:
+- `X_train_`: All of the X (non-output-column) features in the training set
+- `X_test_`: All of the X features in the testing (predicting) set
+- `y_train_`: All of the output columns for the training set. By definition, the testing/predicting data set has no output columns (they have to be predicted!).
+- `id_train_`: The ID column for the rows in the training data set. This prevents the ID column from being included as a feature when training a machine learning algorithm. 
+- `id_test_`: The ID column for the rows in the testing data set. 
+- `X_train_nn_`: All of the X features in the training data set, min-max normalized to have only values between -1 and 1.
+- `X_test_nn_`: All of the X features in the testing data set, min-max normalized to have only values between -1 and 1. 
+
+## How to Use Outside of machineJS:
+Again, this is baked into machineJS, but if you're using it in a different project:
+
 1. Add a dataDescription row to the top of your training data (more info in a following section)
 
 ### Within node.js code using require:
@@ -57,27 +106,7 @@ data-formatter relative/path/to/training/data.csv relative/path/to/testing/data.
 Make sure that you have used the `-g` flag when installing using npm if you want to use `data-formatter` from the command line.
 
 
-### Format of Input File:
-
-1. .csv file
-2. The first row holds information describing each column. Specifically, it *must* specify:
-  - "ID", the column that holds the IDs
-  - "Output", the column that holds the variable we are trying to predict for the test dataset, and train on for the training data set. You must specify what type of problem it is we're working with. Accepted values are:
-    - "Output Regression" for regression problems
-    - "Output Category" for classification problems predicting a single yes or no value
-    - "Output Multi-Category" if there are multiple categories included in this output column
-    - Note: we do not have any plans to support multiple different output columns in the same training dataset. Multiple categories within the same column of training data is a fully supported use case, but multiple output columns is not. 
-  All other columns must be labeled as holding either Categorical or Numerical data:
-  - "Categorical": all columns holding strings are categorical. Similarly, if you have saved someone's occupation as a number (1 for engineer, 2 for carpenter, 3 for processional cyclist, etc.), that column must be labeled "Categorical". 
-  - "Continuous": any column that should hold only continuous numbers. Any non-numerical values in these columns will be assumed to be missing values, and will be replaced by the median value for that column.
-  - "IGNORE": any column that should be ignored. Added for convenience for datasets that would be difficult to manipulate/delete columns from otherwise. 
-  - "Validation Split": If you would like to use this column to determine which rows to keep in the training data, and which to split out into the validation data. This is primarily useful for competitors working on the Numer.ai dataset, and should be the header for the "validation" column provided in their first few data sets. 
-3. Next row (the second row) must be a header row containing the names of each column.
-4. Make sure there are no empty rows!
-5. Make sure each row has the same number of columns (even if those columns are blank, they must exist).
-6. Make sure any strings are formatted using UTF-8 (don't worry about this one unless you get an odd error message).
-
-## API Documentation:
+### API Documentation:
 
 #### an `args` object with the following properties:
 
@@ -104,27 +133,18 @@ If you do not want to perform any feature selection, and keep all the features (
 This is still a beta feature. If you want to try adding all possible combinations of continuous features together, set this flag to true. Since it creates all possible combinations of all the continuous features, this can rapidly create a memory problem, and should only be used on small datasets, or if you have a ton of RAM. 
 
 
-### Format of Output Files:
-The formatted data will be broken out into a number of different files, to be compatible with scikit-learn's API:
-- `X_train_`: All of the X (non-output-column) features in the training set
-- `X_test_`: All of the X features in the testing (predicting) set
-- `y_train_`: All of the output columns for the training set. By definition, the testing/predicting data set has no output columns (they have to be predicted!).
-- `id_train_`: The ID column for the rows in the training data set. This prevents the ID column from being included as a feature when training a machine learning algorithm. 
-- `id_test_`: The ID column for the rows in the testing data set. 
-- `X_train_nn_`: All of the X features in the training data set, min-max normalized to have only values between -1 and 1.
-- `X_test_nn_`: All of the X features in the testing data set, min-max normalized to have only values between -1 and 1. 
 
-## Using from the command line
+### Using from the command line
 
 As of the 1.2 release, `data-formatter` can be invoked right from the command line. 
 
-### Installation
+#### Installation
 ```
 npm install -g data-formatter
 ```
 Note the "-g" flag directing npm to install the module globally. This makes it available from the command line throughout your entire file directory. 
 
-### Invoking from the command line
+#### Invoking from the command line
 ```
 data-formatter path/to/training/data.csv path/to/testing/data.csv
 ```
