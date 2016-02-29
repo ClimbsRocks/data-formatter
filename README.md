@@ -8,6 +8,7 @@
 Each column must have a label. Your options are few- this is designed to be easy!
 
 Column label options:
+
 1. ID
 2. Output Regression
 3. Output Category (this is the one to use for numer.ai's early competitions)
@@ -55,6 +56,7 @@ npm install -g data-formatter
 
 
 ### Some key benefits:
+
   - It goes through your dataset, and automatically formats it to work with `scikit-learn`, `scikit-neuralnetwork` and `brainjs`.
   - This lets you free up more of your time to create cool new features from the data, and not have to worry about repeating the sometimes arduous process of formatting it for a specific machine learning algorithm. 
   - `data-formatter` formats both your training and your testing data in one fell swoop, so you never need to worry about re-formatting your data, or having incompatible features, once you start making predictions. 
@@ -74,6 +76,7 @@ Did any of the above get your heart racing and make you want to dive in to custo
 
 ### Format of Output Files:
 The formatted data will be broken out into a number of different files, to be compatible with scikit-learn's API:
+
 - `X_train_`: All of the X (non-output-column) features in the training set
 - `X_test_`: All of the X features in the testing (predicting) set
 - `y_train_`: All of the output columns for the training set. By definition, the testing/predicting data set has no output columns (they have to be predicted!).
