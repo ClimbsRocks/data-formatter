@@ -85,6 +85,7 @@ args['trainingLength'] = trainingLength
 if(test):
     messageParent([dataDescription, headerRow, trainingLength, X], 'concat.py')
 
+
 if args['joinFileName'][-4:] == '.csv':
     X, dataDescription, headerRow, groupByIndices, dateIndices = join.datasets(X, args['joinFileName'], headerRow, dataDescription, args, groupByIndices, dateIndices)
 
@@ -93,11 +94,17 @@ if test:
 if args['verbose'] != 0:
     printParent('finished joining the data')
 
-# 2. if we have a date column, do some feature engineering on it!
+# 2. Perform some feature engineering:
+
+# 2A. if we have a date column, do some feature engineering on it!
 # this functionality is mostly complete, but hasn't been finished yet
 # NOTE: you can only pass in a single date column for now.
 if len(dateIndices) > 0:
     X, dataDescription, headerRow = featureEngineering.dates(X, dataDescription, headerRow )
+
+# 2B. if we have some text, perform some nlp transformations on it
+if len(nlpIndices) > 0:
+    X, nlpColumns, nlpDataDescription, nlpHeaderRow = featureEngineering.nlp(X, dataDescription, headerRow )
 
 # 3. if the user asked us to group by anything, do so!
 if len(groupByIndices) > 0:

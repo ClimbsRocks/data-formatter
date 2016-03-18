@@ -83,3 +83,44 @@ def dates(X, dataDescription, headerRow):
 
     return X, dataDescription, headerRow
 
+def nlp(X, dataDescription, headerRow):
+        hasnlpColumn = False
+    try:
+        nlpColumnIndex = dataDescription.index('nlp')
+        hasnlpColumn = True
+    except:
+        printParent('we did not find any nlp column to perform feature engineering on')
+        pass
+
+    if hasnlpColumn:
+        # TODO: use TfidfVectorizer
+            # iterate through each row, grabbing the nlp column
+            # run this entire collected corpus through TfidfVectorizer, store into tfVectorized
+            # figure out what to add to the headerRow and dataDescription row
+                # one option is to add the actual word, if we can get that (we should be able to). it appears to exist in get_feature_names()
+                # we might decide that we want to keep all the nlp words, in which case we'd want to prefix all these columns in dataDescription and headerRow with "nlp"
+            # don't actually add tfVectorized to X yet. X is still dense, while tfVectorized is sparse. 
+                # simply pass tfVectorized (along with what should be added to headerRow and dataDescription) back.
+                # then stack it horizontally to X once we turn X into a sparse matrix later on. 
+                # no need to disrupt the entire rest of the process by converting everything to sparse right now
+        
+        corpus = []
+
+        for rowIdx, row in enumerate(X):
+
+            corpus.append(row[nlpColumnIndex])
+
+            # right now the value stored at the nlpColumnIndex is the entire text string
+            # go through and overwrite that with a simple number representing the number of characters in that string. We will have the fuller representation of the string (using bag of words or tf-idf) stored elsewhere in this row
+            row[nlpColumnIndex] = len(row[nlpColumnIndex])
+            X[rowIdx] = row
+
+        # TODO: properly set the parameters here. how many words do we want to include, etc.
+        vectorizer = TfidfVectorizer(min_df=1)
+        vectorizer.fit_transform(corpus)
+
+        # TODO: get the feature names
+    
+    
+    return X, corpus, nlpDataDescription, nlpHeaderRow
+
