@@ -72,9 +72,12 @@ for index in reversed(ignoredIndices):
 
 groupByIndices = []
 dateIndices = []
+nlpIndices = []
 for colIndex, colType in enumerate(dataDescriptionRaw):
     if colType == 'date':
         dateIndices.append(colIndex)
+    if colType == 'nlp':
+        nlpIndices.append(colIndex)
     elif colType[0:7] == 'groupby':
         groupByIndices.append(colIndex)
 

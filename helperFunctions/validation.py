@@ -9,9 +9,10 @@ def dataDescription(arr):
         'output category': False,
         'output regression': False,
         'output multi-category': False,
+        'nlp': False,
         'validation split': False
     }
-    allowableValues = ['id','output category','output multi-category','output regression','continuous','categorical','date','ignore','validation split']
+    allowableValues = ['id','output category','output multi-category','output regression','continuous','categorical','date','ignore','validation split','nlp']
 
 
     for colIndex, name in enumerate(arr):
@@ -36,7 +37,7 @@ def dataDescription(arr):
             printParent('Warning, we have received a value in the first row that is not valid:')
             printParent(name)
             printParent('Please remember that the first row must contain information describing that column of data')
-            printParent('Acceptable values are: "ID", "Output Category", "Output Multi-Category", "Output Regression", "Continuous", "Categorical", "Date", "IGNORE", and "Validation Split", though they are not case sensitive.')
+            printParent('Acceptable values are: "ID", "Output Category", "Output Multi-Category", "Output Regression", "Continuous", "Categorical", "Date", "IGNORE", "Validation Split", and "NLP", though they are not case sensitive.')
             printParent('\n')
             printParent('*********************************************************************')
             printParent('This is an error that prevents the rest of the prorgram from running. Please fix and run machineJS again.')
@@ -61,7 +62,7 @@ def dataDescription(arr):
     return True, expectedTestRowLength, expectedValues['validation split']
 
 def joinDataDescription(dataDescription):
-    allowableValues = ['id','continuous','groupby continuous','categorical','groupby categorical','date','groupby date','ignore', 'validation split']
+    allowableValues = ['id','continuous','groupby continuous','categorical','groupby categorical','date','groupby date','ignore', 'validation split', 'nlp']
 
     for name in dataDescription:
         try:
@@ -75,7 +76,7 @@ def joinDataDescription(dataDescription):
             printParent('The entire dataDescription row is:')
             printParent(dataDescription)
             printParent('Please remember that the first row must contain information describing that column of data')
-            printParent('Acceptable values are: "ID", "Continuous", "Categorical", "Date", "IGNORE", and "Validation Split", though they are not case sensitive')
+            printParent('Acceptable values are: "ID", "Continuous", "Categorical", "Date", "IGNORE", "Validation Split", and "NLP", though they are not case sensitive')
             printParent('\n')
             printParent('*********************************************************************')
             printParent('This is an error that prevents the rest of the prorgram from running. Please fix and run machineJS again.')
