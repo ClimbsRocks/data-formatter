@@ -28,6 +28,8 @@ from helperFunctions import minMax
 from helperFunctions import brainjs
 from helperFunctions import writeToFile
 
+printParent( 'this is the right file' )
+
 # grab arguments
 args = json.loads( sys.argv[1] )
 trainingFile = args['trainingData']
@@ -76,7 +78,7 @@ nlpIndices = []
 for colIndex, colType in enumerate(dataDescriptionRaw):
     if colType == 'date':
         dateIndices.append(colIndex)
-    if colType == 'nlp':
+    elif colType == 'nlp':
         nlpIndices.append(colIndex)
     elif colType[0:7] == 'groupby':
         groupByIndices.append(colIndex)

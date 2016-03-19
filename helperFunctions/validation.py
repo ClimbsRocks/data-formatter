@@ -33,18 +33,22 @@ def dataDescription(arr):
 
         except:
             printParent('*********************************************************************')
-            printParent('\n')
+            printParent('')
             printParent('Warning, we have received a value in the first row that is not valid:')
             printParent(name)
             printParent('Please remember that the first row must contain information describing that column of data')
             printParent('Acceptable values are: "ID", "Output Category", "Output Multi-Category", "Output Regression", "Continuous", "Categorical", "Date", "IGNORE", "Validation Split", and "NLP", though they are not case sensitive.')
-            printParent('\n')
+            printParent('')
+            printParent('The column index of this unexpected value is:')
+            printParent(colIndex)
+            printParent('The entire row that we received is:')
+            printParent(str(arr))
             printParent('*********************************************************************')
             printParent('This is an error that prevents the rest of the prorgram from running. Please fix and run machineJS again.')
-            printParent('\n')
-            printParent('\n')
-            printParent('\n')
-            printParent('\n')
+            printParent('')
+            printParent('')
+            printParent('')
+            printParent('')
             raise
     if( not expectedValues['output category'] and not expectedValues['output regression'] and not expectedValues['output multi-category']):
         printParent('Warning, there is no column with an "Output" label in the first row')
@@ -87,13 +91,6 @@ def joinDataDescription(dataDescription):
 
             raise
     
-
-def isTestingDataDescription(row):
-    lowerRow = [x.lower() for x in row]
-    if 'continuous' in lowerRow or 'categorical' in lowerRow:
-        return True
-    else:
-        return False
 
 def checkColumnCounts(row, expectedRowLength):
     # the testing data must have an ID, so we are not checking for that

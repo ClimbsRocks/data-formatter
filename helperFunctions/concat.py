@@ -1,11 +1,53 @@
 import csv
+import os
 import validation
 from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
 
+def removeHeaderRows(fileName):
+    cleanedFileName = 'temp' + fileName
+    with open(fileName,'rU') as f:
+        with open(cleanedFileName,'w+') as f1:
+            rowCount = 0
+            for row in f:
+                if rowCount == 0:
+                    dataDescription = row.rstrip('\r\n').split(",")
+                    rowCount += 1
+                else:
+                    f1.write(row)
+    return cleanedFileName, dataDescription
+
+
 
 def inputFiles(trainingFile, testingFile):
+
+    # we have two "header" rows before the data actually starts, which will throw off our csv parser
+    trainingFile, dataDescriptionLine = removeHeaderRows(trainingFile)
+    testingFile, testingDataDescriptionLine = removeHeaderRows(testingFile)
+
+
+    # grab the dataDescription row and make it lowercase
+    expectedRowLength = len( dataDescriptionLine )
+    dataDescriptionRaw = [x.lower() for x in dataDescriptionLine]
+    hasID, testHeaderValidationLength, hasCustomValidationSplit = validation.dataDescription( dataDescriptionRaw )
+
+    # the user told us whether this is 'output regression' or 'output category'
+    # we need to split out the problem type (regression, category, or multi-category), and leave only 'output'
+    dataDescription = []
+    for columnType in dataDescriptionRaw:
+        if columnType[0:6] == 'output':
+            dataDescription.append('output')
+            problemType = columnType[7:]
+        elif columnType[0:8] == 'groupby ':
+            dataDescription.append( columnType[8:] )
+        else:
+            dataDescription.append(columnType)
+
+
+    testingDataDescription = [x.lower() for x in testingDataDescriptionLine]
+
+
     # we will break out separately the ID column, the output column, and then the rest of the data
     outputData = []
     idColumn = []
@@ -23,28 +65,15 @@ def inputFiles(trainingFile, testingFile):
 
         rowCount = 0
         for row in trainingRows:
-            if rowCount < 2:
-                # grab the dataDescription row and the header row, and make them both lowercase
-                if rowCount == 0:
-                    expectedRowLength = len( row )
-                    dataDescriptionRaw = [x.lower() for x in row]
-                    hasID, testHeaderValidationLength, hasCustomValidationSplit = validation.dataDescription( dataDescriptionRaw )
+            # grab the header row and make it lowercase
+            if rowCount == 0:
+                validation.rowLength( row, expectedRowLength, rowCount )
+                headerRow = [x.lower() for x in row]
+                printParent('row')
+                printParent(row)
+                printParent('headerRow')
+                printParent(headerRow)
 
-                    # the user told us whether this is 'output regression' or 'output category'
-                    # we need to split out the problem type (regression, category, or multi-category), and leave only 'output'
-                    dataDescription = []
-                    for columnType in dataDescriptionRaw:
-                        if columnType[0:6] == 'output':
-                            dataDescription.append('output')
-                            problemType = columnType[7:]
-                        elif columnType[0:8] == 'groupby ':
-                            dataDescription.append( columnType[8:] )
-                        else:
-                            dataDescription.append(columnType)
-
-                else: 
-                    validation.rowLength( row, expectedRowLength, rowCount )
-                    headerRow = [x.lower() for x in row]
             else:
                 validation.rowLength( row, expectedRowLength, rowCount )
                 trimmedRow = []
@@ -76,6 +105,9 @@ def inputFiles(trainingFile, testingFile):
         # keep track of how long our training data set is so we can split back out again later
         trainingLength = len(outputData)
 
+
+    # TODO TODO TODO: properly handle paring off the top line from our testing csv file
+
     with open(testingFile, 'rU') as testingInput:
         # detect the dialect of the csv file
         try:
@@ -87,34 +119,26 @@ def inputFiles(trainingFile, testingFile):
         testingRows = csv.reader(testingInput, dialect)
         testingRowCount = 0
 
-        # if the user passes in their own dataDescription row for the testing set, use it!
-        # but by default, we will use the standard dataDescription row from the training data
-        testingDataDescription = dataDescription
 
         # set missingOutputIndex equal to infinity to start with
         missingOutputIndex = float('inf')
 
         for row in testingRows:
             if testingRowCount == 0:
-                if validation.isTestingDataDescription(row):
-                    # if we have a dataDescription row for our testing dataset, use it! and acknowledge that the next row is our standard header row
-                    testingRowCount -= 1
-                    testingDataDescription = [x.lower() for x in row]
-                else:
-                    testingHeader = row
-                    # check to see if we find the words "continuous" or "categorical" in this row
-                        # if we do, then set testingDataDescription equal to this row
-                        # if we don't, we can proceed as normal.
-                        # define testingDataDescription above as being equal to normal dataDescription by default.
-                        # check to make sure that with all the IGNOREs considered, we have the right number of columns
+                testingHeader = [x.lower() for x in row]
+                printParent('row')
+                printParent(row)
+                printParent('headerRow')
+                printParent(headerRow)
 
-                    # check to see that we have the same number of columns in the testing set as the training set
-                    colsValidated = validation.testingHeaderRow( row, expectedRowLength, headerRow )
-                    if colsValidated == False:
-                        # if not, assume that the missing column is the output column, and store that index position
-                        missingOutputIndex = dataDescription.index('output')
-                    # skip the first row
-                    expectedTestingRowLength = len( row )
+
+
+                # check to make sure that with all the IGNOREs considered, we have the right number of columns
+                colsValidated = validation.testingHeaderRow( row, expectedRowLength, headerRow )
+                if colsValidated == False:
+                    # if not, assume that the missing column is the output column, and store that index position
+                    missingOutputIndex = dataDescription.index('output')
+                expectedTestingRowLength = len( row )
             else:
                 # build up each row in the testing dataset
                 validation.testingRowLength( row, expectedTestingRowLength, testingRowCount )
