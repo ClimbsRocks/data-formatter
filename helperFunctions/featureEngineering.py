@@ -1,5 +1,6 @@
 from dateutil.parser import parse
 from sendMessages import printParent
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 def dates(X, dataDescription, headerRow):
     hasDateColumn = False
@@ -84,7 +85,7 @@ def dates(X, dataDescription, headerRow):
     return X, dataDescription, headerRow
 
 def nlp(X, dataDescription, headerRow):
-        hasnlpColumn = False
+    hasnlpColumn = False
     try:
         nlpColumnIndex = dataDescription.index('nlp')
         hasnlpColumn = True
@@ -107,8 +108,9 @@ def nlp(X, dataDescription, headerRow):
         corpus = []
 
         for rowIdx, row in enumerate(X):
-
-            corpus.append(row[nlpColumnIndex])
+            rawString = row[nlpColumnIndex]
+            cleanedString = unicode(rawString, errors='replace')
+            corpus.append(cleanedString)
 
             # right now the value stored at the nlpColumnIndex is the entire text string
             # go through and overwrite that with a simple number representing the number of characters in that string. We will have the fuller representation of the string (using bag of words or tf-idf) stored elsewhere in this row
@@ -116,11 +118,25 @@ def nlp(X, dataDescription, headerRow):
             X[rowIdx] = row
 
         # TODO: properly set the parameters here. how many words do we want to include, etc.
-        vectorizer = TfidfVectorizer(min_df=1)
+        # if we face a decoding error, ignore it
+        # strip the accents from words to make them more consistent
+        # each word feature will be made up of character n-grams. this means 'calling' and 'called' will be more similar, because they share the characters 'c','a','l',and 'l'. if words, they would be considered two completely unrelated entities
+        # remove english "stop words": words like 'the','it','a' that appear so frequently as to be pretty useless in creating distinguishing documents. research has shown that for most corpora, removing stop words speeds up calculation time and increases accuracy (removes noise)
+        # convert all charactes to lowercase before tokenizing
+        # only include the most frequently occurring 'max_features' features when building the vocabulary. In other words, if we have 80,000 unique words that appear throughout our corpus, but max_features is only 5,000, we will only include the most popular 5,000 words in the final features. This reduces noise, memory, and computation time, at the risk of ignoring useful data.
+
+        vectorizer = TfidfVectorizer(decode_error='ignore', strip_accents='unicode', analyzer='char', stop_words='english', lowercase=True, max_features=10000)
         vectorizer.fit_transform(corpus)
 
+        # TODO:
+            # Before writing vectorizer to file, remove the stop_words attribute. Otherwise, it will take up totally unnecessary space
+            # vectorizer.stop_words = None
+
         # TODO: get the feature names
-    
-    
+        nlpHeaderRow = vectorizer.get_feature_names()
+        nlpHeaderRow = ['_nlp' + x for x in nlpHeaderRow]
+        nlpDataDescription = ['Continuous' for x in nlpHeaderRow]
+
+
     return X, corpus, nlpDataDescription, nlpHeaderRow
 
