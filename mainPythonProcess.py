@@ -43,6 +43,34 @@ dataDescription, headerRow, trainingLength, X, idColumn, outputColumn, idHeader,
 if args['verbose'] != 0:
     printParent('finished concatting the training and testing files together')
 
+
+labelEncoded = False
+labelMapping = None
+try:
+    for val in outputColumn:
+        val = float(val)
+except:
+    labelEncoded = True
+    # build a list of all the unique values in outputColumn
+    uniqueOutputVals = list(set(outputColumn))
+    printParent(uniqueOutputVals)
+    labelMapping = {}
+    for idx, val in enumerate(uniqueOutputVals):
+        labelMapping[val] = idx
+    for idx, val in enumerate(outputColumn):
+        outputColumn[idx] = labelMapping[val]
+
+messageParent({
+    'labelEncoded': labelEncoded,
+    'labelMapping': labelMapping
+    }, 'fileNames')
+
+
+# for development purposes, take a consistent tiny subset of the data
+# X = [x for rowIdx, x in enumerate(X) if rowIdx % 100 == 0]
+
+
+
 # save the pretty name for the output column
 outputHeader = headerRow[ dataDescription.index('output') ]
 args['idHeader'] = idHeader
@@ -127,7 +155,6 @@ if args['verbose'] != 0:
 
 
 # 3. fill in missing values. Please dive into this file to make sure your placeholder for missing values is included in the list we use. 
-    # we are including args only so that we can write to files at the intermediate stages for debugging
 
 X, dataDescription, headerRow = imputingMissingValues.cleanAll(dataDescription, X, headerRow )
 
