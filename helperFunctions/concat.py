@@ -69,10 +69,6 @@ def inputFiles(trainingFile, testingFile):
             if rowCount == 0:
                 validation.rowLength( row, expectedRowLength, rowCount )
                 headerRow = [x.lower() for x in row]
-                printParent('row')
-                printParent(row)
-                printParent('headerRow')
-                printParent(headerRow)
 
             else:
                 validation.rowLength( row, expectedRowLength, rowCount )

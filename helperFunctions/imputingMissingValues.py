@@ -203,22 +203,24 @@ def impute( columnMatrix, dataDescription, colMap, fillInVals ):
 def cleanAll(dataDescription, matrix, headerRow ):
 
     # standardize missing values to all be None
-    standardizedResults = standardizeMissingValues(dataDescription, matrix)
-    cleanedColumnMatrix = standardizedResults[ 0 ]
-    columnsWithMissingValues = standardizedResults[ 1 ]
-    
+    # standardizedResults = standardizeMissingValues(dataDescription, matrix)
+    cleanedColumnMatrix, columnsWithMissingValues = standardizeMissingValues(dataDescription, matrix)
+    # cleanedColumnMatrix = standardizedResults[ 0 ]
+    # columnsWithMissingValues = standardizedResults[ 1 ]
+
 
     # calculate the replacement values for columns that are missing values
     fillInVals = calculateReplacementValues( cleanedColumnMatrix, columnsWithMissingValues, dataDescription )
 
     # create the new columns for each column that has a missing value
-    newColumnsResults = createImputedColumns( cleanedColumnMatrix, dataDescription, fillInVals, headerRow )
+    # newColumnsResults = createImputedColumns( cleanedColumnMatrix, dataDescription, fillInVals, headerRow )
+    cleanedColumnMatrix, dataDescription, columnsWithMissingValues, headerRow = createImputedColumns( cleanedColumnMatrix, dataDescription, fillInVals, headerRow )
 
     # store results from creating the imputed columns
-    cleanedColumnMatrix = newColumnsResults[ 0 ]
-    dataDescription = newColumnsResults[ 1 ]
-    columnsWithMissingValues = newColumnsResults[ 2 ]
-    headerRow = newColumnsResults[ 3 ]
+    # cleanedColumnMatrix = newColumnsResults[ 0 ]
+    # dataDescription = newColumnsResults[ 1 ]
+    # columnsWithMissingValues = newColumnsResults[ 2 ]
+    # headerRow = newColumnsResults[ 3 ]
 
     # impute the missing values and boolean flags for the newly copied columns
     cleanedColumnMatrix = impute( cleanedColumnMatrix, dataDescription, columnsWithMissingValues, fillInVals )

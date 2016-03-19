@@ -116,6 +116,8 @@ def nlp(X, dataDescription, headerRow):
             # go through and overwrite that with a simple number representing the number of characters in that string. We will have the fuller representation of the string (using bag of words or tf-idf) stored elsewhere in this row
             row[nlpColumnIndex] = len(row[nlpColumnIndex])
             X[rowIdx] = row
+        dataDescription[nlpColumnIndex] = 'continuous'
+        headerRow[nlpColumnIndex] = 'lengthOf' + headerRow[nlpColumnIndex]
 
         # TODO: properly set the parameters here. how many words do we want to include, etc.
         # if we face a decoding error, ignore it
@@ -135,7 +137,7 @@ def nlp(X, dataDescription, headerRow):
         # TODO: get the feature names
         nlpHeaderRow = vectorizer.get_feature_names()
         nlpHeaderRow = ['_nlp' + x for x in nlpHeaderRow]
-        nlpDataDescription = ['Continuous' for x in nlpHeaderRow]
+        nlpDataDescription = ['continuous' for x in nlpHeaderRow]
 
 
     return X, corpus, nlpDataDescription, nlpHeaderRow
