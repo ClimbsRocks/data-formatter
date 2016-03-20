@@ -1,12 +1,13 @@
 import csv
 import os
 import validation
+import ntpath
 from sendMessages import printParent
 from sendMessages import messageParent
 from sendMessages import obviousPrint
 
 def removeHeaderRows(fileName):
-    cleanedFileName = 'temp' + fileName
+    cleanedFileName = 'temp' + ntpath.basename(fileName)
     with open(fileName,'rU') as f:
         with open(cleanedFileName,'w+') as f1:
             rowCount = 0
@@ -16,6 +17,7 @@ def removeHeaderRows(fileName):
                     rowCount += 1
                 else:
                     f1.write(row)
+    # os.remove(cleanedFileName)
     return cleanedFileName, dataDescription
 
 
@@ -153,6 +155,11 @@ def inputFiles(trainingFile, testingFile):
                     # if we treated them separately, it could cause an issue if we have a feature present in the testing data but not the training data, for example
                 outputData.append(trimmedRow)
             testingRowCount += 1
+
+
+    os.remove(trainingFile)
+    os.remove(testingFile)
+
 
     try:
         idHeader = headerRow[ dataDescription.index('id') ]
