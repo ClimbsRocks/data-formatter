@@ -122,13 +122,14 @@ def nlp(X, dataDescription, headerRow):
         # TODO: properly set the parameters here. how many words do we want to include, etc.
         # if we face a decoding error, ignore it
         # strip the accents from words to make them more consistent
-        # each word feature will be made up of character n-grams. this means 'calling' and 'called' will be more similar, because they share the characters 'c','a','l',and 'l'. if words, they would be considered two completely unrelated entities
+        # if amalyzer='char', each word feature will be made up of character n-grams. this means 'calling' and 'called' will be more similar, because they share the characters 'c','a','l',and 'l'. if words, they would be considered two completely unrelated entities
+        # if analyzer='word', each word feature will simply be the count of times that word appears in this document
         # remove english "stop words": words like 'the','it','a' that appear so frequently as to be pretty useless in creating distinguishing documents. research has shown that for most corpora, removing stop words speeds up calculation time and increases accuracy (removes noise)
         # convert all charactes to lowercase before tokenizing
         # only include the most frequently occurring 'max_features' features when building the vocabulary. In other words, if we have 80,000 unique words that appear throughout our corpus, but max_features is only 5,000, we will only include the most popular 5,000 words in the final features. This reduces noise, memory, and computation time, at the risk of ignoring useful data.
 
-        vectorizer = TfidfVectorizer(decode_error='ignore', strip_accents='unicode', analyzer='char', stop_words='english', lowercase=True, max_features=10000)
-        vectorizer.fit_transform(corpus)
+        vectorizer = TfidfVectorizer(decode_error='ignore', strip_accents='unicode', analyzer='word', stop_words='english', lowercase=True, max_features=5000)
+        corpus = vectorizer.fit_transform(corpus)
 
         # TODO:
             # Before writing vectorizer to file, remove the stop_words attribute. Otherwise, it will take up totally unnecessary space
