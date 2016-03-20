@@ -5,6 +5,8 @@ import time
 import json
 import numpy as np
 
+from scipy.sparse import hstack
+
 # some functions to help with logging
 from helperFunctions.sendMessages import printParent
 from helperFunctions.sendMessages import messageParent
@@ -53,7 +55,6 @@ except:
     labelEncoded = True
     # build a list of all the unique values in outputColumn
     uniqueOutputVals = list(set(outputColumn))
-    printParent(uniqueOutputVals)
     labelMapping = {}
     for idx, val in enumerate(uniqueOutputVals):
         labelMapping[val] = idx
@@ -220,6 +221,8 @@ if not args['keepAllFeatures']:
 # 5. write results to file
 # this is the data we need for most scikit-learn algorithms!
 writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow, validationSplitColumn, hasCustomValidationSplit )
+X = hstack([X,nlpColumns], format='csr')
+headerRow = headerRow + nlpHeaderRow
 writeToFile.writeDataSparse(X, args, headerRow, False )
 
 if(test):
