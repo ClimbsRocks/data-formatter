@@ -30,7 +30,6 @@ from helperFunctions import minMax
 from helperFunctions import brainjs
 from helperFunctions import writeToFile
 
-printParent( 'this is the right file' )
 
 # grab arguments
 args = json.loads( sys.argv[1] )
