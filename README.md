@@ -17,6 +17,7 @@ Column label options:
 6. Continuous
 7. Ignore
 8. Validation Split (used for the validation column from numer.ai, rarely used otherwise)
+9. NLP
 
 For more detailed info, see below. 
 
@@ -24,17 +25,19 @@ For more detailed info, see below.
 
 1. .csv file
 2. The first row holds information describing each column. Specifically, it *must* specify:
-  - "ID", the column that holds the IDs
   - "Output", the column that holds the variable we are trying to predict for the test dataset, and train on for the training data set. You must specify what type of problem it is we're working with. Accepted values are:
     - "Output Regression" for regression problems
     - "Output Category" for classification problems predicting a single yes or no value
     - "Output Multi-Category" if there are multiple categories included in this output column
     - Note: we do not have any plans to support multiple different output columns in the same training dataset. Multiple categories within the same column of training data is a fully supported use case, but multiple output columns is not. 
+
   All other columns must be labeled as holding either Categorical or Continuous data:
   - "Categorical": all columns holding strings are categorical. Similarly, if you have saved someone's occupation as a number (1 for engineer, 2 for carpenter, 3 for processional cyclist, etc.), that column must be labeled "Categorical". 
   - "Continuous": any column that should hold only continuous numbers. Any non-numerical values in these columns will be assumed to be missing values, and will be replaced by the median value for that column.
   - "IGNORE": any column that should be ignored. Added for convenience for datasets that would be difficult to manipulate/delete columns from otherwise. 
   - "Validation Split": If you would like to use this column to determine which rows to keep in the training data, and which to split out into the validation data. This is primarily useful for competitors working on the Numer.ai dataset, and should be the header for the "validation" column provided in their first few data sets. 
+  - "ID": A column that holds the IDs for each row. Required for the test dataset, not required for the training data
+  - "NLP": A column holding text data, such as emails, text messages, medical records, tweets, etc.
 3. Next row (the second row) must be a header row containing the names of each column.
 4. Make sure there are no empty rows!
 5. Make sure each row has the same number of columns (even if those columns are blank, they must exist).
