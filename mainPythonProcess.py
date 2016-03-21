@@ -220,8 +220,14 @@ if not args['keepAllFeatures']:
 # 5. write results to file
 # this is the data we need for most scikit-learn algorithms!
 writeToFile.writeMetadata( outputColumn, idColumn, args, headerRow, validationSplitColumn, hasCustomValidationSplit )
-X = hstack([X,nlpColumns], format='csr')
-headerRow = headerRow + nlpHeaderRow
+
+# if we have nlp data, append it now
+try:
+    X = hstack([X,nlpColumns], format='csr')
+    headerRow = headerRow + nlpHeaderRow
+except:
+    pass
+    
 writeToFile.writeDataSparse(X, args, headerRow, False )
 
 if(test):
