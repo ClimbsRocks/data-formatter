@@ -124,12 +124,7 @@ def inputFiles(trainingFile, testingFile):
         for row in testingRows:
             if testingRowCount == 0:
                 testingHeader = [x.lower() for x in row]
-                printParent('row')
-                printParent(row)
-                printParent('headerRow')
-                printParent(headerRow)
-
-
+                
 
                 # check to make sure that with all the IGNOREs considered, we have the right number of columns
                 colsValidated = validation.testingHeaderRow( row, expectedRowLength, headerRow )
